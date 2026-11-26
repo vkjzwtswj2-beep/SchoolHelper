@@ -3,7 +3,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#E8EEEC">
 <title>SchoolHelper</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -15,14 +15,15 @@
  --gold:#C49A55;--cream:#F5F0E5;--sage:#A9BCA8;
 }
 *{box-sizing:border-box}
-html,body{width:100%;min-width:0;max-width:100%;overflow-x:hidden}
-body{margin:0;background:var(--bg);color:var(--text);
+html,body{width:100%;min-width:0;max-width:100%;min-height:100%;overflow-x:hidden}
+html{height:100%;background:var(--bg)}
+body{margin:0;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--text);
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
- padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+ padding-bottom:calc(82px + max(env(safe-area-inset-bottom),var(--tg-content-safe-area-inset-bottom,0px)))}
 img,svg,video,canvas{display:block;max-width:100%;height:auto}
 button,input,select,textarea{font:inherit;max-width:100%;min-width:0}
 button{cursor:pointer}
-.app{width:100%;max-width:680px;min-width:0;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 16px 22px}
+.app{width:100%;max-width:680px;min-width:0;min-height:100vh;min-height:100dvh;margin:0 auto;padding:calc(14px + max(env(safe-area-inset-top),var(--tg-content-safe-area-inset-top,0px))) 16px 22px}
 #content{width:100%;min-width:0;overflow-wrap:anywhere}
 #content *{min-width:0}
 .card,.stat,.welcome,.item-main{min-width:0;max-width:100%}
@@ -103,9 +104,11 @@ p{margin:5px 0}
 .lesson-time{color:#A87932;font-weight:800;font-size:13px;min-width:42px}
 .empty{text-align:center;padding:23px 8px;color:var(--muted);font-size:14px}
 .empty div{font-size:29px;margin-bottom:7px}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:5;
- display:flex;justify-content:space-around;background:rgba(251,248,239,.97);
- border-top:1px solid var(--border);padding:8px 2px calc(8px + env(safe-area-inset-bottom))}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:20;
+ display:flex;justify-content:space-around;align-items:center;background:rgba(251,248,239,.98);
+ border-top:1px solid var(--border);padding:8px 2px calc(8px + max(env(safe-area-inset-bottom),var(--tg-content-safe-area-inset-bottom,0px)));}
+.bottom-nav{padding-left:max(2px,env(safe-area-inset-left));padding-right:max(2px,env(safe-area-inset-right));}
+.nav-btn{min-height:48px;justify-content:center;flex:1 1 0;}
 .nav-btn{background:none;border:0;color:#9995a8;display:flex;flex-direction:column;
  align-items:center;gap:3px;font-size:10px;min-width:0;flex:1}
 .nav-btn span{font-size:20px}
@@ -156,7 +159,24 @@ p{margin:5px 0}
 const $=s=>document.querySelector(s);
 const content=$("#content"),modalRoot=$("#modal-root");
 const tg=window.Telegram?.WebApp;
-if(tg){tg.ready();tg.expand()}
+if(tg){
+ tg.ready();
+ try{tg.expand()}catch(e){}
+ const updateTelegramInsets=()=>{
+  const safe=tg.safeAreaInset||{};
+  const contentSafe=tg.contentSafeAreaInset||{};
+  const top=Math.max(Number(safe.top)||0,Number(contentSafe.top)||0);
+  const bottom=Math.max(Number(safe.bottom)||0,Number(contentSafe.bottom)||0);
+  document.documentElement.style.setProperty("--tg-safe-area-inset-top",`${Number(safe.top)||0}px`);
+  document.documentElement.style.setProperty("--tg-safe-area-inset-bottom",`${Number(safe.bottom)||0}px`);
+  document.documentElement.style.setProperty("--tg-content-safe-area-inset-top",`${top}px`);
+  document.documentElement.style.setProperty("--tg-content-safe-area-inset-bottom",`${bottom}px`);
+ };
+ updateTelegramInsets();
+ ["safeAreaChanged","contentSafeAreaChanged","viewportChanged","fullscreenChanged"].forEach(event=>{
+  try{tg.onEvent(event,updateTelegramInsets)}catch(e){}
+ });
+}
 
 const KEY="schoolhelper_data_v2";
 const WELCOME_HIDDEN_KEY="schoolhelper_welcome_hidden";
