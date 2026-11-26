@@ -14,12 +14,25 @@
  --border:#eeeaf5;--green:#54ad83;--red:#e47b87;
 }
 *{box-sizing:border-box}
+html,body{width:100%;min-width:0;overflow-x:hidden}
 body{margin:0;background:var(--bg);color:var(--text);
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
- padding-bottom:90px}
-button,input,select{font:inherit}
+ padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+button,input,select{font:inherit;max-width:100%}
 button{cursor:pointer}
-.app{max-width:680px;margin:auto;padding:20px 16px}
+.app{width:100%;max-width:680px;min-width:0;margin:auto;padding:calc(20px + env(safe-area-inset-top)) 16px 20px}
+#content{min-width:0;overflow-wrap:anywhere}
+.card,.stat,.welcome,.item-main{min-width:0}
+.item-main h3,.item-main p{overflow-wrap:anywhere}
+.welcome{position:relative;padding-right:54px}
+.welcome-close{position:absolute;right:12px;top:12px;width:32px;height:32px;border:0;border-radius:10px;background:#ffffff30;color:#fff;font-size:22px;line-height:1}
+@media(max-width:380px){
+ .app{padding-left:12px;padding-right:12px}
+ .card{padding:13px}
+ .stat{padding:12px}
+ .welcome{padding:18px 48px 18px 18px}
+ .item-actions{flex-wrap:wrap}
+}
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
 .logo{font-size:22px;font-weight:800}.logo span{color:var(--purple)}
 .avatar{background:var(--light);border-radius:14px;padding:10px;font-size:21px}
@@ -121,6 +134,9 @@ const tg=window.Telegram?.WebApp;
 if(tg){tg.ready();tg.expand()}
 
 const KEY="schoolhelper_data_v2";
+const WELCOME_HIDDEN_KEY="schoolhelper_welcome_hidden";
+let welcomeHidden=false;
+try{welcomeHidden=localStorage.getItem(WELCOME_HIDDEN_KEY)==="1"}catch(e){}
 const weekdays=["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"];
 const shortDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 const today=localDate();
@@ -227,8 +243,8 @@ function renderHome(){
  const lessons=data.schedule.filter(t=>t.day===todayIndex);
  const a=avg(data.grades);
  content.innerHTML=`
- <section class="welcome"><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
- <h1>Привет, ${esc(data.profile.name)}! 👋</h1><p>Всё важное для учёбы — в одном месте.</p></section>
+ ${welcomeHidden?"":`<section class="welcome"><button class="welcome-close" data-action="hide-welcome" aria-label="Скрыть приветствие" title="Скрыть">×</button><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
+ <h1>Привет, ${esc(data.profile.name)}! 👋</h1><p>Всё важное для учёбы — в одном месте.</p></section>`}
  <div class="stats">
  <div class="stat"><div>📚</div><div class="stat-number">${lessons.length}</div><div class="muted">Уроков сегодня</div></div>
  <div class="stat"><div>📝</div><div class="stat-number">${pending.length}</div><div class="muted">Незаконченных заданий</div></div>
@@ -441,6 +457,11 @@ function action(a,el){
  if(a==="edit-profile")return profileForm();
  if(a==="select-day"){data.selectedDay=Number(el.dataset.day);save();return render()}
  if(a==="go-deadlines")return setPage("deadlines");
+ if(a==="hide-welcome"){
+  welcomeHidden=true;
+  try{localStorage.setItem(WELCOME_HIDDEN_KEY,"1")}catch(e){}
+  return render();
+ }
  if(a==="close-modal")return closeModal();
  if(a==="reset-data"){if(confirm("Точно сбросить все данные?")){data=clone(initial);save();render()}}
 }
