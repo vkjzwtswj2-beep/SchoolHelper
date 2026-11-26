@@ -266,7 +266,7 @@ function renderHome(){
  const lessons=data.schedule.filter(t=>t.day===todayIndex);
  const a=avg(data.grades);
  content.innerHTML=`
- ${welcomeHidden?"":`<section class="welcome"><button class="welcome-close" data-action="hide-welcome" aria-label="Скрыть приветствие" title="Скрыть">×</button><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
+ ${welcomeHidden?`<button class="secondary" data-action="show-welcome" style="margin:0 0 14px;width:100%">👋 Показать приветствие</button>`:`<section class="welcome"><button class="welcome-close" data-action="hide-welcome" aria-label="Скрыть приветствие" title="Скрыть">×</button><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
  <h1>Привет, ${esc(data.profile.name)}! 👋</h1><p>Всё важное для учёбы — в одном месте.</p></section>`}
  <div class="stats">
  <div class="stat"><div>📚</div><div class="stat-number">${lessons.length}</div><div class="muted">Уроков сегодня</div></div>
@@ -480,9 +480,12 @@ function action(a,el){
  if(a==="edit-profile")return profileForm();
  if(a==="select-day"){data.selectedDay=Number(el.dataset.day);save();return render()}
  if(a==="go-deadlines")return setPage("deadlines");
- if(a==="hide-welcome"){
-  welcomeHidden=true;
-  try{localStorage.setItem(WELCOME_HIDDEN_KEY,"1")}catch(e){}
+ if(a==="hide-welcome"||a==="show-welcome"){
+  welcomeHidden=a==="hide-welcome";
+  try{
+   if(welcomeHidden)localStorage.setItem(WELCOME_HIDDEN_KEY,"1");
+   else localStorage.removeItem(WELCOME_HIDDEN_KEY);
+  }catch(e){}
   return render();
  }
  if(a==="close-modal")return closeModal();
