@@ -14,24 +14,47 @@
  --border:#eeeaf5;--green:#54ad83;--red:#e47b87;
 }
 *{box-sizing:border-box}
-html,body{width:100%;min-width:0;overflow-x:hidden}
+html,body{width:100%;min-width:0;max-width:100%;overflow-x:hidden}
 body{margin:0;background:var(--bg);color:var(--text);
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
- padding-bottom:calc(90px + env(safe-area-inset-bottom))}
-button,input,select{font:inherit;max-width:100%}
+ padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+img,svg,video,canvas{display:block;max-width:100%;height:auto}
+button,input,select,textarea{font:inherit;max-width:100%;min-width:0}
 button{cursor:pointer}
-.app{width:100%;max-width:680px;min-width:0;margin:auto;padding:calc(20px + env(safe-area-inset-top)) 16px 20px}
-#content{min-width:0;overflow-wrap:anywhere}
-.card,.stat,.welcome,.item-main{min-width:0}
+.app{width:100%;max-width:680px;min-width:0;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 16px 22px}
+#content{width:100%;min-width:0;overflow-wrap:anywhere}
+#content *{min-width:0}
+.card,.stat,.welcome,.item-main{min-width:0;max-width:100%}
+h1,h2,h3,p,.muted,.tag,.nav-btn{overflow-wrap:anywhere;word-break:normal}
 .item-main h3,.item-main p{overflow-wrap:anywhere}
-.welcome{position:relative;padding-right:54px}
-.welcome-close{position:absolute;right:12px;top:12px;width:32px;height:32px;border:0;border-radius:10px;background:#ffffff30;color:#fff;font-size:22px;line-height:1}
+.top{min-width:0;gap:10px}
+.logo{min-width:0;overflow-wrap:anywhere}
+.avatar{flex-shrink:0}
+.welcome{position:relative;padding:22px 54px 22px 22px;overflow:hidden}
+.welcome h1,.welcome p{max-width:100%}
+.welcome-close{position:absolute;right:12px;top:12px;width:32px;height:32px;min-width:32px;padding:0;border:0;border-radius:10px;background:#ffffff30;color:#fff;font-size:22px;line-height:1}
+.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+.stat{overflow-wrap:anywhere}
+.card{overflow-wrap:anywhere}
+.item{min-width:0}
+.item-main{overflow-wrap:anywhere}
+.item-actions{flex-wrap:wrap}
+.bottom-nav{width:100%;max-width:100%;left:0;right:0;overflow-x:auto;overscroll-behavior-x:contain}
+.nav-btn{flex:1 1 0;min-width:0;padding:2px 1px;white-space:normal;line-height:1.2}
+.nav-btn span{line-height:1.2}
+.modal-bg{padding:10px max(10px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+.modal{width:100%;min-width:0;overflow-x:hidden}
+.field input,.field select{min-width:0;width:100%}
 @media(max-width:380px){
  .app{padding-left:12px;padding-right:12px}
  .card{padding:13px}
  .stat{padding:12px}
  .welcome{padding:18px 48px 18px 18px}
- .item-actions{flex-wrap:wrap}
+ .item-actions{gap:5px}
+ .small-btn{padding:8px 9px}
+ .bottom-nav{padding-left:2px;padding-right:2px}
+ .nav-btn{font-size:9px}
+ .nav-btn span{font-size:18px}
 }
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
 .logo{font-size:22px;font-weight:800}.logo span{color:var(--purple)}
