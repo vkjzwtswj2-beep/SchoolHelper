@@ -3,465 +3,461 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#f6f1ff">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f2ff">
 <title>SchoolHelper</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root {
-  --bg:#f7f4fc;
-  --purple:#9270c9;
-  --dark:#49376b;
-  --light:#eee7fa;
-  --white:#fff;
-  --muted:#9289a1;
-  --pink:#f5eafa;
-  --green:#dff3e8;
-  --red:#fce5e8;
-  --yellow:#fff1d7;
+:root{
+ --purple:#8065d8;--dark:#654bc0;--light:#eee9ff;
+ --bg:#f7f5fc;--text:#29263a;--muted:#89869b;
+ --border:#eeeaf5;--green:#54ad83;--red:#e47b87;
 }
-* {box-sizing:border-box}
-body {
-  margin:0;
-  background:var(--bg);
-  color:#342b43;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  padding-bottom:95px;
-}
-header {
-  padding:25px 20px 15px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.logo {font-size:23px;font-weight:800;color:var(--dark)}
-.logo span {color:var(--purple)}
-.avatar {
-  background:var(--light);
-  border-radius:50%;
-  width:43px;height:43px;
-  display:grid;place-items:center;
-  font-size:21px;
-}
-main {padding:0 17px;max-width:600px;margin:auto}
-h1 {font-size:26px;margin:10px 0 5px}
-h2 {font-size:19px;margin:20px 0 12px}
-.sub {color:var(--muted);font-size:14px}
-.card {
-  background:white;
-  border-radius:19px;
-  padding:17px;
-  margin-bottom:13px;
-  box-shadow:0 3px 15px #6d57920a;
-}
-.welcome {
-  background:linear-gradient(135deg,#e9ddfa,#f4eafa);
-  border-radius:23px;
-  padding:22px;
-  margin:10px 0 20px;
-}
-.welcome h1 {color:var(--dark);font-size:25px}
-.welcome p {color:#76658f;font-size:14px}
-.stats {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:11px;
-}
-.stat {
-  background:white;
-  border-radius:18px;
-  padding:16px;
-}
-.stat .emoji {font-size:23px}
-.stat strong {display:block;font-size:25px;color:var(--dark);margin-top:7px}
-.stat small {color:var(--muted)}
-.row {display:flex;align-items:center;justify-content:space-between;gap:10px}
-.item {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:13px 0;
-  border-bottom:1px solid #f0edf4;
-}
-.item:last-child {border:0}
-.item-icon {
-  width:42px;height:42px;border-radius:13px;
-  background:var(--light);
-  display:grid;place-items:center;font-size:20px;
-  flex-shrink:0;
-}
-.item-info {flex:1;min-width:0}
-.item-info strong {font-size:14px}
-.item-info small {display:block;color:var(--muted);margin-top:4px}
-button {
-  border:0;
-  cursor:pointer;
-  font:inherit;
-}
-.primary {
-  background:var(--purple);
-  color:white;
-  padding:12px 17px;
-  border-radius:13px;
-  font-weight:650;
-}
-.secondary {
-  background:var(--light);
-  color:var(--dark);
-  padding:10px 14px;
-  border-radius:12px;
-}
-.small-btn {
-  background:#f3eff8;
-  color:var(--dark);
-  padding:8px 10px;
-  border-radius:10px;
-  font-size:12px;
-}
-.danger {color:#c45c70;background:var(--red)}
-.badge {
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:9px;
-  font-size:11px;
-  font-weight:650;
-  background:var(--light);
-  color:var(--dark);
-}
-.badge.red {background:var(--red);color:#b34c62}
-.badge.yellow {background:var(--yellow);color:#a47728}
-.badge.green {background:var(--green);color:#43815e}
-.days {
-  display:flex;gap:7px;overflow-x:auto;
-  padding:5px 0 13px;
-}
-.day {
-  min-width:51px;
-  padding:11px 6px;
-  border-radius:13px;
-  background:white;
-  text-align:center;
-  color:var(--muted);
-  font-size:12px;
-}
-.day.active {background:var(--purple);color:white}
-.day strong {display:block;font-size:17px;margin-top:5px}
-.lesson-time {color:var(--purple);font-size:12px;font-weight:700}
-.empty {text-align:center;padding:25px;color:var(--muted);font-size:14px}
-.bottom {
-  position:fixed;bottom:0;left:0;right:0;
-  background:#fff;
-  display:flex;justify-content:space-around;
-  padding:10px 3px calc(10px + env(safe-area-inset-bottom));
-  box-shadow:0 -4px 20px #49376b12;
-  z-index:5;
-}
-.nav {
-  background:transparent;
-  color:#a59aaf;
-  display:flex;flex-direction:column;
-  align-items:center;gap:4px;
-  font-size:10px;
-  min-width:54px;
-}
-.nav span {font-size:21px}
-.nav.active {color:var(--purple);font-weight:750}
-input,select,textarea {
-  width:100%;
-  border:1px solid #e8e1f0;
-  border-radius:12px;
-  padding:13px;
-  background:#fff;
-  font:inherit;
-  color:#342b43;
-  margin-top:6px;
-  outline:none;
-}
-label {font-size:13px;color:#756985;display:block;margin:12px 0}
-textarea {min-height:75px;resize:vertical}
-.modal {
-  display:none;
-  position:fixed;inset:0;
-  background:#24183277;
-  z-index:10;
-  align-items:flex-end;
-  justify-content:center;
-}
-.modal.open {display:flex}
-.modal-content {
-  width:100%;max-width:600px;
-  background:var(--bg);
-  border-radius:24px 24px 0 0;
-  padding:22px 20px calc(25px + env(safe-area-inset-bottom));
-  max-height:88vh;overflow:auto;
-}
-.modal-title {font-size:20px;font-weight:800}
-.progress {
-  height:9px;background:#eee8f5;
-  border-radius:20px;overflow:hidden;margin-top:9px;
-}
-.progress div {height:100%;background:var(--purple);border-radius:20px}
-.hidden {display:none!important}
-footer {text-align:center;color:#aaa1b1;font-size:11px;padding:20px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ padding-bottom:90px}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:680px;margin:auto;padding:20px 16px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.logo{font-size:22px;font-weight:800}.logo span{color:var(--purple)}
+.avatar{background:var(--light);border-radius:14px;padding:10px;font-size:21px}
+h1{font-size:25px;margin:8px 0}
+h2{font-size:19px;margin:23px 0 12px}
+h3{font-size:16px;margin:0 0 6px}
+p{margin:5px 0}
+.muted{color:var(--muted);font-size:13px}
+.card{background:white;border-radius:19px;padding:16px;margin-bottom:12px;
+ box-shadow:0 5px 22px rgba(65,48,110,.06)}
+.welcome{background:linear-gradient(135deg,#9279e7,#7158ca);
+ color:white;padding:22px;border-radius:22px;margin-bottom:17px}
+.welcome p{opacity:.85;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.stat{background:white;padding:15px;border-radius:17px}
+.stat-number{font-size:26px;font-weight:800;margin:7px 0 2px}
+.section-head{display:flex;justify-content:space-between;align-items:center;
+ gap:8px;margin:23px 0 12px}
+.section-head h2{margin:0}
+.primary,.secondary,.small-btn{border:0;border-radius:11px;padding:10px 13px;font-weight:650}
+.primary{background:var(--purple);color:white}
+.secondary{background:var(--light);color:var(--dark)}
+.small-btn{background:#f4f1fb;color:var(--dark);font-size:12px;padding:8px 10px}
+.danger{background:#fff0f1;color:#c65e6c}
+.item{display:flex;align-items:flex-start;gap:11px}
+.item+.item{border-top:1px solid var(--border);padding-top:12px;margin-top:12px}
+.item-icon{width:39px;height:39px;border-radius:12px;background:var(--light);
+ display:grid;place-items:center;flex-shrink:0;font-size:19px}
+.item-main{flex:1;min-width:0}
+.item-main p{font-size:13px;color:var(--muted)}
+.item-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.done{opacity:.5}.done .item-title{text-decoration:line-through}
+.tag{display:inline-block;background:var(--light);color:var(--dark);
+ padding:5px 9px;border-radius:9px;font-size:11px;font-weight:650}
+.tag.green{background:#e7f7ef;color:#39845e}
+.tag.red{background:#fff0f1;color:#c65e6c}
+.days{display:flex;gap:7px;overflow-x:auto;padding:3px 0 12px}
+.day{border:0;background:white;color:var(--muted);border-radius:12px;
+ min-width:43px;padding:9px 6px}
+.day strong{display:block;color:var(--text);margin-top:4px}
+.day.active{background:var(--purple);color:white}
+.day.active strong{color:white}
+.lesson-time{color:var(--purple);font-weight:750;font-size:13px;min-width:42px}
+.empty{text-align:center;padding:23px 8px;color:var(--muted);font-size:14px}
+.empty div{font-size:29px;margin-bottom:7px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:5;
+ display:flex;justify-content:space-around;background:rgba(255,255,255,.97);
+ border-top:1px solid var(--border);padding:8px 2px calc(8px + env(safe-area-inset-bottom))}
+.nav-btn{background:none;border:0;color:#9995a8;display:flex;flex-direction:column;
+ align-items:center;gap:3px;font-size:10px;min-width:0;flex:1}
+.nav-btn span{font-size:20px}
+.nav-btn.active{color:var(--purple);font-weight:750}
+.modal-bg{position:fixed;inset:0;z-index:10;background:#231d375e;
+ display:flex;align-items:flex-end;justify-content:center;padding:10px}
+.modal{background:white;border-radius:23px;padding:20px 17px;width:100%;
+ max-width:600px;max-height:88vh;overflow-y:auto}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.close{border:0;background:#f3f0f8;border-radius:10px;width:34px;height:34px;font-size:19px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:13px;font-weight:650;margin-bottom:6px}
+.field input,.field select{width:100%;border:1px solid var(--border);
+ border-radius:11px;padding:12px;background:#fcfbff;color:var(--text)}
+.full{width:100%;margin-top:5px}
+.grade-big{font-size:25px;color:var(--purple);font-weight:800}
+.progress{height:8px;background:#eeeaf6;border-radius:10px;overflow:hidden;margin-top:8px}
+.progress>div{height:100%;background:var(--purple);border-radius:10px}
+.goal-box{background:#f7f4ff;border-radius:14px;padding:12px;margin-top:10px}
+.profile-center{text-align:center;padding:23px}
+.profile-avatar{font-size:34px;background:var(--light);width:72px;height:72px;
+ border-radius:23px;display:grid;place-items:center;margin:0 auto 10px}
+@media(min-width:600px){.modal-bg{align-items:center}}
 </style>
 </head>
 <body>
-
-<header>
-  <div class="logo">School<span>Helper</span> 💜</div>
-  <div class="avatar" onclick="showPage('profile')">🎓</div>
-</header>
-
-<main>
-<section id="home" class="page">
-  <div class="welcome">
-    <div class="sub" id="todayDate"></div>
-    <h1>Привет, <span id="helloName">ученик</span>! 👋</h1>
-    <p>Давай сделаем этот учебный день продуктивным!</p>
-  </div>
-
-  <div class="stats">
-    <div class="stat"><div class="emoji">📚</div><strong id="lessonCount">0</strong><small>Уроков сегодня</small></div>
-    <div class="stat"><div class="emoji">📝</div><strong id="taskCount">0</strong><small>Активных заданий</small></div>
-    <div class="stat"><div class="emoji">⏰</div><strong id="deadlineCount">0</strong><small>Ближайших дедлайнов</small></div>
-    <div class="stat"><div class="emoji">⭐</div><strong id="average">5.0</strong><small>Средний балл</small></div>
-  </div>
-
-  <h2>📌 Ближайшие события</h2>
-  <div class="card" id="homeDeadlines"></div>
-
-  <h2>📝 Мои задания</h2>
-  <div class="card" id="homeTasks"></div>
-</section>
-
-<section id="schedule" class="page hidden">
-  <h1>📅 Расписание</h1>
-  <p class="sub">Твоя учебная неделя</p>
-  <div class="days" id="days"></div>
-  <div class="card" id="lessons"></div>
-  <button class="primary" onclick="openModal('lesson')">＋ Добавить урок</button>
-</section>
-
-<section id="tasks" class="page hidden">
-  <h1>📝 Домашние задания</h1>
-  <p class="sub">Следи за своими учебными задачами</p>
-  <div class="row" style="margin:18px 0">
-    <strong>Мои задания</strong>
-    <button class="primary" onclick="openModal('task')">＋ Добавить</button>
-  </div>
-  <div id="taskList"></div>
-</section>
-
-<section id="deadlines" class="page hidden">
-  <h1>⏰ Дедлайны</h1>
-  <p class="sub">Не забывай о важных событиях</p>
-  <div class="card" style="margin-top:20px">
-    <div class="row">
-      <strong>Предстоящие события</strong>
-      <span>📌</span>
-    </div>
-    <div id="deadlineList"></div>
-  </div>
-  <button class="primary" onclick="openModal('deadline')">＋ Добавить событие</button>
-</section>
-
-<section id="profile" class="page hidden">
-  <h1>👤 Профиль</h1>
-  <p class="sub">Твои учебные данные</p>
-  <div class="card" style="text-align:center;padding:25px">
-    <div style="font-size:48px">🎓</div>
-    <h2 id="profileName">Ученик</h2>
-    <p class="sub" id="profileClass">Школьник</p>
-    <button class="secondary" onclick="openModal('profile')">Изменить профиль</button>
-  </div>
-  <h2>📊 Успеваемость</h2>
-  <div class="card" id="grades"></div>
-  <h2>⚙️ Настройки</h2>
-  <div class="card">
-    <div class="row">
-      <span>Демонстрационные напоминания</span>
-      <input id="reminders" type="checkbox" style="width:22px" checked>
-    </div>
-    <p class="sub">Настройка демонстрационного режима</p>
-    <button class="small-btn danger" onclick="resetData()">Сбросить данные</button>
-  </div>
-</section>
-</main>
-
-<nav class="bottom">
-  <button class="nav active" data-page="home" onclick="showPage('home')"><span>🏠</span>Главная</button>
-  <button class="nav" data-page="schedule" onclick="showPage('schedule')"><span>📅</span>Расписание</button>
-  <button class="nav" data-page="tasks" onclick="showPage('tasks')"><span>📝</span>Задания</button>
-  <button class="nav" data-page="deadlines" onclick="showPage('deadlines')"><span>⏰</span>Дедлайны</button>
-  <button class="nav" data-page="profile" onclick="showPage('profile')"><span>👤</span>Профиль</button>
-</nav>
-
-<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal-content">
-    <div class="row">
-      <div class="modal-title" id="modalTitle">Добавить</div>
-      <button class="secondary" onclick="closeModal()">✕</button>
-    </div>
-    <form id="dataForm">
-      <div id="formFields"></div>
-      <button class="primary" style="width:100%;margin-top:15px" type="submit">Сохранить</button>
-    </form>
-  </div>
+<div class="app">
+ <header class="top">
+  <div class="logo">School<span>Helper</span></div>
+  <div class="avatar">📚</div>
+ </header>
+ <main id="content"></main>
 </div>
 
-<footer>SchoolHelper · Твой помощник в учёбе 💜</footer>
+<nav class="bottom-nav">
+ <button class="nav-btn active" data-page="home"><span>🏠</span>Главная</button>
+ <button class="nav-btn" data-page="schedule"><span>🗓️</span>Расписание</button>
+ <button class="nav-btn" data-page="tasks"><span>📝</span>Задания</button>
+ <button class="nav-btn" data-page="deadlines"><span>⏰</span>Дедлайны</button>
+ <button class="nav-btn" data-page="grades"><span>⭐</span>Оценки</button>
+ <button class="nav-btn" data-page="profile"><span>👤</span>Профиль</button>
+</nav>
+<div id="modal-root"></div>
 
 <script>
-const $ = id => document.getElementById(id);
-const subjects = ["Математика","Русский язык","Биология","История","Английский язык","Химия","География","Физика","Литература"];
-const weekdays = ["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"];
-const shortDays = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
-const today = new Date();
-const offset = (n) => {
-  const d = new Date();
-  d.setDate(d.getDate()+n);
-  return d.toISOString().slice(0,10);
-};
-const dayIndex = (d) => (new Date(d+"T12:00:00").getDay()+6)%7;
+(() => {
+"use strict";
+const $=s=>document.querySelector(s);
+const content=$("#content"),modalRoot=$("#modal-root");
+const tg=window.Telegram?.WebApp;
+if(tg){tg.ready();tg.expand()}
 
-const initial = {
-  name:"Ученик",
-  schoolClass:"9 класс",
-  selectedDay:dayIndex(offset(0)),
-  tasks:[
-    {id:1,subject:"Биология",description:"Выучить строение клетки",date:offset(1),done:false},
-    {id:2,subject:"Русский язык",description:"Выполнить упражнение 125",date:offset(2),done:false},
-    {id:3,subject:"История",description:"Подготовить краткий доклад",date:offset(4),done:false}
-  ],
-  deadlines:[
-    {id:1,title:"Контрольная работа",subject:"Биология",date:offset(1)},
-    {id:2,title:"Сдать доклад",subject:"История",date:offset(4)}
-  ],
-  lessons:[
-    {id:1,day:0,time:"08:30",subject:"Математика",room:"205"},
-    {id:2,day:0,time:"09:25",subject:"Русский язык",room:"108"},
-    {id:3,day:0,time:"10:25",subject:"Биология",room:"312"},
-    {id:4,day:1,time:"08:30",subject:"История",room:"204"},
-    {id:5,day:1,time:"09:25",subject:"Английский язык",room:"110"},
-    {id:6,day:2,time:"08:30",subject:"Химия",room:"301"},
-    {id:7,day:2,time:"09:25",subject:"Литература",room:"108"},
-    {id:8,day:3,time:"08:30",subject:"Физика",room:"310"},
-    {id:9,day:3,time:"09:25",subject:"Математика",room:"205"},
-    {id:10,day:4,time:"08:30",subject:"География",room:"207"}
-  ],
-  grades:[
-    {subject:"Биология",grade:5},
-    {subject:"Русский язык",grade:5},
-    {subject:"История",grade:4},
-    {subject:"Математика",grade:4},
-    {subject:"Английский язык",grade:5}
-  ]
-};
-let data;
-try {
-  data = JSON.parse(localStorage.getItem("schoolhelper_data")) || initial;
-} catch(e) { data = initial; }
+const KEY="schoolhelper_data_v2";
+const weekdays=["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"];
+const shortDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+const today=localDate();
+const todayIndex=(new Date().getDay()+6)%7;
 
-function save() {
-  localStorage.setItem("schoolhelper_data",JSON.stringify(data));
-  render();
+function localDate(d=new Date()){
+ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
-function showPage(page) {
-  document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
-  $(page).classList.remove("hidden");
-  document.querySelectorAll(".nav").forEach(x=>x.classList.toggle("active",x.dataset.page===page));
-  render();
-  window.scrollTo(0,0);
-}
-function formatDate(d) {
-  return new Date(d+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
-}
-function escapeHTML(s) {
-  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-function status(date) {
-  const diff = Math.round((new Date(date+"T12:00:00")-new Date(offset(0)+"T12:00:00"))/86400000);
-  if(diff<0) return ["Просрочено","red"];
-  if(diff<=1) return [diff===0?"Сегодня":"Завтра","red"];
-  if(diff<=3) return [diff+" дня","yellow"];
-  return [diff+" дн.","green"];
-}
-function render() {
-  $("todayDate").textContent=today.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
-  $("helloName").textContent=data.name;
-  $("profileName").textContent=data.name;
-  $("profileClass").textContent=data.schoolClass;
-  $("lessonCount").textContent=data.lessons.filter(x=>x.day===dayIndex(offset(0))).length;
-  $("taskCount").textContent=data.tasks.filter(x=>!x.done).length;
-  $("deadlineCount").textContent=data.deadlines.length;
-  const avg=data.grades.length?data.grades.reduce((a,b)=>a+Number(b.grade),0)/data.grades.length:0;
-  $("average").textContent=avg.toFixed(1);
-  $("homeDeadlines").innerHTML=data.deadlines.length?data.deadlines.slice().sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3).map(d=>`
-    <div class="item"><div class="item-icon">⏰</div><div class="item-info"><strong>${escapeHTML(d.title)}</strong><small>${escapeHTML(d.subject)} · ${formatDate(d.date)}</small></div><span class="badge ${status(d.date)[1]}">${status(d.date)[0]}</span></div>`).join(""):'<div class="empty">Пока нет событий</div>';
-  $("homeTasks").innerHTML=data.tasks.filter(x=>!x.done).slice(0,3).map(t=>`<div class="item"><div class="item-icon">📚</div><div class="item-info"><strong>${escapeHTML(t.subject)}</strong><small>${escapeHTML(t.description)}</small></div><span class="badge">${formatDate(t.date)}</span></div>`).join("")||'<div class="empty">Все задания выполнены! 🎉</div>';
-  renderDays();renderLessons();renderTasks();renderDeadlines();renderGrades();
-}
-function renderDays() {
-  $("days").innerHTML=shortDays.map((d,i)=>`<button class="day ${data.selectedDay===i?'active':''}" onclick="selectDay(${i})">${d}<strong>${i+1}</strong></button>`).join("");
-}
-function selectDay(i) {data.selectedDay=i;save()}
-function renderLessons() {
-  const list=data.lessons.filter(x=>x.day===data.selectedDay).sort((a,b)=>a.time.localeCompare(b.time));
-  $("lessons").innerHTML=`<strong>${weekdays[data.selectedDay]}</strong>`+(list.map(l=>`<div class="item"><div class="item-icon">📖</div><div class="item-info"><span class="lesson-time">${escapeHTML(l.time)}</span><br><strong>${escapeHTML(l.subject)}</strong><small>Кабинет ${escapeHTML(l.room)}</small></div><button class="small-btn danger" onclick="deleteItem('lessons',${l.id})">✕</button></div>`).join("")||'<div class="empty">На этот день уроков пока нет</div>');
-}
-function renderTasks() {
-  $("taskList").innerHTML=data.tasks.map(t=>`<div class="card"><div class="row"><strong>${escapeHTML(t.subject)}</strong><span class="badge ${t.done?'green':'yellow'}">${t.done?'Выполнено':'В процессе'}</span></div><p style="font-size:14px">${escapeHTML(t.description)}</p><div class="row"><small class="sub">Срок: ${formatDate(t.date)}</small><button class="small-btn" onclick="toggleTask(${t.id})">${t.done?'Вернуть':'Выполнено ✓'}</button></div><div style="text-align:right;margin-top:9px"><button class="small-btn danger" onclick="deleteItem('tasks',${t.id})">Удалить</button></div></div>`).join("")||'<div class="empty">Заданий пока нет</div>';
-}
-function renderDeadlines() {
-  $("deadlineList").innerHTML=data.deadlines.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(d=>`<div class="item"><div class="item-icon">📌</div><div class="item-info"><strong>${escapeHTML(d.title)}</strong><small>${escapeHTML(d.subject)} · ${formatDate(d.date)}</small><span class="badge ${status(d.date)[1]}">${status(d.date)[0]}</span></div><button class="small-btn danger" onclick="deleteItem('deadlines',${d.id})">✕</button></div>`).join("")||'<div class="empty">Дедлайнов пока нет</div>';
-}
-function renderGrades() {
-  $("grades").innerHTML=data.grades.map(g=>`<div style="margin:15px 0"><div class="row"><strong>${escapeHTML(g.subject)}</strong><strong>${g.grade}/5</strong></div><div class="progress"><div style="width:${Number(g.grade)*20}%"></div></div></div>`).join("")||'<div class="empty">Оценок пока нет</div>';
-}
-function toggleTask(id) {
-  const t=data.tasks.find(x=>x.id===id);if(t){t.done=!t.done;save()}
-}
-function deleteItem(type,id) {
-  if(confirm("Удалить эту запись?")){data[type]=data[type].filter(x=>x.id!==id);save()}
-}
-function openModal(type) {
-  $("modal").classList.add("open");
-  $("dataForm").dataset.type=type;
-  const fields={
-    task:`<label>Предмет<select name="subject" required>${subjects.map(s=>`<option>${s}</option>`).join("")}</select></label><label>Описание<textarea name="description" placeholder="Что нужно сделать?" required></textarea></label><label>Срок сдачи<input name="date" type="date" value="${offset(1)}" required></label>`,
-    deadline:`<label>Название события<input name="title" placeholder="Например, контрольная" required></label><label>Предмет<select name="subject">${subjects.map(s=>`<option>${s}</option>`).join("")}</select></label><label>Дата<input name="date" type="date" value="${offset(2)}" required></label>`,
-    lesson:`<label>День недели<select name="day">${weekdays.slice(0,6).map((d,i)=>`<option value="${i}" ${i===data.selectedDay?'selected':''}>${d}</option>`).join("")}</select></label><label>Предмет<select name="subject">${subjects.map(s=>`<option>${s}</option>`).join("")}</select></label><label>Время<input name="time" type="time" value="10:00" required></label><label>Кабинет<input name="room" placeholder="Например, 205"></label>`,
-    profile:`<label>Имя<input name="name" value="${escapeHTML(data.name)}" required></label><label>Класс<input name="schoolClass" value="${escapeHTML(data.schoolClass)}" required></label>`
+function dateObj(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d,12)}
+function shiftDate(s,n){const d=dateObj(s);d.setDate(d.getDate()+n);return localDate(d)}
+function formatDate(s){return s?dateObj(s).toLocaleDateString("ru-RU",{day:"numeric",month:"long"}):""}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function id(){return Date.now()+Math.floor(Math.random()*10000)}
+function clone(v){return JSON.parse(JSON.stringify(v))}
+
+const initial={
+ profile:{name:"Ученик",schoolClass:"9 класс",reminders:true},
+ selectedDay:todayIndex,
+ schedule:[
+ {id:1,day:0,time:"08:30",subject:"Математика",room:"12"},
+ {id:2,day:0,time:"09:25",subject:"Русский язык",room:"8"},
+ {id:3,day:0,time:"10:20",subject:"Биология",room:"21"},
+ {id:4,day:1,time:"08:30",subject:"История",room:"15"},
+ {id:5,day:1,time:"09:25",subject:"Английский язык",room:"10"},
+ {id:6,day:2,time:"08:30",subject:"Физика",room:"19"},
+ {id:7,day:2,time:"09:25",subject:"Литература",room:"8"},
+ {id:8,day:3,time:"08:30",subject:"Химия",room:"22"},
+ {id:9,day:4,time:"08:30",subject:"География",room:"16"}
+ ],
+ tasks:[
+ {id:11,title:"Упражнение 125",subject:"Русский язык",date:today,done:false},
+ {id:12,title:"Параграф 18, вопросы",subject:"Биология",date:shiftDate(today,1),done:false},
+ {id:13,title:"Задачи № 45–47",subject:"Математика",date:shiftDate(today,2),done:true}
+ ],
+ deadlines:[
+ {id:14,title:"Сдать проект",subject:"Информатика",date:shiftDate(today,3)},
+ {id:15,title:"Контрольная работа",subject:"Биология",date:shiftDate(today,5)}
+ ],
+ grades:[
+ {id:16,subject:"Биология",value:5,date:today},
+ {id:17,subject:"Русский язык",value:4,date:today},
+ {id:18,subject:"История",value:5,date:today},
+ {id:19,subject:"Математика",value:4,date:today}
+ ],
+ goals:[
+ {subject:"Математика",value:5},
+ {subject:"Русский язык",value:4}
+ ]
+};
+
+function load(){
+ try{
+  const saved=localStorage.getItem(KEY);
+  if(!saved)return clone(initial);
+  const x=JSON.parse(saved);
+  return {
+   ...clone(initial),...x,
+   profile:{...initial.profile,...(x.profile||{})},
+   schedule:Array.isArray(x.schedule)?x.schedule:[],
+   tasks:Array.isArray(x.tasks)?x.tasks:[],
+   deadlines:Array.isArray(x.deadlines)?x.deadlines:[],
+   grades:Array.isArray(x.grades)?x.grades:[],
+   goals:Array.isArray(x.goals)?x.goals:[]
   };
-  $("modalTitle").textContent={task:"Новое задание",deadline:"Новое событие",lesson:"Новый урок",profile:"Мой профиль"}[type];
-  $("formFields").innerHTML=fields[type];
+ }catch(e){return clone(initial)}
 }
-function closeModal() {$("modal").classList.remove("open")}
-$("dataForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const type=e.target.dataset.type;
-  const f=new FormData(e.target);
-  const obj=Object.fromEntries(f.entries());
-  if(type==="task") data.tasks.push({...obj,id:Date.now(),done:false});
-  if(type==="deadline") data.deadlines.push({...obj,id:Date.now()});
-  if(type==="lesson") data.lessons.push({...obj,day:Number(obj.day),id:Date.now()});
-  if(type==="profile"){data.name=obj.name;data.schoolClass=obj.schoolClass}
-  closeModal();save();
-});
-function resetData() {
-  if(confirm("Вернуть первоначальные демонстрационные данные?")) {
-    data=JSON.parse(JSON.stringify(initial));save();
-  }
+let data=load(),page="home";
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}
+ catch(e){alert("Не удалось сохранить данные на устройстве.")}}
+function setPage(p){page=p;document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===p));render()}
+function empty(icon,msg){return `<div class="empty"><div>${icon}</div>${esc(msg)}</div>`}
+function head(title,btn,action){return `<div class="section-head"><h2>${title}</h2><button class="primary" data-action="${action}">＋ ${btn}</button></div>`}
+function avg(list){return list.length?list.reduce((s,g)=>s+Number(g.value),0)/list.length:null}
+
+function taskHTML(t){return `<div class="item ${t.done?"done":""}">
+ <div class="item-icon">${t.done?"✅":"📝"}</div><div class="item-main">
+ <h3 class="item-title">${esc(t.title)}</h3><p>${esc(t.subject)} · ${formatDate(t.date)}</p>
+ <div class="item-actions">
+ <button class="small-btn" data-action="toggle-task" data-id="${t.id}">${t.done?"Вернуть":"Выполнено"}</button>
+ <button class="small-btn" data-action="edit-task" data-id="${t.id}">Изменить</button>
+ <button class="small-btn danger" data-action="delete-task" data-id="${t.id}">Удалить</button>
+ </div></div></div>`}
+
+function deadlineHTML(t){
+ const diff=Math.round((dateObj(t.date)-dateObj(today))/86400000);
+ const label=diff<0?"Просрочено":diff===0?"Сегодня":diff===1?"Завтра":`Через ${diff} дн.`;
+ return `<div class="item"><div class="item-icon">⏰</div><div class="item-main">
+ <h3>${esc(t.title)}</h3><p>${esc(t.subject)} · ${formatDate(t.date)}</p>
+ <div class="item-actions"><span class="tag ${diff<=1?"red":"green"}">${label}</span>
+ <button class="small-btn" data-action="edit-deadline" data-id="${t.id}">Изменить</button>
+ <button class="small-btn danger" data-action="delete-deadline" data-id="${t.id}">Удалить</button>
+ </div></div></div>`}
+
+function lessonHTML(t){return `<div class="item">
+ <div class="lesson-time">${esc(t.time)}</div><div class="item-icon">📖</div>
+ <div class="item-main"><h3>${esc(t.subject)}</h3><p>Кабинет: ${esc(t.room||"—")}</p>
+ <div class="item-actions">
+ <button class="small-btn" data-action="edit-lesson" data-id="${t.id}">Изменить</button>
+ <button class="small-btn danger" data-action="delete-lesson" data-id="${t.id}">Удалить</button>
+ </div></div></div>`}
+
+function renderHome(){
+ const pending=data.tasks.filter(t=>!t.done);
+ const lessons=data.schedule.filter(t=>t.day===todayIndex);
+ const a=avg(data.grades);
+ content.innerHTML=`
+ <section class="welcome"><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
+ <h1>Привет, ${esc(data.profile.name)}! 👋</h1><p>Всё важное для учёбы — в одном месте.</p></section>
+ <div class="stats">
+ <div class="stat"><div>📚</div><div class="stat-number">${lessons.length}</div><div class="muted">Уроков сегодня</div></div>
+ <div class="stat"><div>📝</div><div class="stat-number">${pending.length}</div><div class="muted">Незаконченных заданий</div></div>
+ <div class="stat"><div>⏰</div><div class="stat-number">${data.deadlines.length}</div><div class="muted">Дедлайнов</div></div>
+ <div class="stat"><div>⭐</div><div class="stat-number">${a===null?"—":a.toFixed(2)}</div><div class="muted">Средний балл</div></div>
+ </div>
+ ${head("Ближайшие задания","Добавить","add-task")}
+ <div class="card">${pending.length?pending.slice(0,3).map(taskHTML).join(""):empty("🎉","Все задания выполнены!")}</div>
+ <div class="section-head"><h2>Ближайшие дедлайны</h2><button class="small-btn" data-action="go-deadlines">Все</button></div>
+ <div class="card">${data.deadlines.length?[...data.deadlines].sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3).map(deadlineHTML).join(""):empty("🌸","Пока нет дедлайнов")}</div>
+ ${data.profile.reminders?`<div class="card"><div class="item"><div class="item-icon">🔔</div><div class="item-main"><h3>Напоминания включены</h3><p>Ближайшие дела отображаются в приложении. Это не push-уведомления.</p></div></div></div>`:""}`;
 }
-$("reminders").addEventListener("change",e=>{
-  localStorage.setItem("schoolhelper_reminders",e.target.checked?"1":"0");
+
+function renderSchedule(){
+ const day=Math.max(0,Math.min(6,Number(data.selectedDay)||0));
+ const list=data.schedule.filter(t=>t.day===day).sort((a,b)=>a.time.localeCompare(b.time));
+ content.innerHTML=`<h1>Расписание 🗓️</h1><p class="muted">Уроки на каждый день недели</p>
+ <div class="days">${shortDays.map((d,i)=>`<button class="day ${day===i?"active":""}" data-action="select-day" data-day="${i}">${d}<strong>${i+1}</strong></button>`).join("")}</div>
+ ${head(weekdays[day],"Добавить урок","add-lesson")}
+ <div class="card">${list.length?list.map(lessonHTML).join(""):empty("📖","На этот день уроков пока нет")}</div>`;
+}
+
+function renderTasks(){
+ const list=[...data.tasks].sort((a,b)=>Number(a.done)-Number(b.done)||a.date.localeCompare(b.date));
+ content.innerHTML=`<h1>Домашние задания 📝</h1><p class="muted">Записывай задания и отмечай выполненные</p>
+ ${head("Мои задания","Добавить","add-task")}
+ <div class="card">${list.length?list.map(taskHTML).join(""):empty("📚","Заданий пока нет")}</div>`;
+}
+
+function renderDeadlines(){
+ const list=[...data.deadlines].sort((a,b)=>a.date.localeCompare(b.date));
+ content.innerHTML=`<h1>Дедлайны ⏰</h1><p class="muted">Не забывай о важных датах</p>
+ ${head("Мои дедлайны","Добавить","add-deadline")}
+ <div class="card">${list.length?list.map(deadlineHTML).join(""):empty("🌸","Дедлайнов пока нет")}</div>`;
+}
+
+/* Раздел оценок: группировка по предметам и отдельная цель для каждого */
+function renderGrades(){
+ const subjects=[...new Set([
+  ...data.grades.map(g=>g.subject),
+  ...data.goals.map(g=>g.subject)
+ ])].sort((a,b)=>a.localeCompare(b,"ru"));
+ const overall=avg(data.grades);
+ content.innerHTML=`<h1>Мои оценки ⭐</h1>
+ <p class="muted">История оценок, средний балл и личные цели</p>
+ <div class="welcome"><div style="opacity:.8">ОБЩИЙ СРЕДНИЙ БАЛЛ</div>
+ <div style="font-size:38px;font-weight:800;margin-top:7px">${overall===null?"—":overall.toFixed(2)}</div>
+ <p>Всего оценок: ${data.grades.length}</p></div>
+ <div class="section-head"><h2>По предметам</h2><button class="primary" data-action="add-grade">＋ Оценка</button></div>
+ <div class="section-head" style="margin-top:0"><span class="muted">Добавляй предметы и ставь себе желаемую оценку.</span>
+ <button class="small-btn" data-action="add-goal">＋ Цель</button></div>
+ ${subjects.length?subjects.map(subject=>{
+  const list=data.grades.filter(g=>g.subject===subject).sort((a,b)=>b.date.localeCompare(a.date));
+  const average=avg(list);
+  const goal=data.goals.find(g=>g.subject===subject);
+  const target=goal?Number(goal.value):null;
+  const progress=average===null?0:Math.min(100,average/5*100);
+  return `<section class="card">
+   <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+    <h3>${esc(subject)}</h3>
+    <button class="small-btn" data-action="edit-goal" data-subject="${esc(subject)}">🎯 ${target===null?"Поставить цель":"Цель: "+target}</button>
+   </div>
+   <div style="display:flex;gap:20px;align-items:center;margin-top:12px">
+    <div><div class="muted">Средний балл</div><div class="grade-big">${average===null?"—":average.toFixed(2)}</div></div>
+    <div><div class="muted">Оценок</div><div class="grade-big">${list.length}</div></div>
+    ${target!==null?`<div><div class="muted">Желаю</div><div class="grade-big">${target}</div></div>`:""}
+   </div>
+   <div class="progress"><div style="width:${progress}%"></div></div>
+   ${target!==null?`<div class="goal-box"><strong>Моя цель: ${target}</strong><p class="muted">${average===null?"Добавь первую оценку, чтобы отслеживать результат.":average>=target?"Цель достигнута по текущему среднему баллу!":"Продолжай заниматься — отслеживай свой прогресс."}</p></div>`:""}
+   <div class="section-head" style="margin:15px 0 10px"><strong>История оценок</strong>
+    <button class="small-btn" data-action="add-grade-subject" data-subject="${esc(subject)}">＋ Добавить</button>
+   </div>
+   ${list.length?list.map(g=>`<div class="item" style="align-items:center">
+    <div class="grade-big">${g.value}</div><div class="item-main"><h3>${formatDate(g.date)}</h3><p>${esc(g.subject)}</p></div>
+    <div class="item-actions">
+     <button class="small-btn" data-action="edit-grade" data-id="${g.id}">✏️</button>
+     <button class="small-btn danger" data-action="delete-grade" data-id="${g.id}">×</button>
+    </div></div>`).join(""):empty("📘","Пока нет оценок по этому предмету")}
+  </section>`;
+ }).join(""):`
+ <div class="card">${empty("⭐","Добавь первую оценку или создай цель по предмету.")}</div>`}`;
+}
+
+function renderProfile(){
+ content.innerHTML=`<h1>Профиль 👤</h1><p class="muted">Настройки приложения</p>
+ <div class="card profile-center"><div class="profile-avatar">👩‍🎓</div>
+ <h2 style="margin:5px 0">${esc(data.profile.name)}</h2><p class="muted">${esc(data.profile.schoolClass)}</p>
+ <button class="secondary" data-action="edit-profile">Изменить профиль</button></div>
+ <h2>Настройки</h2><div class="card"><label style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+ <span><strong>Напоминания в приложении</strong><p class="muted">Показывать блок напоминаний на главной</p></span>
+ <input type="checkbox" data-action="toggle-reminders" ${data.profile.reminders?"checked":""}></label></div>
+ <h2>О приложении</h2><div class="card"><h3>SchoolHelper 📚</h3>
+ <p class="muted">Расписание, задания, дедлайны и оценки.</p>
+ <p class="muted">Данные хранятся в браузере на этом устройстве.</p></div>
+ <div class="card"><h3>Сбросить данные</h3><p class="muted">Вернуть демонстрационные записи.</p>
+ <button class="small-btn danger" data-action="reset-data">Сбросить приложение</button></div>`;
+}
+function render(){
+ ({home:renderHome,schedule:renderSchedule,tasks:renderTasks,deadlines:renderDeadlines,grades:renderGrades,profile:renderProfile}[page]||renderHome)();
+}
+
+/* Формы */
+function openModal(title,html,submit){
+ modalRoot.innerHTML=`<div class="modal-bg" data-action="close-modal"><div class="modal">
+ <div class="modal-head"><h2 style="margin:0">${esc(title)}</h2><button class="close" data-action="close-modal">×</button></div>
+ <form id="edit-form">${html}<button class="primary full" type="submit">Сохранить</button></form>
+ </div></div>`;
+ $("#edit-form").addEventListener("submit",e=>{
+  e.preventDefault();const values=Object.fromEntries(new FormData(e.currentTarget).entries());
+  if(submit(values)!==false){closeModal();save();render()}
+ });
+ $(".modal").addEventListener("click",e=>e.stopPropagation());
+}
+function closeModal(){modalRoot.innerHTML=""}
+function field(label,name,value="",type="text",required=true){
+ return `<div class="field"><label>${esc(label)}</label><input type="${type}" name="${name}" value="${esc(value)}" ${required?"required":""}></div>`;
+}
+function selectField(label,name,options,selected){
+ return `<div class="field"><label>${esc(label)}</label><select name="${name}" required>
+ ${options.map(o=>`<option value="${esc(o)}" ${String(o)===String(selected)?"selected":""}>${esc(o)}</option>`).join("")}
+ </select></div>`;
+}
+
+function taskForm(idValue=null){
+ const old=data.tasks.find(x=>x.id===idValue);
+ openModal(old?"Изменить задание":"Новое задание",`
+ ${field("Название задания","title",old?.title||"")}
+ ${field("Предмет","subject",old?.subject||"")}
+ ${field("Срок выполнения","date",old?.date||today,"date")}`,v=>{
+  if(!v.title.trim()||!v.subject.trim())return false;
+  if(old)Object.assign(old,v);else data.tasks.push({id:id(),...v,done:false});
+ });
+}
+function deadlineForm(idValue=null){
+ const old=data.deadlines.find(x=>x.id===idValue);
+ openModal(old?"Изменить дедлайн":"Новый дедлайн",`
+ ${field("Название","title",old?.title||"")}
+ ${field("Предмет","subject",old?.subject||"")}
+ ${field("Дата","date",old?.date||today,"date")}`,v=>{
+  if(!v.title.trim()||!v.subject.trim())return false;
+  if(old)Object.assign(old,v);else data.deadlines.push({id:id(),...v});
+ });
+}
+function lessonForm(idValue=null){
+ const old=data.schedule.find(x=>x.id===idValue);
+ openModal(old?"Изменить урок":"Новый урок",`
+ ${field("Предмет","subject",old?.subject||"")}
+ ${field("Время начала","time",old?.time||"08:30","time")}
+ ${field("Кабинет","room",old?.room||"", "text",false)}
+ ${selectField("День недели","day",weekdays,weekdays[old?old.day:data.selectedDay])}`,v=>{
+  if(!v.subject.trim())return false;
+  const item={subject:v.subject,time:v.time,room:v.room,day:weekdays.indexOf(v.day)};
+  if(old)Object.assign(old,item);else data.schedule.push({id:id(),...item});
+  data.selectedDay=item.day;
+ });
+}
+function gradeForm(idValue=null,subjectPreset=""){
+ const old=data.grades.find(x=>x.id===idValue);
+ openModal(old?"Изменить оценку":"Добавить оценку",`
+ ${field("Предмет","subject",old?.subject||subjectPreset)}
+ ${selectField("Оценка","value",["2","3","4","5"],String(old?.value||"5"))}
+ ${field("Дата","date",old?.date||today,"date")}`,v=>{
+  if(!v.subject.trim())return false;
+  const item={subject:v.subject.trim(),value:Number(v.value),date:v.date};
+  if(old)Object.assign(old,item);else data.grades.push({id:id(),...item});
+ });
+}
+function goalForm(subjectPreset=""){
+ const existing=data.goals.find(g=>g.subject===subjectPreset);
+ openModal(existing?"Изменить цель":"Желаемая оценка",`
+ ${field("Предмет","subject",subjectPreset)}
+ ${selectField("Какую оценку хочешь получать?","value",["3","4","5"],String(existing?.value||"5"))}`,v=>{
+  if(!v.subject.trim())return false;
+  const subject=v.subject.trim();
+  const found=data.goals.find(g=>g.subject.toLowerCase()===subject.toLowerCase());
+  if(found)found.value=Number(v.value);
+  else data.goals.push({subject,value:Number(v.value)});
+ });
+}
+function profileForm(){
+ openModal("Мой профиль",`${field("Имя","name",data.profile.name)}
+ ${field("Класс","schoolClass",data.profile.schoolClass)}`,v=>{
+  if(!v.name.trim()||!v.schoolClass.trim())return false;
+  data.profile.name=v.name.trim();data.profile.schoolClass=v.schoolClass.trim();
+ });
+}
+function remove(list,idValue,label){
+ if(!confirm(`Удалить ${label}?`))return;
+ data[list]=data[list].filter(x=>x.id!==idValue);save();render();
+}
+
+function action(a,el){
+ const n=Number(el.dataset.id);
+ if(a==="add-task")return taskForm();
+ if(a==="edit-task")return taskForm(n);
+ if(a==="delete-task")return remove("tasks",n,"задание");
+ if(a==="toggle-task"){const t=data.tasks.find(x=>x.id===n);if(t)t.done=!t.done;save();return render()}
+ if(a==="add-deadline")return deadlineForm();
+ if(a==="edit-deadline")return deadlineForm(n);
+ if(a==="delete-deadline")return remove("deadlines",n,"дедлайн");
+ if(a==="add-lesson")return lessonForm();
+ if(a==="edit-lesson")return lessonForm(n);
+ if(a==="delete-lesson")return remove("schedule",n,"урок");
+ if(a==="add-grade")return gradeForm();
+ if(a==="add-grade-subject")return gradeForm(null,el.dataset.subject);
+ if(a==="edit-grade")return gradeForm(n);
+ if(a==="delete-grade")return remove("grades",n,"оценку");
+ if(a==="add-goal")return goalForm();
+ if(a==="edit-goal")return goalForm(el.dataset.subject);
+ if(a==="edit-profile")return profileForm();
+ if(a==="select-day"){data.selectedDay=Number(el.dataset.day);save();return render()}
+ if(a==="go-deadlines")return setPage("deadlines");
+ if(a==="close-modal")return closeModal();
+ if(a==="reset-data"){if(confirm("Точно сбросить все данные?")){data=clone(initial);save();render()}}
+}
+
+document.addEventListener("click",e=>{
+ const nav=e.target.closest("[data-page]");
+ if(nav){setPage(nav.dataset.page);return}
+ const el=e.target.closest("[data-action]");
+ if(el)action(el.dataset.action,el);
 });
-(function init(){
-  const tg=window.Telegram?.WebApp;
-  if(tg){tg.ready();tg.expand()}
-  const saved=localStorage.getItem("schoolhelper_reminders");
-  if(saved!==null)$("reminders").checked=saved==="1";
-  render();
+document.addEventListener("change",e=>{
+ if(e.target.dataset.action==="toggle-reminders"){
+  data.profile.reminders=e.target.checked;save();render();
+ }
+});
+save();
+render();
 })();
 </script>
 </body>
