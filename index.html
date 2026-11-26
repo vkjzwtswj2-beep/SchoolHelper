@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#f6f1ff">
+<title>SchoolHelper</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root {
+  --bg:#f7f4fc;
+  --purple:#9270c9;
+  --dark:#49376b;
+  --light:#eee7fa;
+  --white:#fff;
+  --muted:#9289a1;
+  --pink:#f5eafa;
+  --green:#dff3e8;
+  --red:#fce5e8;
+  --yellow:#fff1d7;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--bg);
+  color:#342b43;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  padding-bottom:95px;
+}
+header {
+  padding:25px 20px 15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.logo {font-size:23px;font-weight:800;color:var(--dark)}
+.logo span {color:var(--purple)}
+.avatar {
+  background:var(--light);
+  border-radius:50%;
+  width:43px;height:43px;
+  display:grid;place-items:center;
+  font-size:21px;
+}
+main {padding:0 17px;max-width:600px;margin:auto}
+h1 {font-size:26px;margin:10px 0 5px}
+h2 {font-size:19px;margin:20px 0 12px}
+.sub {color:var(--muted);font-size:14px}
+.card {
+  background:white;
+  border-radius:19px;
+  padding:17px;
+  margin-bottom:13px;
+  box-shadow:0 3px 15px #6d57920a;
+}
+.welcome {
+  background:linear-gradient(135deg,#e9ddfa,#f4eafa);
+  border-radius:23px;
+  padding:22px;
+  margin:10px 0 20px;
+}
+.welcome h1 {color:var(--dark);font-size:25px}
+.welcome p {color:#76658f;font-size:14px}
+.stats {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:11px;
+}
+.stat {
+  background:white;
+  border-radius:18px;
+  padding:16px;
+}
+.stat .emoji {font-size:23px}
+.stat strong {display:block;font-size:25px;color:var(--dark);margin-top:7px}
+.stat small {color:var(--muted)}
+.row {display:flex;align-items:center;justify-content:space-between;gap:10px}
+.item {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:13px 0;
+  border-bottom:1px solid #f0edf4;
+}
+.item:last-child {border:0}
+.item-icon {
+  width:42px;height:42px;border-radius:13px;
+  background:var(--light);
+  display:grid;place-items:center;font-size:20px;
+  flex-shrink:0;
+}
+.item-info {flex:1;min-width:0}
+.item-info strong {font-size:14px}
+.item-info small {display:block;color:var(--muted);margin-top:4px}
+button {
+  border:0;
+  cursor:pointer;
+  font:inherit;
+}
+.primary {
+  background:var(--purple);
+  color:white;
+  padding:12px 17px;
+  border-radius:13px;
+  font-weight:650;
+}
+.secondary {
+  background:var(--light);
+  color:var(--dark);
+  padding:10px 14px;
+  border-radius:12px;
+}
+.small-btn {
+  background:#f3eff8;
+  color:var(--dark);
+  padding:8px 10px;
+  border-radius:10px;
+  font-size:12px;
+}
+.danger {color:#c45c70;background:var(--red)}
+.badge {
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:9px;
+  font-size:11px;
+  font-weight:650;
+  background:var(--light);
+  color:var(--dark);
+}
+.badge.red {background:var(--red);color:#b34c62}
+.badge.yellow {background:var(--yellow);color:#a47728}
+.badge.green {background:var(--green);color:#43815e}
+.days {
+  display:flex;gap:7px;overflow-x:auto;
+  padding:5px 0 13px;
+}
+.day {
+  min-width:51px;
+  padding:11px 6px;
+  border-radius:13px;
+  background:white;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+.day.active {background:var(--purple);color:white}
+.day strong {display:block;font-size:17px;margin-top:5px}
+.lesson-time {color:var(--purple);font-size:12px;font-weight:700}
+.empty {text-align:center;padding:25px;color:var(--muted);font-size:14px}
+.bottom {
+  position:fixed;bottom:0;left:0;right:0;
+  background:#fff;
+  display:flex;justify-content:space-around;
+  padding:10px 3px calc(10px + env(safe-area-inset-bottom));
+  box-shadow:0 -4px 20px #49376b12;
+  z-index:5;
+}
+.nav {
+  background:transparent;
+  color:#a59aaf;
+  display:flex;flex-direction:column;
+  align-items:center;gap:4px;
+  font-size:10px;
+  min-width:54px;
+}
+.nav span {font-size:21px}
+.nav.active {color:var(--purple);font-weight:750}
+input,select,textarea {
+  width:100%;
+  border:1px solid #e8e1f0;
+  border-radius:12px;
+  padding:13px;
+  background:#fff;
+  font:inherit;
+  color:#342b43;
+  margin-top:6px;
+  outline:none;
+}
+label {font-size:13px;color:#756985;display:block;margin:12px 0}
+textarea {min-height:75px;resize:vertical}
+.modal {
+  display:none;
+  position:fixed;inset:0;
+  background:#24183277;
+  z-index:10;
+  align-items:flex-end;
+  justify-content:center;
+}
+.modal.open {display:flex}
+.modal-content {
+  width:100%;max-width:600px;
+  background:var(--bg);
+  border-radius:24px 24px 0 0;
+  padding:22px 20px calc(25px + env(safe-area-inset-bottom));
+  max-height:88vh;overflow:auto;
+}
+.modal-title {font-size:20px;font-weight:800}
+.progress {
+  height:9px;background:#eee8f5;
+  border-radius:20px;overflow:hidden;margin-top:9px;
+}
+.progress div {height:100%;background:var(--purple);border-radius:20px}
+.hidden {display:none!important}
+footer {text-align:center;color:#aaa1b1;font-size:11px;padding:20px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">School<span>Helper</span> 💜</div>
+  <div class="avatar" onclick="showPage('profile')">🎓</div>
+</header>
+
+<main>
+<section id="home" class="page">
+  <div class="welcome">
+    <div class="sub" id="todayDate"></div>
+    <h1>Привет, <span id="helloName">ученик</span>! 👋</h1>
+    <p>Давай сделаем этот учебный день продуктивным!</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="emoji">📚</div><strong id="lessonCount">0</strong><small>Уроков сегодня</small></div>
+    <div class="stat"><div class="emoji">📝</div><strong id="taskCount">0</strong><small>Активных заданий</small></div>
+    <div class="stat"><div class="emoji">⏰</div><strong id="deadlineCount">0</strong><small>Ближайших дедлайнов</small></div>
+    <div class="stat"><div class="emoji">⭐</div><strong id="average">5.0</strong><small>Средний балл</small></div>
+  </div>
+
+  <h2>📌 Ближайшие события</h2>
+  <div class="card" id="homeDeadlines"></div>
+
+  <h2>📝 Мои задания</h2>
+  <div class="card" id="homeTasks"></div>
+</section>
+
+<section id="schedule" class="page hidden">
+  <h1>📅 Расписание</h1>
+  <p class="sub">Твоя учебная неделя</p>
+  <div class="days" id="days"></div>
+  <div class="card" id="lessons"></div>
+  <button class="primary" onclick="openModal('lesson')">＋ Добавить урок</button>
+</section>
+
+<section id="tasks" class="page hidden">
+  <h1>📝 Домашние задания</h1>
+  <p class="sub">Следи за своими учебными задачами</p>
+  <div class="row" style="margin:18px 0">
+    <strong>Мои задания</strong>
+    <button class="primary" onclick="openModal('task')">＋ Добавить</button>
+  </div>
+  <div id="taskList"></div>
+</section>
+
+<section id="deadlines" class="page hidden">
+  <h1>⏰ Дедлайны</h1>
+  <p class="sub">Не забывай о важных событиях</p>
+  <div class="card" style="margin-top:20px">
+    <div class="row">
+      <strong>Предстоящие события</strong>
+      <span>📌</span>
+    </div>
+    <div id="deadlineList"></div>
+  </div>
+  <button class="primary" onclick="openModal('deadline')">＋ Добавить событие</button>
+</section>
+
+<section id="profile" class="page hidden">
+  <h1>👤 Профиль</h1>
+  <p class="sub">Твои учебные данные</p>
+  <div class="card" style="text-align:center;padding:25px">
+    <div style="font-size:48px">🎓</div>
+    <h2 id="profileName">Ученик</h2>
+    <p class="sub" id="profileClass">Школьник</p>
+    <button class="secondary" onclick="openModal('profile')">Изменить профиль</button>
+  </div>
+  <h2>📊 Успеваемость</h2>
+  <div class="card" id="grades"></div>
+  <h2>⚙️ Настройки</h2>
+  <div class="card">
+    <div class="row">
+      <span>Демонстрационные напоминания</span>
+      <input id="reminders" type="checkbox" style="width:22px" checked>
+    </div>
+    <p class="sub">Настройка демонстрационного режима</p>
+    <button class="small-btn danger" onclick="resetData()">Сбросить данные</button>
+  </div>
+</section>
+</main>
+
+<nav class="bottom">
+  <button class="nav active" data-page="home" onclick="showPage('home')"><span>🏠</span>Главная</button>
+  <button class="nav" data-page="schedule" onclick="showPage('schedule')"><span>📅</span>Расписание</button>
+  <button class="nav" data-page="tasks" onclick="showPage('tasks')"><span>📝</span>Задания</button>
+  <button class="nav" data-page="deadlines" onclick="showPage('deadlines')"><span>⏰</span>Дедлайны</button>
+  <button class="nav" data-page="profile" onclick="showPage('profile')"><span>👤</span>Профиль</button>
+</nav>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-content">
+    <div class="row">
+      <div class="modal-title" id="modalTitle">Добавить</div>
+      <button class="secondary" onclick="closeModal()">✕</button>
+    </div>
+    <form id="dataForm">
+      <div id="formFields"></div>
+      <button class="primary" style="width:100%;margin-top:15px" type="submit">Сохранить</button>
+    </form>
+  </div>
+</div>
+
+<footer>SchoolHelper · Твой помощник в учёбе 💜</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const subjects = ["Математика","Русский язык","Биология","История","Английский язык","Химия","География","Физика","Литература"];
+const weekdays = ["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"];
+const shortDays = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+const today = new Date();
+const offset = (n) => {
+  const d = new Date();
+  d.setDate(d.getDate()+n);
+  return d.toISOString().slice(0,10);
+};
+const dayIndex = (d) => (new Date(d+"T12:00:00").getDay()+6)%7;
+
+const initial = {
+  name:"Ученик",
+  schoolClass:"9 класс",
+  selectedDay:dayIndex(offset(0)),
+  tasks:[
+    {id:1,subject:"Биология",description:"Выучить строение клетки",date:offset(1),done:false},
+    {id:2,subject:"Русский язык",description:"Выполнить упражнение 125",date:offset(2),done:false},
+    {id:3,subject:"История",description:"Подготовить краткий доклад",date:offset(4),done:false}
+  ],
+  deadlines:[
+    {id:1,title:"Контрольная работа",subject:"Биология",date:offset(1)},
+    {id:2,title:"Сдать доклад",subject:"История",date:offset(4)}
+  ],
+  lessons:[
+    {id:1,day:0,time:"08:30",subject:"Математика",room:"205"},
+    {id:2,day:0,time:"09:25",subject:"Русский язык",room:"108"},
+    {id:3,day:0,time:"10:25",subject:"Биология",room:"312"},
+    {id:4,day:1,time:"08:30",subject:"История",room:"204"},
+    {id:5,day:1,time:"09:25",subject:"Английский язык",room:"110"},
+    {id:6,day:2,time:"08:30",subject:"Химия",room:"301"},
+    {id:7,day:2,time:"09:25",subject:"Литература",room:"108"},
+    {id:8,day:3,time:"08:30",subject:"Физика",room:"310"},
+    {id:9,day:3,time:"09:25",subject:"Математика",room:"205"},
+    {id:10,day:4,time:"08:30",subject:"География",room:"207"}
+  ],
+  grades:[
+    {subject:"Биология",grade:5},
+    {subject:"Русский язык",grade:5},
+    {subject:"История",grade:4},
+    {subject:"Математика",grade:4},
+    {subject:"Английский язык",grade:5}
+  ]
+};
+let data;
+try {
+  data = JSON.parse(localStorage.getItem("schoolhelper_data")) || initial;
+} catch(e) { data = initial; }
+
+function save() {
+  localStorage.setItem("schoolhelper_data",JSON.stringify(data));
+  render();
+}
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
+  $(page).classList.remove("hidden");
+  document.querySelectorAll(".nav").forEach(x=>x.classList.toggle("active",x.dataset.page===page));
+  render();
+  window.scrollTo(0,0);
+}
+function formatDate(d) {
+  return new Date(d+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
+}
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function status(date) {
+  const diff = Math.round((new Date(date+"T12:00:00")-new Date(offset(0)+"T12:00:00"))/86400000);
+  if(diff<0) return ["Просрочено","red"];
+  if(diff<=1) return [diff===0?"Сегодня":"Завтра","red"];
+  if(diff<=3) return [diff+" дня","yellow"];
+  return [diff+" дн.","green"];
+}
+function render() {
+  $("todayDate").textContent=today.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+  $("helloName").textContent=data.name;
+  $("profileName").textContent=data.name;
+  $("profileClass").textContent=data.schoolClass;
+  $("lessonCount").textContent=data.lessons.filter(x=>x.day===dayIndex(offset(0))).length;
+  $("taskCount").textContent=data.tasks.filter(x=>!x.done).length;
+  $("deadlineCount").textContent=data.deadlines.length;
+  const avg=data.grades.length?data.grades.reduce((a,b)=>a+Number(b.grade),0)/data.grades.length:0;
+  $("average").textContent=avg.toFixed(1);
+  $("homeDeadlines").innerHTML=data.deadlines.length?data.deadlines.slice().sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3).map(d=>`
+    <div class="item"><div class="item-icon">⏰</div><div class="item-info"><strong>${escapeHTML(d.title)}</strong><small>${escapeHTML(d.subject)} · ${formatDate(d.date)}</small></div><span class="badge ${status(d.date)[1]}">${status(d.date)[0]}</span></div>`).join(""):'<div class="empty">Пока нет событий</div>';
+  $("homeTasks").innerHTML=data.tasks.filter(x=>!x.done).slice(0,3).map(t=>`<div class="item"><div class="item-icon">📚</div><div class="item-info"><strong>${escapeHTML(t.subject)}</strong><small>${escapeHTML(t.description)}</small></div><span class="badge">${formatDate(t.date)}</span></div>`).join("")||'<div class="empty">Все задания выполнены! 🎉</div>';
+  renderDays();renderLessons();renderTasks();renderDeadlines();renderGrades();
+}
+function renderDays() {
+  $("days").innerHTML=shortDays.map((d,i)=>`<button class="day ${data.selectedDay===i?'active':''}" onclick="selectDay(${i})">${d}<strong>${i+1}</strong></button>`).join("");
+}
+function selectDay(i) {data.selectedDay=i;save()}
+function renderLessons() {
+  const list=data.lessons.filter(x=>x.day===data.selectedDay).sort((a,b)=>a.time.localeCompare(b.time));
+  $("lessons").innerHTML=`<strong>${weekdays[data.selectedDay]}</strong>`+(list.map(l=>`<div class="item"><div class="item-icon">📖</div><div class="item-info"><span class="lesson-time">${escapeHTML(l.time)}</span><br><strong>${escapeHTML(l.subject)}</strong><small>Кабинет ${escapeHTML(l.room)}</small></div><button class="small-btn danger" onclick="deleteItem('lessons',${l.id})">✕</button></div>`).join("")||'<div class="empty">На этот день уроков пока нет</div>');
+}
+function renderTasks() {
+  $("taskList").innerHTML=data.tasks.map(t=>`<div class="card"><div class="row"><strong>${escapeHTML(t.subject)}</strong><span class="badge ${t.done?'green':'yellow'}">${t.done?'Выполнено':'В процессе'}</span></div><p style="font-size:14px">${escapeHTML(t.description)}</p><div class="row"><small class="sub">Срок: ${formatDate(t.date)}</small><button class="small-btn" onclick="toggleTask(${t.id})">${t.done?'Вернуть':'Выполнено ✓'}</button></div><div style="text-align:right;margin-top:9px"><button class="small-btn danger" onclick="deleteItem('tasks',${t.id})">Удалить</button></div></div>`).join("")||'<div class="empty">Заданий пока нет</div>';
+}
+function renderDeadlines() {
+  $("deadlineList").innerHTML=data.deadlines.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(d=>`<div class="item"><div class="item-icon">📌</div><div class="item-info"><strong>${escapeHTML(d.title)}</strong><small>${escapeHTML(d.subject)} · ${formatDate(d.date)}</small><span class="badge ${status(d.date)[1]}">${status(d.date)[0]}</span></div><button class="small-btn danger" onclick="deleteItem('deadlines',${d.id})">✕</button></div>`).join("")||'<div class="empty">Дедлайнов пока нет</div>';
+}
+function renderGrades() {
+  $("grades").innerHTML=data.grades.map(g=>`<div style="margin:15px 0"><div class="row"><strong>${escapeHTML(g.subject)}</strong><strong>${g.grade}/5</strong></div><div class="progress"><div style="width:${Number(g.grade)*20}%"></div></div></div>`).join("")||'<div class="empty">Оценок пока нет</div>';
+}
+function toggleTask(id) {
+  const t=data.tasks.find(x=>x.id===id);if(t){t.done=!t.done;save()}
+}
+function deleteItem(type,id) {
+  if(confirm("Удалить эту запись?")){data[type]=data[type].filter(x=>x.id!==id);save()}
+}
+function openModal(type) {
+  $("modal").classList.add("open");
+  $("dataForm").dataset.type=type;
+  const fields={
+    task:`<label>Предмет<select name="subject" required>${subjects.map(s=>`<option>${s}</option>`).join("")}</select></label><label>Описание<textarea name="description" placeholder="Что нужно сделать?" required></textarea></label><label>Срок сдачи<input name="date" type="date" value="${offset(1)}" required></label>`,
+    deadline:`<label>Название события<input name="title" placeholder="Например, контрольная" required></label><label>Предмет<select name="subject">${subjects.map(s=>`<option>${s}</option>`).join("")}</select></label><label>Дата<input name="date" type="date" value="${offset(2)}" required></label>`,
+    lesson:`<label>День недели<select name="day">${weekdays.slice(0,6).map((d,i)=>`<option value="${i}" ${i===data.selectedDay?'selected':''}>${d}</option>`).join("")}</select></label><label>Предмет<select name="subject">${subjects.map(s=>`<option>${s}</option>`).join("")}</select></label><label>Время<input name="time" type="time" value="10:00" required></label><label>Кабинет<input name="room" placeholder="Например, 205"></label>`,
+    profile:`<label>Имя<input name="name" value="${escapeHTML(data.name)}" required></label><label>Класс<input name="schoolClass" value="${escapeHTML(data.schoolClass)}" required></label>`
+  };
+  $("modalTitle").textContent={task:"Новое задание",deadline:"Новое событие",lesson:"Новый урок",profile:"Мой профиль"}[type];
+  $("formFields").innerHTML=fields[type];
+}
+function closeModal() {$("modal").classList.remove("open")}
+$("dataForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const type=e.target.dataset.type;
+  const f=new FormData(e.target);
+  const obj=Object.fromEntries(f.entries());
+  if(type==="task") data.tasks.push({...obj,id:Date.now(),done:false});
+  if(type==="deadline") data.deadlines.push({...obj,id:Date.now()});
+  if(type==="lesson") data.lessons.push({...obj,day:Number(obj.day),id:Date.now()});
+  if(type==="profile"){data.name=obj.name;data.schoolClass=obj.schoolClass}
+  closeModal();save();
+});
+function resetData() {
+  if(confirm("Вернуть первоначальные демонстрационные данные?")) {
+    data=JSON.parse(JSON.stringify(initial));save();
+  }
+}
+$("reminders").addEventListener("change",e=>{
+  localStorage.setItem("schoolhelper_reminders",e.target.checked?"1":"0");
+});
+(function init(){
+  const tg=window.Telegram?.WebApp;
+  if(tg){tg.ready();tg.expand()}
+  const saved=localStorage.getItem("schoolhelper_reminders");
+  if(saved!==null)$("reminders").checked=saved==="1";
+  render();
+})();
+</script>
+</body>
+</html>
