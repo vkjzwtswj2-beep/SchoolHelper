@@ -1,0 +1,533 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#E8EEEC">
+<title>SchoolHelper — прототип логотипа</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+ --purple:#1D2D4D;--dark:#14223D;--light:#E9EEE8;
+ --bg:#E8EEEC;--text:#1D2D4D;--muted:#77817D;
+ --border:#DCE4DE;--green:#66866F;--red:#B96B62;
+ --gold:#C49A55;--cream:#F5F0E5;--sage:#A9BCA8;
+}
+*{box-sizing:border-box}
+html,body{width:100%;min-width:0;max-width:100%;min-height:100%;overflow-x:hidden}
+html{height:100%;background:var(--bg)}
+body{margin:0;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--text);
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ padding-bottom:calc(82px + max(env(safe-area-inset-bottom),var(--tg-content-safe-area-inset-bottom,0px)))}
+img,svg,video,canvas{display:block;max-width:100%;height:auto}
+button,input,select,textarea{font:inherit;max-width:100%;min-width:0}
+button{cursor:pointer}
+.app{width:100%;max-width:680px;min-width:0;min-height:100vh;min-height:100dvh;margin:0 auto;padding:max(104px,calc(40px + max(env(safe-area-inset-top),var(--tg-content-safe-area-inset-top,0px)))) 16px 22px}
+#content{width:100%;min-width:0;overflow-wrap:anywhere}
+#content *{min-width:0}
+.card,.stat,.welcome,.item-main{min-width:0;max-width:100%}
+h1,h2,h3,p,.muted,.tag,.nav-btn{overflow-wrap:anywhere;word-break:normal}
+.item-main h3,.item-main p{overflow-wrap:anywhere}
+.top{min-width:0;gap:10px}
+.logo{min-width:0;overflow-wrap:anywhere}
+.avatar{flex-shrink:0}
+.welcome{position:relative;padding:22px 54px 22px 22px;overflow:hidden}
+.welcome h1,.welcome p{max-width:100%}
+.welcome-close{position:absolute;right:12px;top:12px;width:32px;height:32px;min-width:32px;padding:0;border:0;border-radius:10px;background:#ffffff30;color:#fff;font-size:22px;line-height:1}
+.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+.stat{overflow-wrap:anywhere}
+.card{overflow-wrap:anywhere}
+.item{min-width:0}
+.item-main{overflow-wrap:anywhere}
+.item-actions{flex-wrap:wrap}
+.bottom-nav{width:100%;max-width:100%;left:0;right:0;overflow-x:auto;overscroll-behavior-x:contain}
+.nav-btn{flex:1 1 0;min-width:0;padding:2px 1px;white-space:normal;line-height:1.2}
+.nav-btn span{line-height:1.2}
+.modal-bg{padding:10px max(10px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+.modal{width:100%;min-width:0;overflow-x:hidden}
+.field input,.field select{min-width:0;width:100%}
+@media(max-width:380px){
+ .app{padding-left:12px;padding-right:12px}
+ .card{padding:13px}
+ .stat{padding:12px}
+ .welcome{padding:18px 48px 18px 18px}
+ .item-actions{gap:5px}
+ .small-btn{padding:8px 9px}
+ .bottom-nav{padding-left:2px;padding-right:2px}
+ .nav-btn{font-size:9px}
+ .nav-btn span{font-size:18px}
+}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.7px;color:var(--dark)}.logo span{color:var(--gold)}
+.avatar{width:72px;height:58px;flex:0 0 72px;display:flex;align-items:center;justify-content:center;padding:0;background:transparent;border:0;border-radius:0;overflow:visible;filter:drop-shadow(0 0 1px #FBF8EF) drop-shadow(0 4px 5px rgba(29,45,77,.22))}.avatar img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 1px 1px rgba(196,154,85,.28))}
+h1{font-size:25px;margin:8px 0}
+h2{font-size:19px;margin:23px 0 12px}
+h3{font-size:16px;margin:0 0 6px}
+p{margin:5px 0}
+.muted{color:var(--muted);font-size:13px}
+.card{background:#FBF8EF;border:1px solid rgba(29,45,77,.06);border-radius:19px;padding:16px;margin-bottom:12px;
+ box-shadow:0 5px 22px rgba(29,45,77,.055)}
+.welcome{background:linear-gradient(135deg,#1D2D4D 0%,#263B60 100%);
+ color:#F5F0E5;padding:22px;border-radius:22px;margin-bottom:17px;border:1px solid rgba(196,154,85,.42);box-shadow:0 10px 26px rgba(29,45,77,.15)}
+.welcome h1{color:#FFFFFF}.welcome p{color:#E8EEEC}.welcome-close{background:rgba(245,240,229,.14);color:#F5F0E5}
+.welcome p{opacity:.85;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.stat{background:#FBF8EF;padding:15px;border-radius:17px;border:1px solid rgba(29,45,77,.06);box-shadow:0 4px 16px rgba(29,45,77,.04)}
+.stat-number{font-size:26px;font-weight:800;margin:7px 0 2px}
+.section-head{display:flex;justify-content:space-between;align-items:center;
+ gap:8px;margin:23px 0 12px}
+.section-head h2{margin:0}
+.primary,.secondary,.small-btn{border:0;border-radius:11px;padding:10px 13px;font-weight:650}
+.primary{background:var(--dark);color:#F5F0E5;box-shadow:0 3px 8px rgba(29,45,77,.12)}
+.secondary{background:#E4EAE2;color:var(--dark);border:1px solid #D5DED5}
+.small-btn{background:#E9EEE8;color:var(--dark);font-size:12px;padding:8px 10px;border:1px solid rgba(29,45,77,.05)}
+.danger{background:#fff0f1;color:#c65e6c}
+.item{display:flex;align-items:flex-start;gap:11px}
+.item+.item{border-top:1px solid var(--border);padding-top:12px;margin-top:12px}
+.item-icon{width:39px;height:39px;border-radius:12px;background:#E5EBE3;color:var(--dark);
+ display:grid;place-items:center;flex-shrink:0;font-size:19px}
+.item-main{flex:1;min-width:0}
+.item-main p{font-size:13px;color:var(--muted)}
+.item-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.done{opacity:.5}.done .item-title{text-decoration:line-through}
+.tag{display:inline-block;background:#E9EEE8;color:var(--dark);
+ padding:5px 9px;border-radius:9px;font-size:11px;font-weight:650}
+.tag.green{background:#e7f7ef;color:#39845e}
+.tag.red{background:#fff0f1;color:#c65e6c}
+.days{display:flex;gap:7px;overflow-x:auto;padding:3px 0 12px}
+.day{border:1px solid var(--border);background:#FBF8EF;color:var(--muted);border-radius:12px;
+ min-width:43px;padding:9px 6px}
+.day strong{display:block;color:var(--text);margin-top:4px}
+.day.active{background:var(--dark);color:#F5F0E5;border-color:var(--gold);box-shadow:0 3px 9px rgba(29,45,77,.14)}
+.day.active strong{color:white}
+.lesson-time{color:#A87932;font-weight:800;font-size:13px;min-width:42px}
+.empty{text-align:center;padding:23px 8px;color:var(--muted);font-size:14px}
+.empty div{font-size:29px;margin-bottom:7px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:20;
+ display:flex;justify-content:space-around;align-items:center;background:rgba(251,248,239,.98);
+ border-top:1px solid var(--border);padding:8px 2px calc(8px + max(env(safe-area-inset-bottom),var(--tg-content-safe-area-inset-bottom,0px)));}
+.bottom-nav{padding-left:max(2px,env(safe-area-inset-left));padding-right:max(2px,env(safe-area-inset-right));}
+.nav-btn{min-height:48px;justify-content:center;flex:1 1 0;}
+.nav-btn{background:none;border:0;color:#9995a8;display:flex;flex-direction:column;
+ align-items:center;gap:3px;font-size:10px;min-width:0;flex:1}
+.nav-btn span{font-size:20px}
+.nav-btn.active{color:var(--dark);font-weight:800}
+.modal-bg{position:fixed;inset:0;z-index:10;background:#231d375e;
+ display:flex;align-items:flex-end;justify-content:center;padding:10px}
+.modal{background:#FBF8EF;border:1px solid #DCE4DE;border-radius:23px;padding:20px 17px;width:100%;
+ max-width:600px;max-height:88vh;overflow-y:auto}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.close{border:0;background:#f3f0f8;border-radius:10px;width:34px;height:34px;font-size:19px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:13px;font-weight:650;margin-bottom:6px}
+.field input,.field select{width:100%;border:1px solid #DCE4DE;
+ border-radius:11px;padding:12px;background:#F5F0E5;color:var(--text)}
+.full{width:100%;margin-top:5px}
+.grade-big{font-size:25px;color:#A87932;font-weight:800}
+.progress{height:8px;background:#E2E8E1;border-radius:10px;overflow:hidden;margin-top:8px}
+.progress>div{height:100%;background:linear-gradient(90deg,#1D2D4D,#C49A55);border-radius:10px}
+.goal-box{background:#F1EEE3;border:1px solid #E6DDC8;border-radius:14px;padding:12px;margin-top:10px}
+.profile-center{text-align:center;padding:23px}
+.profile-avatar{font-size:34px;background:#E5EBE3;color:var(--dark);width:72px;height:72px;
+ border-radius:23px;display:grid;place-items:center;margin:0 auto 10px}
+@media(min-width:600px){.modal-bg{align-items:center}}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="top">
+  <div class="logo">School<span>Helper</span></div>
+  <div class="avatar"><img src="data:image/webp;base64,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" alt="SchoolHelper logo"></div>
+ </header>
+ <main id="content"></main>
+</div>
+
+<nav class="bottom-nav">
+ <button class="nav-btn active" data-page="home"><span>🏠</span>Главная</button>
+ <button class="nav-btn" data-page="schedule"><span>🗓️</span>Расписание</button>
+ <button class="nav-btn" data-page="tasks"><span>📝</span>Задания</button>
+ <button class="nav-btn" data-page="deadlines"><span>⏰</span>Дедлайны</button>
+ <button class="nav-btn" data-page="grades"><span>⭐</span>Оценки</button>
+ <button class="nav-btn" data-page="profile"><span>👤</span>Профиль</button>
+</nav>
+<div id="modal-root"></div>
+
+<script>
+(() => {
+"use strict";
+const $=s=>document.querySelector(s);
+const content=$("#content"),modalRoot=$("#modal-root");
+const tg=window.Telegram?.WebApp;
+if(tg){
+ tg.ready();
+ try{tg.expand()}catch(e){}
+ const updateTelegramInsets=()=>{
+  const safe=tg.safeAreaInset||{};
+  const contentSafe=tg.contentSafeAreaInset||{};
+  const top=Math.max(Number(safe.top)||0,Number(contentSafe.top)||0);
+  const bottom=Math.max(Number(safe.bottom)||0,Number(contentSafe.bottom)||0);
+  document.documentElement.style.setProperty("--tg-safe-area-inset-top",`${Number(safe.top)||0}px`);
+  document.documentElement.style.setProperty("--tg-safe-area-inset-bottom",`${Number(safe.bottom)||0}px`);
+  document.documentElement.style.setProperty("--tg-content-safe-area-inset-top",`${top}px`);
+  document.documentElement.style.setProperty("--tg-content-safe-area-inset-bottom",`${bottom}px`);
+ };
+ updateTelegramInsets();
+ ["safeAreaChanged","contentSafeAreaChanged","viewportChanged","fullscreenChanged"].forEach(event=>{
+  try{tg.onEvent(event,updateTelegramInsets)}catch(e){}
+ });
+}
+
+const KEY="schoolhelper_preview_data_v1";
+const WELCOME_HIDDEN_KEY="schoolhelper_preview_welcome_hidden";
+let welcomeHidden=false;
+try{welcomeHidden=localStorage.getItem(WELCOME_HIDDEN_KEY)==="1"}catch(e){}
+const weekdays=["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"];
+const shortDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+const today=localDate();
+const todayIndex=(new Date().getDay()+6)%7;
+
+function localDate(d=new Date()){
+ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function dateObj(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d,12)}
+function shiftDate(s,n){const d=dateObj(s);d.setDate(d.getDate()+n);return localDate(d)}
+function formatDate(s){return s?dateObj(s).toLocaleDateString("ru-RU",{day:"numeric",month:"long"}):""}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function id(){return Date.now()+Math.floor(Math.random()*10000)}
+function clone(v){return JSON.parse(JSON.stringify(v))}
+
+const initial={
+ profile:{name:"Ученик",schoolClass:"9 класс",reminders:true},
+ selectedDay:todayIndex,
+ schedule:[
+ {id:1,day:0,time:"08:30",subject:"Математика",room:"12"},
+ {id:2,day:0,time:"09:25",subject:"Русский язык",room:"8"},
+ {id:3,day:0,time:"10:20",subject:"Биология",room:"21"},
+ {id:4,day:1,time:"08:30",subject:"История",room:"15"},
+ {id:5,day:1,time:"09:25",subject:"Английский язык",room:"10"},
+ {id:6,day:2,time:"08:30",subject:"Физика",room:"19"},
+ {id:7,day:2,time:"09:25",subject:"Литература",room:"8"},
+ {id:8,day:3,time:"08:30",subject:"Химия",room:"22"},
+ {id:9,day:4,time:"08:30",subject:"География",room:"16"}
+ ],
+ tasks:[
+ {id:11,title:"Упражнение 125",subject:"Русский язык",date:today,done:false},
+ {id:12,title:"Параграф 18, вопросы",subject:"Биология",date:shiftDate(today,1),done:false},
+ {id:13,title:"Задачи № 45–47",subject:"Математика",date:shiftDate(today,2),done:true}
+ ],
+ deadlines:[
+ {id:14,title:"Сдать проект",subject:"Информатика",date:shiftDate(today,3)},
+ {id:15,title:"Контрольная работа",subject:"Биология",date:shiftDate(today,5)}
+ ],
+ grades:[
+ {id:16,subject:"Биология",value:5,date:today},
+ {id:17,subject:"Русский язык",value:4,date:today},
+ {id:18,subject:"История",value:5,date:today},
+ {id:19,subject:"Математика",value:4,date:today}
+ ],
+ goals:[
+ {subject:"Математика",value:5},
+ {subject:"Русский язык",value:4}
+ ]
+};
+
+function load(){
+ try{
+  const saved=localStorage.getItem(KEY);
+  if(!saved)return clone(initial);
+  const x=JSON.parse(saved);
+  return {
+   ...clone(initial),...x,
+   profile:{...initial.profile,...(x.profile||{})},
+   schedule:Array.isArray(x.schedule)?x.schedule:[],
+   tasks:Array.isArray(x.tasks)?x.tasks:[],
+   deadlines:Array.isArray(x.deadlines)?x.deadlines:[],
+   grades:Array.isArray(x.grades)?x.grades:[],
+   goals:Array.isArray(x.goals)?x.goals:[]
+  };
+ }catch(e){return clone(initial)}
+}
+let data=load(),page="home";
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}
+ catch(e){alert("Не удалось сохранить данные на устройстве.")}}
+function setPage(p){page=p;document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===p));render()}
+function empty(icon,msg){return `<div class="empty"><div>${icon}</div>${esc(msg)}</div>`}
+function head(title,btn,action){return `<div class="section-head"><h2>${title}</h2><button class="primary" data-action="${action}">＋ ${btn}</button></div>`}
+function avg(list){return list.length?list.reduce((s,g)=>s+Number(g.value),0)/list.length:null}
+
+function taskHTML(t){return `<div class="item ${t.done?"done":""}">
+ <div class="item-icon">${t.done?"✅":"📝"}</div><div class="item-main">
+ <h3 class="item-title">${esc(t.title)}</h3><p>${esc(t.subject)} · ${formatDate(t.date)}</p>
+ <div class="item-actions">
+ <button class="small-btn" data-action="toggle-task" data-id="${t.id}">${t.done?"Вернуть":"Выполнено"}</button>
+ <button class="small-btn" data-action="edit-task" data-id="${t.id}">Изменить</button>
+ <button class="small-btn danger" data-action="delete-task" data-id="${t.id}">Удалить</button>
+ </div></div></div>`}
+
+function deadlineHTML(t){
+ const diff=Math.round((dateObj(t.date)-dateObj(today))/86400000);
+ const label=diff<0?"Просрочено":diff===0?"Сегодня":diff===1?"Завтра":`Через ${diff} дн.`;
+ return `<div class="item"><div class="item-icon">⏰</div><div class="item-main">
+ <h3>${esc(t.title)}</h3><p>${esc(t.subject)} · ${formatDate(t.date)}</p>
+ <div class="item-actions"><span class="tag ${diff<=1?"red":"green"}">${label}</span>
+ <button class="small-btn" data-action="edit-deadline" data-id="${t.id}">Изменить</button>
+ <button class="small-btn danger" data-action="delete-deadline" data-id="${t.id}">Удалить</button>
+ </div></div></div>`}
+
+function lessonHTML(t){return `<div class="item">
+ <div class="lesson-time">${esc(t.time)}</div><div class="item-icon">📖</div>
+ <div class="item-main"><h3>${esc(t.subject)}</h3><p>Кабинет: ${esc(t.room||"—")}</p>
+ <div class="item-actions">
+ <button class="small-btn" data-action="edit-lesson" data-id="${t.id}">Изменить</button>
+ <button class="small-btn danger" data-action="delete-lesson" data-id="${t.id}">Удалить</button>
+ </div></div></div>`}
+
+function renderHome(){
+ const pending=data.tasks.filter(t=>!t.done);
+ const lessons=data.schedule.filter(t=>t.day===todayIndex);
+ const a=avg(data.grades);
+ content.innerHTML=`
+ ${welcomeHidden?`<button class="secondary" data-action="show-welcome" style="margin:0 0 14px;width:100%">👋 Показать приветствие</button>`:`<section class="welcome"><button class="welcome-close" data-action="hide-welcome" aria-label="Скрыть приветствие" title="Скрыть">×</button><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
+ <h1>Привет, ${esc(data.profile.name)}! 👋</h1><p>Всё важное для учёбы — в одном месте.</p></section>`}
+ <div class="stats">
+ <div class="stat"><div>📚</div><div class="stat-number">${lessons.length}</div><div class="muted">Уроков сегодня</div></div>
+ <div class="stat"><div>📝</div><div class="stat-number">${pending.length}</div><div class="muted">Незаконченных заданий</div></div>
+ <div class="stat"><div>⏰</div><div class="stat-number">${data.deadlines.length}</div><div class="muted">Дедлайнов</div></div>
+ <div class="stat"><div>⭐</div><div class="stat-number">${a===null?"—":a.toFixed(2)}</div><div class="muted">Средний балл</div></div>
+ </div>
+ ${head("Ближайшие задания","Добавить","add-task")}
+ <div class="card">${pending.length?pending.slice(0,3).map(taskHTML).join(""):empty("🎉","Все задания выполнены!")}</div>
+ <div class="section-head"><h2>Ближайшие дедлайны</h2><button class="small-btn" data-action="go-deadlines">Все</button></div>
+ <div class="card">${data.deadlines.length?[...data.deadlines].sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3).map(deadlineHTML).join(""):empty("🌸","Пока нет дедлайнов")}</div>
+ ${data.profile.reminders?`<div class="card"><div class="item"><div class="item-icon">🔔</div><div class="item-main"><h3>Напоминания включены</h3><p>Ближайшие дела отображаются в приложении. Это не push-уведомления.</p></div></div></div>`:""}`;
+}
+
+function renderSchedule(){
+ const day=Math.max(0,Math.min(6,Number(data.selectedDay)||0));
+ const list=data.schedule.filter(t=>t.day===day).sort((a,b)=>a.time.localeCompare(b.time));
+ content.innerHTML=`<h1>Расписание 🗓️</h1><p class="muted">Уроки на каждый день недели</p>
+ <div class="days">${shortDays.map((d,i)=>`<button class="day ${day===i?"active":""}" data-action="select-day" data-day="${i}">${d}<strong>${i+1}</strong></button>`).join("")}</div>
+ ${head(weekdays[day],"Добавить урок","add-lesson")}
+ <div class="card">${list.length?list.map(lessonHTML).join(""):empty("📖","На этот день уроков пока нет")}</div>`;
+}
+
+function renderTasks(){
+ const list=[...data.tasks].sort((a,b)=>Number(a.done)-Number(b.done)||a.date.localeCompare(b.date));
+ content.innerHTML=`<h1>Домашние задания 📝</h1><p class="muted">Записывай задания и отмечай выполненные</p>
+ ${head("Мои задания","Добавить","add-task")}
+ <div class="card">${list.length?list.map(taskHTML).join(""):empty("📚","Заданий пока нет")}</div>`;
+}
+
+function renderDeadlines(){
+ const list=[...data.deadlines].sort((a,b)=>a.date.localeCompare(b.date));
+ content.innerHTML=`<h1>Дедлайны ⏰</h1><p class="muted">Не забывай о важных датах</p>
+ ${head("Мои дедлайны","Добавить","add-deadline")}
+ <div class="card">${list.length?list.map(deadlineHTML).join(""):empty("🌸","Дедлайнов пока нет")}</div>`;
+}
+
+/* Раздел оценок: группировка по предметам и отдельная цель для каждого */
+function renderGrades(){
+ const subjects=[...new Set([
+  ...data.grades.map(g=>g.subject),
+  ...data.goals.map(g=>g.subject)
+ ])].sort((a,b)=>a.localeCompare(b,"ru"));
+ const overall=avg(data.grades);
+ content.innerHTML=`<h1>Мои оценки ⭐</h1>
+ <p class="muted">История оценок, средний балл и личные цели</p>
+ <div class="welcome"><div style="opacity:.8">ОБЩИЙ СРЕДНИЙ БАЛЛ</div>
+ <div style="font-size:38px;font-weight:800;margin-top:7px">${overall===null?"—":overall.toFixed(2)}</div>
+ <p>Всего оценок: ${data.grades.length}</p></div>
+ <div class="section-head"><h2>По предметам</h2><button class="primary" data-action="add-grade">＋ Оценка</button></div>
+ <div class="section-head" style="margin-top:0"><span class="muted">Добавляй предметы и ставь себе желаемую оценку.</span>
+ <button class="small-btn" data-action="add-goal">＋ Цель</button></div>
+ ${subjects.length?subjects.map(subject=>{
+  const list=data.grades.filter(g=>g.subject===subject).sort((a,b)=>b.date.localeCompare(a.date));
+  const average=avg(list);
+  const goal=data.goals.find(g=>g.subject===subject);
+  const target=goal?Number(goal.value):null;
+  const progress=average===null?0:Math.min(100,average/5*100);
+  return `<section class="card">
+   <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+    <h3>${esc(subject)}</h3>
+    <button class="small-btn" data-action="edit-goal" data-subject="${esc(subject)}">🎯 ${target===null?"Поставить цель":"Цель: "+target}</button>
+   </div>
+   <div style="display:flex;gap:20px;align-items:center;margin-top:12px">
+    <div><div class="muted">Средний балл</div><div class="grade-big">${average===null?"—":average.toFixed(2)}</div></div>
+    <div><div class="muted">Оценок</div><div class="grade-big">${list.length}</div></div>
+    ${target!==null?`<div><div class="muted">Желаю</div><div class="grade-big">${target}</div></div>`:""}
+   </div>
+   <div class="progress"><div style="width:${progress}%"></div></div>
+   ${target!==null?`<div class="goal-box"><strong>Моя цель: ${target}</strong><p class="muted">${average===null?"Добавь первую оценку, чтобы отслеживать результат.":average>=target?"Цель достигнута по текущему среднему баллу!":"Продолжай заниматься — отслеживай свой прогресс."}</p></div>`:""}
+   <div class="section-head" style="margin:15px 0 10px"><strong>История оценок</strong>
+    <button class="small-btn" data-action="add-grade-subject" data-subject="${esc(subject)}">＋ Добавить</button>
+   </div>
+   ${list.length?list.map(g=>`<div class="item" style="align-items:center">
+    <div class="grade-big">${g.value}</div><div class="item-main"><h3>${formatDate(g.date)}</h3><p>${esc(g.subject)}</p></div>
+    <div class="item-actions">
+     <button class="small-btn" data-action="edit-grade" data-id="${g.id}">✏️</button>
+     <button class="small-btn danger" data-action="delete-grade" data-id="${g.id}">×</button>
+    </div></div>`).join(""):empty("📘","Пока нет оценок по этому предмету")}
+  </section>`;
+ }).join(""):`
+ <div class="card">${empty("⭐","Добавь первую оценку или создай цель по предмету.")}</div>`}`;
+}
+
+function renderProfile(){
+ content.innerHTML=`<h1>Профиль 👤</h1><p class="muted">Настройки приложения</p>
+ <div class="card profile-center"><div class="profile-avatar">👩‍🎓</div>
+ <h2 style="margin:5px 0">${esc(data.profile.name)}</h2><p class="muted">${esc(data.profile.schoolClass)}</p>
+ <button class="secondary" data-action="edit-profile">Изменить профиль</button></div>
+ <h2>Настройки</h2><div class="card"><label style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+ <span><strong>Напоминания в приложении</strong><p class="muted">Показывать блок напоминаний на главной</p></span>
+ <input type="checkbox" data-action="toggle-reminders" ${data.profile.reminders?"checked":""}></label></div>
+ <h2>О приложении</h2><div class="card"><h3>SchoolHelper 📚</h3>
+ <p class="muted">Расписание, задания, дедлайны и оценки.</p>
+ <p class="muted">Данные хранятся в браузере на этом устройстве.</p></div>
+ <div class="card"><h3>Сбросить данные</h3><p class="muted">Вернуть демонстрационные записи.</p>
+ <button class="small-btn danger" data-action="reset-data">Сбросить приложение</button></div>`;
+}
+function render(){
+ ({home:renderHome,schedule:renderSchedule,tasks:renderTasks,deadlines:renderDeadlines,grades:renderGrades,profile:renderProfile}[page]||renderHome)();
+}
+
+/* Формы */
+function openModal(title,html,submit){
+ modalRoot.innerHTML=`<div class="modal-bg" data-action="close-modal"><div class="modal">
+ <div class="modal-head"><h2 style="margin:0">${esc(title)}</h2><button class="close" data-action="close-modal">×</button></div>
+ <form id="edit-form">${html}<button class="primary full" type="submit">Сохранить</button></form>
+ </div></div>`;
+ $("#edit-form").addEventListener("submit",e=>{
+  e.preventDefault();const values=Object.fromEntries(new FormData(e.currentTarget).entries());
+  if(submit(values)!==false){closeModal();save();render()}
+ });
+ $(".modal").addEventListener("click",e=>e.stopPropagation());
+}
+function closeModal(){modalRoot.innerHTML=""}
+function field(label,name,value="",type="text",required=true){
+ return `<div class="field"><label>${esc(label)}</label><input type="${type}" name="${name}" value="${esc(value)}" ${required?"required":""}></div>`;
+}
+function selectField(label,name,options,selected){
+ return `<div class="field"><label>${esc(label)}</label><select name="${name}" required>
+ ${options.map(o=>`<option value="${esc(o)}" ${String(o)===String(selected)?"selected":""}>${esc(o)}</option>`).join("")}
+ </select></div>`;
+}
+
+function taskForm(idValue=null){
+ const old=data.tasks.find(x=>x.id===idValue);
+ openModal(old?"Изменить задание":"Новое задание",`
+ ${field("Название задания","title",old?.title||"")}
+ ${field("Предмет","subject",old?.subject||"")}
+ ${field("Срок выполнения","date",old?.date||today,"date")}`,v=>{
+  if(!v.title.trim()||!v.subject.trim())return false;
+  if(old)Object.assign(old,v);else data.tasks.push({id:id(),...v,done:false});
+ });
+}
+function deadlineForm(idValue=null){
+ const old=data.deadlines.find(x=>x.id===idValue);
+ openModal(old?"Изменить дедлайн":"Новый дедлайн",`
+ ${field("Название","title",old?.title||"")}
+ ${field("Предмет","subject",old?.subject||"")}
+ ${field("Дата","date",old?.date||today,"date")}`,v=>{
+  if(!v.title.trim()||!v.subject.trim())return false;
+  if(old)Object.assign(old,v);else data.deadlines.push({id:id(),...v});
+ });
+}
+function lessonForm(idValue=null){
+ const old=data.schedule.find(x=>x.id===idValue);
+ openModal(old?"Изменить урок":"Новый урок",`
+ ${field("Предмет","subject",old?.subject||"")}
+ ${field("Время начала","time",old?.time||"08:30","time")}
+ ${field("Кабинет","room",old?.room||"", "text",false)}
+ ${selectField("День недели","day",weekdays,weekdays[old?old.day:data.selectedDay])}`,v=>{
+  if(!v.subject.trim())return false;
+  const item={subject:v.subject,time:v.time,room:v.room,day:weekdays.indexOf(v.day)};
+  if(old)Object.assign(old,item);else data.schedule.push({id:id(),...item});
+  data.selectedDay=item.day;
+ });
+}
+function gradeForm(idValue=null,subjectPreset=""){
+ const old=data.grades.find(x=>x.id===idValue);
+ openModal(old?"Изменить оценку":"Добавить оценку",`
+ ${field("Предмет","subject",old?.subject||subjectPreset)}
+ ${selectField("Оценка","value",["2","3","4","5"],String(old?.value||"5"))}
+ ${field("Дата","date",old?.date||today,"date")}`,v=>{
+  if(!v.subject.trim())return false;
+  const item={subject:v.subject.trim(),value:Number(v.value),date:v.date};
+  if(old)Object.assign(old,item);else data.grades.push({id:id(),...item});
+ });
+}
+function goalForm(subjectPreset=""){
+ const existing=data.goals.find(g=>g.subject===subjectPreset);
+ openModal(existing?"Изменить цель":"Желаемая оценка",`
+ ${field("Предмет","subject",subjectPreset)}
+ ${selectField("Какую оценку хочешь получать?","value",["3","4","5"],String(existing?.value||"5"))}`,v=>{
+  if(!v.subject.trim())return false;
+  const subject=v.subject.trim();
+  const found=data.goals.find(g=>g.subject.toLowerCase()===subject.toLowerCase());
+  if(found)found.value=Number(v.value);
+  else data.goals.push({subject,value:Number(v.value)});
+ });
+}
+function profileForm(){
+ openModal("Мой профиль",`${field("Имя","name",data.profile.name)}
+ ${field("Класс","schoolClass",data.profile.schoolClass)}`,v=>{
+  if(!v.name.trim()||!v.schoolClass.trim())return false;
+  data.profile.name=v.name.trim();data.profile.schoolClass=v.schoolClass.trim();
+ });
+}
+function remove(list,idValue,label){
+ if(!confirm(`Удалить ${label}?`))return;
+ data[list]=data[list].filter(x=>x.id!==idValue);save();render();
+}
+
+function action(a,el){
+ const n=Number(el.dataset.id);
+ if(a==="add-task")return taskForm();
+ if(a==="edit-task")return taskForm(n);
+ if(a==="delete-task")return remove("tasks",n,"задание");
+ if(a==="toggle-task"){const t=data.tasks.find(x=>x.id===n);if(t)t.done=!t.done;save();return render()}
+ if(a==="add-deadline")return deadlineForm();
+ if(a==="edit-deadline")return deadlineForm(n);
+ if(a==="delete-deadline")return remove("deadlines",n,"дедлайн");
+ if(a==="add-lesson")return lessonForm();
+ if(a==="edit-lesson")return lessonForm(n);
+ if(a==="delete-lesson")return remove("schedule",n,"урок");
+ if(a==="add-grade")return gradeForm();
+ if(a==="add-grade-subject")return gradeForm(null,el.dataset.subject);
+ if(a==="edit-grade")return gradeForm(n);
+ if(a==="delete-grade")return remove("grades",n,"оценку");
+ if(a==="add-goal")return goalForm();
+ if(a==="edit-goal")return goalForm(el.dataset.subject);
+ if(a==="edit-profile")return profileForm();
+ if(a==="select-day"){data.selectedDay=Number(el.dataset.day);save();return render()}
+ if(a==="go-deadlines")return setPage("deadlines");
+ if(a==="hide-welcome"||a==="show-welcome"){
+  welcomeHidden=a==="hide-welcome";
+  try{
+   if(welcomeHidden)localStorage.setItem(WELCOME_HIDDEN_KEY,"1");
+   else localStorage.removeItem(WELCOME_HIDDEN_KEY);
+  }catch(e){}
+  return render();
+ }
+ if(a==="close-modal")return closeModal();
+ if(a==="reset-data"){if(confirm("Точно сбросить все данные?")){data=clone(initial);save();render()}}
+}
+
+document.addEventListener("click",e=>{
+ const nav=e.target.closest("[data-page]");
+ if(nav){setPage(nav.dataset.page);return}
+ const el=e.target.closest("[data-action]");
+ if(el)action(el.dataset.action,el);
+});
+document.addEventListener("change",e=>{
+ if(e.target.dataset.action==="toggle-reminders"){
+  data.profile.reminders=e.target.checked;save();render();
+ }
+});
+save();
+render();
+})();
+</script>
+</body>
+</html>
