@@ -116,7 +116,7 @@ p{margin:5px 0}
 .year-month-grid span{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;min-width:0;height:18px;padding:0;font-size:9px;line-height:18px;white-space:nowrap;overflow:hidden;border-radius:5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .year-month-grid .year-weekday{font-size:8px;color:var(--muted);font-weight:700}
 .year-month-grid .year-vacation{background:#D7E4D9;color:#456B5B;font-weight:700}
-.year-month-grid .year-weekend{background:#F5D7E1;color:#92566A;font-weight:700}
+.year-month-grid .year-weekend{background:#E8D6CF;color:#fff;font-weight:700}
 .year-month-grid .year-today{outline:1px solid var(--gold);outline-offset:-1px}
 @media(max-width:380px){.calendar-year-view{gap:7px}.year-month{padding:7px 3px}.year-month-grid span{font-size:8px;height:16px;line-height:16px}.year-month-title{font-size:11px}}
 
@@ -139,11 +139,11 @@ p{margin:5px 0}
 .calendar-legend span{display:inline-flex;align-items:center;gap:6px}
 .calendar-legend i{width:11px;height:11px;border-radius:4px;display:inline-block}
 .calendar-legend .legend-vacation{background:#D7E4D9}
-.calendar-legend .legend-weekend{background:#F5D7E1}
+.calendar-legend .legend-weekend{background:#E8D6CF}
 .week-cell.vacation .week-number,.calendar-month-view .calendar-day.vacation .day-number{background:#D7E4D9;color:#456B5B}
-.week-cell.weekend .week-number,.calendar-month-view .calendar-day.weekend .day-number{background:#D6E3EC;color:#92566A}
+.week-cell.weekend .week-number,.calendar-month-view .calendar-day.weekend .day-number{background:#E8D6CF;color:#fff}
 .week-cell.selected.vacation .week-number,.calendar-month-view .calendar-day.selected.vacation .day-number{background:#D7E4D9;color:#456B5B;outline:2px solid var(--dark);outline-offset:2px}
-.week-cell.selected.weekend .week-number,.calendar-month-view .calendar-day.selected.weekend .day-number{background:#D6E3EC;color:#fff;outline:2px solid var(--dark);outline-offset:2px}
+.week-cell.selected.weekend .week-number,.calendar-month-view .calendar-day.selected.weekend .day-number{background:#E8D6CF;color:#fff;outline:2px solid var(--dark);outline-offset:2px}
 /* Restore the original warm terracotta treatment in the month calendar */
 .calendar-month-view .calendar-day.weekend .day-number{background:#E8D6CF;color:#fff}
 .calendar-month-view .calendar-day.selected.weekend .day-number{background:#E8D6CF;color:#fff;outline:2px solid var(--dark);outline-offset:2px}
@@ -328,7 +328,7 @@ let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 let selectedCalendarDate=today;
 let calendarExpanded=false;
 let calendarYearView=false;
-const schoolBreakRanges=[["2026-10-05","2026-10-11"],["2026-11-16","2026-11-21"],["2026-12-30","2027-01-10"],["2027-02-15","2027-02-21"],["2027-04-05","2027-04-11"],["2027-05-26","2027-08-31"]];
+const schoolBreakRanges=[["2026-10-05","2026-10-11"],["2026-11-16","2026-11-22"],["2026-12-30","2027-01-10"],["2027-02-15","2027-02-21"],["2027-04-05","2027-04-11"],["2027-05-26","2027-08-31"]];
 const schoolHolidayDates=["2026-11-04","2027-02-22","2027-02-23","2027-03-08","2027-05-03","2027-05-10"];
 function calendarDayType(key){
  if(schoolBreakRanges.some(([a,b])=>key>=a&&key<=b))return "vacation";
