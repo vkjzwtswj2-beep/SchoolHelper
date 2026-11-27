@@ -443,7 +443,7 @@ function load(){
   const x=JSON.parse(saved);
   return {
    ...clone(initial),...x,
-   profile:{...initial.profile,...(x.profile||{}),schoolClass:x.profile?.schoolClass==="-"?"-":(initial.classSchedules?.[x.profile?.schoolClass]?x.profile.schoolClass:"5А")},
+   profile:{...initial.profile,...(x.profile||{}),schoolClass:(x.profile?.schoolClass==="-"||x.profile?.schoolClass==="none")?"none":(initial.classSchedules?.[x.profile?.schoolClass]?x.profile.schoolClass:"5А")},
    schedule:Array.isArray(x.schedule)?x.schedule:[],
    classSchedules:{...clone(initial.classSchedules),...(x.classSchedules&&typeof x.classSchedules==="object"?x.classSchedules:{})},
    tasks:Array.isArray(x.tasks)?x.tasks:[],
@@ -681,9 +681,9 @@ function renderGrades(){
 function renderProfile(){
  content.innerHTML=`<h1>Профиль 👤</h1><p class="muted">Настройки приложения</p>
  <div class="card profile-center"><div class="profile-avatar">👩‍🎓</div>
- <h2 style="margin:5px 0">${esc(data.profile.name)}</h2><p class="muted">${data.profile.schoolClass&&data.profile.schoolClass!=="-"?`Класс: ${esc(data.profile.schoolClass)}`:"-"}</p>
+ <h2 style="margin:5px 0">${esc(data.profile.name)}</h2><p class="muted">${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`Класс: ${esc(data.profile.schoolClass)}`:"-"}</p>
  <button class="secondary" data-action="edit-profile">Изменить профиль</button></div>
- <h2>Настройки</h2><div class="card"><h3>Класс и расписание</h3><p class="muted">Выбери свой класс или отключи отображение уроков</p><p style="font-weight:750;margin:10px 0">${data.profile.schoolClass&&data.profile.schoolClass!=="-"?`Выбран класс: ${esc(data.profile.schoolClass)}`:"-"}</p><button class="secondary" data-action="edit-class">Изменить класс</button></div><div class="card"><label style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+ <h2>Настройки</h2><div class="card"><h3>Класс и расписание</h3><p class="muted">Выбери свой класс или отключи отображение уроков</p><p style="font-weight:750;margin:10px 0">${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`Выбран класс: ${esc(data.profile.schoolClass)}`:"-"}</p><button class="secondary" data-action="edit-class">Изменить класс</button></div><div class="card"><label style="display:flex;justify-content:space-between;gap:12px;align-items:center">
  <span><strong>Напоминания в приложении</strong><p class="muted">Показывать блок напоминаний на главной</p></span>
  <input type="checkbox" data-action="toggle-reminders" ${data.profile.reminders?"checked":""}></label></div>
  <h2>О приложении</h2><div class="card"><h3>SchoolHelper 📚</h3>
@@ -784,7 +784,7 @@ function profileForm(){
  });
 }
 function classForm(){
- const options=[["5А","5А"],["-","-"]];
+ const options=[["5А","5А"],["none","Без расписания"]];
  openModal("Класс и расписание",`<div class="field"><label>Выбери класс</label><select name="schoolClass">${options.map(([value,label])=>`<option value="${value}" ${data.profile.schoolClass===value?"selected":""}>${label}</option>`).join("")}</select></div>`,v=>{
   data.profile.schoolClass=v.schoolClass;
  });
