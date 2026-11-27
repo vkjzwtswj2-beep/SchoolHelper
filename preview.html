@@ -405,19 +405,22 @@ function renderSchedule(){
  const first=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1),offset=(first.getDay()+6)%7;
  const monthStart=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1-offset);
  const monthCells=Array.from({length:42},(_,i)=>{const d=new Date(monthStart);d.setDate(monthStart.getDate()+i);return makeCell(d)});
- const yearMonths=Array.from({length:12},(_,m)=>{
-  const firstDay=new Date(year,m,1),startOffset=(firstDay.getDay()+6)%7,days=new Date(year,m+1,0).getDate();
+ const academicStartYear=calendarMonth.getMonth()>=8?year:year-1;
+ const academicMonths=Array.from({length:9},(_,i)=>{
+  const m=(i+8)%12,monthYear=m>=8?academicStartYear:academicStartYear+1;
+  const firstDay=new Date(monthYear,m,1),startOffset=(firstDay.getDay()+6)%7,days=new Date(monthYear,m+1,0).getDate();
   const cells=Array(startOffset).fill(null).concat(Array.from({length:days},(_,n)=>n+1));
   while(cells.length%7)cells.push(null);
-  return `<button class="year-month" data-action="calendar-open-month" data-month="${m}" aria-label="Открыть ${new Date(year,m,1).toLocaleDateString("ru-RU",{month:"long"})}">
-   <div class="year-month-title">${new Date(year,m,1).toLocaleDateString("ru-RU",{month:"long"})}</div>
+  return `<button class="year-month" data-action="calendar-open-month" data-month="${m}" data-year="${monthYear}" aria-label="Открыть ${new Date(monthYear,m,1).toLocaleDateString("ru-RU",{month:"long"})}">
+   <div class="year-month-title">${new Date(monthYear,m,1).toLocaleDateString("ru-RU",{month:"long"})}</div>
    <div class="year-month-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<span class="year-weekday">${x[0]}</span>`).join("")}
    ${cells.map(n=>{
     if(!n)return "<span></span>";
-    const key=localDate(new Date(year,m,n)),type=calendarDayType(key);
+    const key=localDate(new Date(monthYear,m,n)),type=calendarDayType(key);
     return `<span class="${type==="vacation"?"year-vacation":type==="weekend"?"year-weekend":""} ${key===today?"year-today":""}">${n}</span>`;
    }).join("")}</div></button>`;
  }).join("");
+ const academicYearLabel=`${academicStartYear}–${academicStartYear+1}`;
  const day=(selected.getDay()+6)%7;
  const list=data.schedule.filter(t=>t.day===day).sort((a,b)=>a.time.localeCompare(b.time));
  const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
@@ -426,11 +429,11 @@ function renderSchedule(){
  <div class="card">
   <div class="calendar-toolbar">
    <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий период">‹</button>
-   <div class="calendar-month">${calendarYearView?year:esc(monthName)}</div>
+   <div class="calendar-month">${calendarYearView?academicYearLabel:esc(monthName)}</div>
    <button class="calendar-toggle" data-action="calendar-view-toggle">${calendarYearView?"К месяцу":calendarExpanded?"Открыть год":"Открыть месяц"}</button>
    <button class="small-btn" data-action="calendar-next" aria-label="Следующий период">›</button>
   </div>
-  ${calendarYearView?`<div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div><div class="calendar-year-view">${yearMonths}</div>`:`
+  ${calendarYearView?`<div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div><div class="calendar-year-view">${academicMonths}</div>`:`
   <div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div>
   ${calendarExpanded?`<div class="calendar-month-view"><div class="calendar-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<div class="calendar-weekday">${x}</div>`).join("")}
   ${monthCells.map(x=>`<button class="calendar-day ${x.sameMonth?"":"muted-day"} ${x.isToday?"today":""} ${x.selected?"selected":""} ${x.type}" data-action="calendar-select" data-date="${x.key}"><span class="day-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div></div>`:
@@ -662,7 +665,7 @@ function action(a,el){
   return render();
  }
  if(a==="calendar-view-toggle"){if(calendarYearView){calendarYearView=false;calendarExpanded=true}else if(calendarExpanded){calendarExpanded=false;calendarYearView=true}else{calendarExpanded=true}return render()}
- if(a==="calendar-open-month"){const m=Number(el.dataset.month);calendarMonth=new Date(calendarMonth.getFullYear(),m,1);selectedCalendarDate=localDate(new Date(calendarMonth.getFullYear(),m,1));calendarYearView=false;calendarExpanded=true;return render()}
+ if(a==="calendar-open-month"){const m=Number(el.dataset.month),y=Number(el.dataset.year);calendarMonth=new Date(y,m,1);selectedCalendarDate=localDate(new Date(y,m,1));calendarYearView=false;calendarExpanded=true;return render()}
  if(a==="calendar-expand"){calendarExpanded=!calendarExpanded;return render()}
  if(a==="calendar-today"){calendarMonth=new Date();selectedCalendarDate=today;calendarYearView=false;calendarExpanded=false;return render()}
  if(a==="calendar-select"){selectedCalendarDate=el.dataset.date;return render()}
