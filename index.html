@@ -398,7 +398,7 @@ function id(){return Date.now()+Math.floor(Math.random()*10000)}
 function clone(v){return JSON.parse(JSON.stringify(v))}
 
 const initial={
- profile:{name:"Ученик",schoolClass:"none",reminders:false},
+ profile:{name:"",schoolClass:"none",reminders:false},
  classSchedules:{"5А":[
  {id:501,day:0,time:"08:30",subject:"Разговоры о важном",teacher:"Федорова ИЮ"},{id:502,day:0,time:"09:30",subject:"Русский язык",teacher:"Букина АА"},{id:503,day:0,time:"10:30",subject:"Литература",teacher:"Букина АА"},{id:504,day:0,time:"11:35",subject:"География",teacher:"Владимирова ЕА"},{id:505,day:0,time:"12:35",subject:"Киберурок",teacher:"Федорова ИЮ"},{id:506,day:0,time:"13:35",subject:"Математика",teacher:"Федорова ИЮ"},
  {id:507,day:1,time:"08:30",subject:"Математика",teacher:"Федорова ИЮ"},{id:508,day:1,time:"09:30",subject:"Компьютерная грамотность",teacher:"Деклау НВ"},{id:509,day:1,time:"10:30",subject:"Русский язык",teacher:"Букина АА"},{id:510,day:1,time:"11:35",subject:"Изобразительное искусство",teacher:"Афанасьева ДВ"},{id:511,day:1,time:"12:35",subject:"Физическая культура",teacher:"Красновейкин ВА"},{id:512,day:1,time:"13:35",subject:"Литература",teacher:"Букина АА"},
@@ -484,7 +484,7 @@ function renderHome(){
  const a=avg(data.grades);
  content.innerHTML=`
  ${welcomeHidden?`<button class="secondary" data-action="show-welcome" style="margin:0 0 14px;width:100%">👋 Показать приветствие</button>`:`<section class="welcome"><button class="welcome-close" data-action="hide-welcome" aria-label="Скрыть приветствие" title="Скрыть">×</button><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
- <h1>Привет, ${esc(data.profile.name)}! 👋</h1><p>Всё важное для учёбы — в одном месте.</p></section>`}
+ <h1>${data.profile.name?`Привет, ${esc(data.profile.name)}! 👋`:"Привет! 👋"}</h1><p>Всё важное для учёбы — в одном месте.</p></section>`}
  <div class="stats">
  <div class="stat"><div>📚</div><div class="stat-number">${lessons.length}</div><div class="muted">Уроков сегодня</div></div>
  <div class="stat"><div>📝</div><div class="stat-number">${pending.length}</div><div class="muted">Незаконченных заданий</div></div>
@@ -661,7 +661,7 @@ function renderProfile(){
  const avatar=data.profile.avatar;
  content.innerHTML=`<h1>Профиль 👤</h1><p class="muted">Настройки приложения</p>
  <div class="card profile-center"><div class="profile-avatar ${avatar?"has-photo":""}">${avatar?`<img src="${esc(avatar)}" alt="Аватар профиля">`:"👩‍🎓"}</div>
- <h2 style="margin:5px 0">${esc(data.profile.name)}</h2><p class="muted">${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`Класс: ${esc(data.profile.schoolClass)}`:"-"}</p>
+ <h2 style="margin:5px 0">${esc(data.profile.name||"Имя не указано")}</h2><p class="muted">${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`Класс: ${esc(data.profile.schoolClass)}`:"-"}</p>
  <button class="secondary" data-action="edit-profile">Изменить профиль</button></div>
  <h2>Настройки</h2><div class="card"><h3>Класс и расписание</h3><p class="muted">Выбери класс — расписание обновится автоматически</p><p style="font-weight:750;margin:10px 0">Сейчас выбран: ${data.profile.schoolClass&&data.profile.schoolClass!=="none"?esc(data.profile.schoolClass):"Нет"}</p><button class="secondary" data-action="edit-class">Изменить класс</button></div><div class="card"><label style="display:flex;justify-content:space-between;gap:12px;align-items:center">
  <span><strong>Напоминания в приложении</strong><p class="muted">Показывать блок напоминаний на главной</p></span>
