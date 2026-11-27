@@ -208,6 +208,73 @@ p{margin:5px 0}
 .profile-avatar{font-size:34px;background:#E5EBE3;color:var(--dark);width:72px;height:72px;
  border-radius:23px;display:grid;place-items:center;margin:0 auto 10px}
 @media(min-width:600px){.modal-bg{align-items:center}}
+
+/* Годовой календарь: фиксированная равномерная сетка */
+.calendar-year-view{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ align-items:start!important;
+ justify-items:stretch!important;
+ gap:10px!important;
+ width:100%!important;
+}
+.year-month{
+ display:block!important;
+ width:100%!important;
+ min-width:0!important;
+ padding:9px 4px!important;
+ box-sizing:border-box!important;
+ overflow:hidden!important;
+}
+.year-month-title{margin:0 0 6px!important;text-align:center!important}
+.year-month-grid{
+ display:grid!important;
+ grid-template-columns:repeat(7,minmax(0,1fr))!important;
+ grid-auto-flow:row!important;
+ justify-items:center!important;
+ align-items:center!important;
+ align-content:start!important;
+ gap:3px 0!important;
+ width:100%!important;
+ min-width:0!important;
+ box-sizing:border-box!important;
+}
+.year-month-grid span{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ justify-self:center!important;
+ width:18px!important;
+ max-width:100%!important;
+ height:18px!important;
+ min-width:0!important;
+ padding:0!important;
+ margin:0!important;
+ box-sizing:border-box!important;
+ border-radius:50%!important;
+ font-size:9px!important;
+ line-height:18px!important;
+ overflow:hidden!important;
+ white-space:nowrap!important;
+}
+.year-month-grid .year-weekday{
+ width:100%!important;
+ height:14px!important;
+ border-radius:0!important;
+ background:transparent!important;
+ font-size:8px!important;
+ line-height:14px!important;
+}
+.year-month-grid span:empty{background:transparent!important}
+.year-month-grid .year-vacation{background:#D7E4D9!important;color:#456B5B!important}
+.year-month-grid .year-weekend{background:#E8D6CF!important;color:#fff!important}
+@media(max-width:520px){
+ .calendar-year-view{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+ .year-month{padding:8px 3px!important}
+ .year-month-grid span{width:20px!important;height:20px!important;font-size:10px!important;line-height:20px!important}
+ .year-month-grid .year-weekday{height:15px!important;font-size:9px!important;line-height:15px!important}
+}
+
 </style>
 </head>
 <body>
