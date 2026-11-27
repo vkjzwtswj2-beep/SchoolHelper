@@ -784,8 +784,15 @@ function profileForm(){
  });
 }
 function classForm(){
- const options=[["5А","5А"],["none","Нет"]];
- openModal("Класс и расписание",`<div class="field"><label>Выбери класс</label><select name="schoolClass">${options.map(([value,label])=>`<option value="${value}" ${data.profile.schoolClass===value?"selected":""}>${label}</option>`).join("")}</select></div>`,v=>{
+ const current=data.profile.schoolClass||"none";
+ openModal("Класс и расписание",`<div class="field"><label style="display:block;margin-bottom:10px">Выбери свой класс</label>
+ <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #DCE4DE;border-radius:14px;margin-bottom:10px;cursor:pointer;background:#fff">
+ <input type="radio" name="schoolClass" value="5А" ${current==="5А"?"checked":""} style="width:20px;height:20px;accent-color:#536F61">
+ <span style="font-weight:700">5А</span></label>
+ <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #DCE4DE;border-radius:14px;cursor:pointer;background:#fff">
+ <input type="radio" name="schoolClass" value="none" ${current==="none"?"checked":""} style="width:20px;height:20px;accent-color:#536F61">
+ <span style="font-weight:700">Нет</span></label></div>`,v=>{
+  if(v.schoolClass!=="5А"&&v.schoolClass!=="none")return false;
   data.profile.schoolClass=v.schoolClass;
  });
 }
