@@ -669,7 +669,7 @@ function renderProfile(){
  <h2>О приложении</h2><div class="card"><h3>SchoolHelper 📚</h3>
  <p class="muted">Расписание, задания, дедлайны и оценки.</p>
  <p class="muted">Данные хранятся в браузере на этом устройстве.</p></div>
- <div class="card"><h3>Сбросить данные</h3><p class="muted">Вернуть демонстрационные записи.</p>
+ <div class="card"><h3>Сбросить приложение</h3><p class="muted">Удалить имя, фотографию, выбранный класс, личное расписание, задания, оценки, цели и дедлайны. Настройки календаря, каникулы, выходные и праздники останутся без изменений.</p>
  <button class="small-btn danger" data-action="reset-data">Сбросить приложение</button></div>`;
 }
 function render(){
@@ -843,7 +843,7 @@ function action(a,el){
   return render();
  }
  if(a==="close-modal")return closeModal();
- if(a==="reset-data"){if(confirm("Точно сбросить все данные?")){data=clone(initial);save();render()}}
+ if(a==="reset-data"){if(confirm("Сбросить приложение?\n\nИмя, фотография, выбранный класс, личное расписание, задания, оценки, цели и дедлайны будут удалены. Календарь, каникулы, выходные и праздники останутся без изменений.")){const savedClassSchedules=data.classSchedules;data=clone(initial);data.classSchedules=savedClassSchedules;welcomeHidden=false;try{localStorage.removeItem(WELCOME_HIDDEN_KEY)}catch(e){}save();render()}}
 }
 
 document.addEventListener("click",e=>{
