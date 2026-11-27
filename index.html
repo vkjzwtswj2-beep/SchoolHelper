@@ -471,8 +471,9 @@ function deadlineHTML(t){
  <button class="small-btn danger" data-action="delete-deadline" data-id="${t.id}">Удалить</button>
  </div></div></div>`}
 
+function lessonTimeRange(start){const ends={"08:30":"09:15","09:30":"10:15","10:30":"11:15","11:35":"12:20","12:35":"13:20","13:35":"14:20","14:30":"15:15"};return ends[start]?`${start}–${ends[start]}`:start}
 function lessonHTML(t){return `<div class="item">
- <div class="lesson-time">${esc(t.time)}</div><div class="item-icon">📖</div>
+ <div class="lesson-time">${esc(lessonTimeRange(t.time))}</div><div class="item-icon">📖</div>
  <div class="item-main"><h3>${esc(t.subject)}</h3><p>${t.teacher?"Учитель: "+esc(t.teacher):"Кабинет: "+esc(t.room||"—")}</p>
  <div class="item-actions">
  <button class="small-btn" data-action="edit-lesson" data-id="${t.id}">Изменить</button>
