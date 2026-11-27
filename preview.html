@@ -315,6 +315,17 @@ p{margin:5px 0}
  .nav-btn span{font-size:18px!important}
 }
 
+/* Fix modal close controls and native date/time input sizing on mobile */
+.modal-head .close{position:relative;z-index:2;flex:0 0 42px;width:42px;height:42px;cursor:pointer;pointer-events:auto}
+.modal .field{min-width:0;width:100%}
+.modal .field input,.modal .field select{
+ display:block;box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important
+}
+.modal .field input[type="time"],.modal .field input[type="date"],.modal .field input[type="datetime-local"]{
+ -webkit-appearance:none;appearance:none;font:inherit;font-size:16px;min-height:52px;padding:12px 10px
+}
+.modal .field input[type="time"]::-webkit-date-and-time-value{text-align:center}
+
 </style>
 </head>
 <body>
@@ -683,7 +694,10 @@ function openModal(title,html,submit){
   e.preventDefault();const values=Object.fromEntries(new FormData(e.currentTarget).entries());
   if(submit(values)!==false){closeModal();save();render()}
  });
- $(".modal").addEventListener("click",e=>e.stopPropagation());
+ $(".modal").addEventListener("click",e=>{
+  if(e.target.closest('[data-action="close-modal"]')){e.preventDefault();closeModal();return}
+  e.stopPropagation();
+ });
 }
 function closeModal(){modalRoot.innerHTML=""}
 function field(label,name,value="",type="text",required=true){
