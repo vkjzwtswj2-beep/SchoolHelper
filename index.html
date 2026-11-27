@@ -700,16 +700,20 @@ function render(){
 
 /* Формы */
 function openModal(title,html,submit){
- modalRoot.innerHTML=`<div class="modal-bg" data-action="close-modal"><div class="modal">
- <div class="modal-head"><h2 style="margin:0">${esc(title)}</h2><button class="close" data-action="close-modal">×</button></div>
+ modalRoot.innerHTML=`<div class="modal-bg"><div class="modal">
+ <div class="modal-head"><h2 style="margin:0">${esc(title)}</h2><button class="close" type="button" data-action="close-modal">×</button></div>
  <form id="edit-form">${html}<button class="primary full" type="submit">Сохранить</button></form>
  </div></div>`;
+ const backdrop=$(".modal-bg");
+ backdrop.addEventListener("click",e=>{if(e.target===backdrop)closeModal()});
  $("#edit-form").addEventListener("submit",e=>{
-  e.preventDefault();const values=Object.fromEntries(new FormData(e.currentTarget).entries());
-  if(submit(values)!==false){closeModal();save();render()}
+  e.preventDefault();
+  const values=Object.fromEntries(new FormData(e.currentTarget).entries());
+  if(submit(values)!==false){save();closeModal();render()}
  });
  $(".modal").addEventListener("click",e=>{
-  if(e.target.closest('[data-action="close-modal"]')){e.preventDefault();closeModal();return}
+  const close=e.target.closest('[data-action="close-modal"]');
+  if(close){e.preventDefault();closeModal();return}
   e.stopPropagation();
  });
 }
