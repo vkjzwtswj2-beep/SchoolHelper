@@ -210,8 +210,10 @@ p{margin:5px 0}
 .progress>div{height:100%;background:linear-gradient(90deg,#1D2D4D,#C49A55);border-radius:10px}
 .goal-box{background:#F1EEE3;border:1px solid #E6DDC8;border-radius:14px;padding:12px;margin-top:10px}
 .profile-center{text-align:center;padding:23px}
-.profile-avatar{font-size:34px;background:#E5EBE3;color:var(--dark);width:72px;height:72px;
- border-radius:23px;display:grid;place-items:center;margin:0 auto 10px}
+.profile-avatar{font-size:34px;background:#E5EBE3;color:var(--dark);width:88px;height:88px;
+ border-radius:50%;display:grid;place-items:center;margin:0 auto 12px;overflow:hidden;border:3px solid #E5EBE3}
+.profile-avatar.has-photo{background:#E5EBE3}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 @media(min-width:600px){.modal-bg{align-items:center}}
 
 /* Годовой календарь: фиксированная равномерная сетка */
@@ -681,8 +683,9 @@ function renderGrades(){
 }
 
 function renderProfile(){
+ const avatar=data.profile.avatar;
  content.innerHTML=`<h1>Профиль 👤</h1><p class="muted">Настройки приложения</p>
- <div class="card profile-center"><div class="profile-avatar">👩‍🎓</div>
+ <div class="card profile-center"><div class="profile-avatar ${avatar?"has-photo":""}">${avatar?`<img src="${esc(avatar)}" alt="Аватар профиля">`:"👩‍🎓"}</div><input id="avatar-file" type="file" accept="image/*" hidden><button class="secondary" data-action="choose-avatar">${avatar?"Изменить аватарку":"Добавить аватарку"}</button>${avatar?'<button class="small-btn danger" style="margin-left:6px" data-action="remove-avatar">Удалить</button>':""}
  <h2 style="margin:5px 0">${esc(data.profile.name)}</h2><p class="muted">${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`Класс: ${esc(data.profile.schoolClass)}`:"-"}</p>
  <button class="secondary" data-action="edit-profile">Изменить профиль</button></div>
  <h2>Настройки</h2><div class="card"><h3>Класс и расписание</h3><p class="muted">Выбери класс — расписание обновится автоматически</p><p style="font-weight:750;margin:10px 0">Сейчас выбран: ${data.profile.schoolClass&&data.profile.schoolClass!=="none"?esc(data.profile.schoolClass):"Нет"}</p><button class="secondary" data-action="edit-class">Изменить класс</button></div><div class="card"><label style="display:flex;justify-content:space-between;gap:12px;align-items:center">
@@ -840,6 +843,8 @@ function action(a,el){
  if(a==="delete-grade")return remove("grades",n,"оценку");
  if(a==="add-goal")return goalForm();
  if(a==="edit-goal")return goalForm(el.dataset.subject);
+ if(a==="choose-avatar"){document.getElementById("avatar-file")?.click();return;}
+ if(a==="remove-avatar"){data.profile.avatar="";save();return renderProfile();}
  if(a==="edit-profile")return profileForm();
  if(a==="edit-class")return classForm();
  if(a==="set-class"){const chosen=el.dataset.class;if(chosen==="5А"||chosen==="none"){data.profile.schoolClass=chosen;save();renderProfile()}return;}
@@ -864,6 +869,26 @@ document.addEventListener("click",e=>{
  if(el)action(el.dataset.action,el);
 });
 document.addEventListener("change",e=>{
+ if(e.target.id==="avatar-file"&&e.target.files?.[0]){
+  const file=e.target.files[0];
+  if(!file.type.startsWith("image/")){alert("Выбери файл изображения.");return;}
+  const reader=new FileReader();
+  reader.onload=()=>{
+   const img=new Image();
+   img.onload=()=>{
+    const max=512,scale=Math.min(1,max/Math.max(img.width,img.height));
+    const canvas=document.createElement("canvas");
+    canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
+    canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+    data.profile.avatar=canvas.toDataURL("image/jpeg",.82);
+    save();renderProfile();
+   };
+   img.onerror=()=>alert("Не удалось открыть это изображение.");
+   img.src=reader.result;
+  };
+  reader.onerror=()=>alert("Не удалось прочитать файл.");
+  reader.readAsDataURL(file);
+ }
  if(e.target.dataset.action==="toggle-reminders"){
   data.profile.reminders=e.target.checked;save();render();
  }
