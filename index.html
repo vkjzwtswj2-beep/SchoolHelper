@@ -125,6 +125,16 @@ p{margin:5px 0}
 .calendar-month-view .calendar-dots{display:flex;align-items:center;justify-content:center;gap:3px;min-height:6px}
 .calendar-month-view .calendar-dots i{display:block;width:5px;height:5px;flex:0 0 5px;border-radius:50%;background:var(--green)}
 .calendar-month-view .calendar-day.selected .calendar-dots i{background:var(--green)}
+.calendar-legend{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 2px;color:var(--muted);font-size:11px}
+.calendar-legend span{display:inline-flex;align-items:center;gap:6px}
+.calendar-legend i{width:11px;height:11px;border-radius:4px;display:inline-block}
+.calendar-legend .legend-vacation{background:#D7E4D9}
+.calendar-legend .legend-weekend{background:#E8D6CF}
+.week-cell.vacation .week-number,.calendar-month-view .calendar-day.vacation .day-number{background:#D7E4D9;color:#456B5B}
+.week-cell.weekend .week-number,.calendar-month-view .calendar-day.weekend .day-number{background:#E8D6CF;color:#fff}
+.week-cell.selected.vacation .week-number,.calendar-month-view .calendar-day.selected.vacation .day-number{background:#D7E4D9;color:#456B5B;outline:2px solid var(--dark);outline-offset:2px}
+.week-cell.selected.weekend .week-number,.calendar-month-view .calendar-day.selected.weekend .day-number{background:#E8D6CF;color:#fff;outline:2px solid var(--dark);outline-offset:2px}
+
 /* Month view follows the same circular, minimal style as the week strip */
 .calendar-month-view .calendar-grid{gap:4px}
 .calendar-month-view .calendar-weekday{font-size:10px;padding:5px 0}
@@ -366,7 +376,7 @@ function renderSchedule(){
   const tasks=data.tasks.filter(x=>x.date===key),deadlines=data.deadlines.filter(x=>x.date===key);
   const lessons=data.schedule.filter(x=>x.day===dayIndex);
   const dots=[...Array(Math.min(tasks.length,2)).fill("task"),...Array(Math.min(deadlines.length,2)).fill("deadline"),...Array(lessons.length?1:0).fill("lesson")].slice(0,3);
-  return {key,number:d.getDate(),sameMonth:d.getMonth()===calendarMonth.getMonth(),isToday:key===today,selected:key===selectedCalendarDate,dots};
+  return {key,number:d.getDate(),sameMonth:d.getMonth()===calendarMonth.getMonth(),isToday:key===today,selected:key===selectedCalendarDate,type:calendarDayType(key),dots};
  };
  const weekCells=Array.from({length:7},(_,i)=>{const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);return makeCell(d)});
  const first=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1),offset=(first.getDay()+6)%7;
@@ -384,9 +394,10 @@ function renderSchedule(){
    <button class="calendar-toggle" data-action="calendar-expand">${calendarExpanded?"Свернуть":"Весь месяц"} ${calendarExpanded?"⌃":"⌄"}</button>
    <button class="small-btn" data-action="calendar-next" aria-label="Следующая неделя или месяц">›</button>
   </div>
+  <div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div>
   ${calendarExpanded?`<div class="calendar-month-view"><div class="calendar-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<div class="calendar-weekday">${x}</div>`).join("")}
-  ${monthCells.map(x=>`<button class="calendar-day ${x.sameMonth?"":"muted-day"} ${x.isToday?"today":""} ${x.selected?"selected":""}" data-action="calendar-select" data-date="${x.key}"><span class="day-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div></div>`:
-  `<div class="week-strip">${weekCells.map(x=>`<button class="week-cell ${x.selected?"selected":""} ${x.isToday?"today":""}" data-action="calendar-select" data-date="${x.key}"><span class="week-name">${new Date(x.key+"T12:00:00").toLocaleDateString("ru-RU",{weekday:"short"})}</span><span class="week-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div>`}
+  ${monthCells.map(x=>`<button class="calendar-day ${x.sameMonth?"":"muted-day"} ${x.isToday?"today":""} ${x.selected?"selected":""} ${x.type}" data-action="calendar-select" data-date="${x.key}"><span class="day-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div></div>`:
+  `<div class="week-strip">${weekCells.map(x=>`<button class="week-cell ${x.selected?"selected":""} ${x.isToday?"today":""} ${x.type}" data-action="calendar-select" data-date="${x.key}"><span class="week-name">${new Date(x.key+"T12:00:00").toLocaleDateString("ru-RU",{weekday:"short"})}</span><span class="week-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div>`}
   <button class="secondary full" data-action="calendar-today">Сегодня</button>
  </div>
  <div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2><button class="primary" data-action="add-lesson">＋ Урок</button></div>
