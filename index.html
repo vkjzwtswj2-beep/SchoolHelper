@@ -465,7 +465,7 @@ function calendarDayType(key){
  const d=dateObj(key);
  return d.getDay()===0||d.getDay()===6||schoolHolidayDates.includes(key)?"weekend":"";
 }
-function isNoSchoolDate(key){const d=dateObj(key),m=d.getMonth();return key<"2026-09-01"||m>4||calendarDayType(key)!=="";}
+function isNoSchoolDate(key){return key<"2026-09-01"||key>"2027-05-31"||calendarDayType(key)!=="";}
 function getActiveSchedule(){return Array.isArray(data.classSchedules?.[data.profile.schoolClass])?data.classSchedules[data.profile.schoolClass]:[]}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}
  catch(e){alert("Не удалось сохранить данные на устройстве.")}}
