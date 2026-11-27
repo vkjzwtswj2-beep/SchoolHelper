@@ -430,8 +430,8 @@ function renderSchedule(){
   <div class="calendar-toolbar">
    <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий период">‹</button>
    <div class="calendar-month">${calendarYearView?academicYearLabel:esc(monthName)}</div>
-   <button class="calendar-toggle" data-action="calendar-view-toggle">${calendarYearView?"К месяцу":calendarExpanded?"К году":"К месяцу"}</button>
-   ${calendarExpanded?`<button class="calendar-toggle" data-action="calendar-back-week">К неделе</button>`:""}
+   <button class="calendar-toggle" data-action="calendar-view-toggle">${calendarYearView?"к месяцу":calendarExpanded?"к году":"к месяцу"}</button>
+   ${calendarExpanded?`<button class="calendar-toggle" data-action="calendar-back-week">к неделе</button>`:""}
    <button class="small-btn" data-action="calendar-next" aria-label="Следующий период">›</button>
   </div>
   ${calendarYearView?`<div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div><div class="calendar-year-view">${academicMonths}</div>`:`
