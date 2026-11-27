@@ -465,6 +465,7 @@ function calendarDayType(key){
  const d=dateObj(key);
  return d.getDay()===0||d.getDay()===6||schoolHolidayDates.includes(key)?"weekend":"";
 }
+function isNoSchoolDate(key){return calendarDayType(key)!=="";}
 function getActiveSchedule(){return Array.isArray(data.classSchedules?.[data.profile.schoolClass])?data.classSchedules[data.profile.schoolClass]:[]}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}
  catch(e){alert("Не удалось сохранить данные на устройстве.")}}
@@ -502,7 +503,7 @@ function lessonHTML(t){return `<div class="item">
 
 function renderHome(){
  const pending=data.tasks.filter(t=>!t.done);
- const lessons=getActiveSchedule().filter(t=>t.day===todayIndex);
+ const lessons=isNoSchoolDate(today)?[]:getActiveSchedule().filter(t=>t.day===todayIndex);
  const a=avg(data.grades);
  content.innerHTML=`
  ${welcomeHidden?`<button class="secondary" data-action="show-welcome" style="margin:0 0 14px;width:100%">👋 Показать приветствие</button>`:`<section class="welcome"><button class="welcome-close" data-action="hide-welcome" aria-label="Скрыть приветствие" title="Скрыть">×</button><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
@@ -528,7 +529,7 @@ function renderSchedule(){
  const makeCell=d=>{
   const key=localDate(d),dayIndex=(d.getDay()+6)%7;
   const tasks=data.tasks.filter(x=>x.date===key),deadlines=data.deadlines.filter(x=>x.date===key);
-  const lessons=getActiveSchedule().filter(x=>x.day===dayIndex);
+  const lessons=isNoSchoolDate(key)?[]:getActiveSchedule().filter(x=>x.day===dayIndex);
   const dots=[...Array(Math.min(tasks.length,2)).fill("task"),...Array(Math.min(deadlines.length,2)).fill("deadline"),...Array(lessons.length?1:0).fill("lesson")].slice(0,3);
   return {key,number:d.getDate(),sameMonth:d.getMonth()===calendarMonth.getMonth(),isToday:key===today,selected:key===selectedCalendarDate,type:calendarDayType(key),dots};
  };
@@ -553,7 +554,8 @@ function renderSchedule(){
  }).join("");
  const academicYearLabel=`${academicStartYear}–${academicStartYear+1}`;
  const day=(selected.getDay()+6)%7;
- const list=getActiveSchedule().filter(t=>t.day===day).sort((a,b)=>a.time.localeCompare(b.time));
+ const noSchool=isNoSchoolDate(selectedCalendarDate);
+ const list=(noSchool?[]:getActiveSchedule().filter(t=>t.day===day)).sort((a,b)=>a.time.localeCompare(b.time));
  const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
  const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
  content.innerHTML=`<h1>Расписание 🗓️</h1><p class="muted">Выбери день недели, месяц или посмотри весь год</p>
@@ -572,7 +574,7 @@ function renderSchedule(){
   <button class="secondary full" data-action="calendar-today">${selectedCalendarDate===today?"Сегодня":"Вернуться к сегодня"}</button>`}
  </div>
  ${calendarYearView?"":`<div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2><button class="primary" data-action="add-lesson">＋ Урок</button></div>
- <div class="card">${list.length?list.map(lessonHTML).join(""):empty("📖","На этот день уроков пока нет")}</div>
+ <div class="card">${list.length?list.map(lessonHTML).join(""):empty("📖",noSchool?"В этот день занятий нет":"На этот день уроков пока нет")}</div>
  ${chosenTasks.length?`<div class="section-head"><h2>Задания на эту дату</h2></div><div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
  ${chosenDeadlines.length?`<div class="section-head"><h2>Дедлайны на эту дату</h2></div><div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}`}`;
 }
