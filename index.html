@@ -160,7 +160,6 @@ p{margin:5px 0}
 <nav class="bottom-nav">
  <button class="nav-btn active" data-page="home"><span>🏠</span>Главная</button>
  <button class="nav-btn" data-page="schedule"><span>🗓️</span>Расписание</button>
- <button class="nav-btn" data-page="calendar"><span>📅</span>Календарь</button>
  <button class="nav-btn" data-page="tasks"><span>📝</span>Задания</button>
  <button class="nav-btn" data-page="deadlines"><span>⏰</span>Дедлайны</button>
  <button class="nav-btn" data-page="grades"><span>⭐</span>Оценки</button>
@@ -321,12 +320,38 @@ function renderHome(){
 }
 
 function renderSchedule(){
- const day=Math.max(0,Math.min(6,Number(data.selectedDay)||0));
+ const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth();
+ const monthName=calendarMonth.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
+ const first=new Date(year,month,1),offset=(first.getDay()+6)%7;
+ const start=new Date(year,month,1-offset),cells=[];
+ for(let i=0;i<42;i++){
+  const d=new Date(start);d.setDate(start.getDate()+i);
+  const key=localDate(d),dayIndex=(d.getDay()+6)%7;
+  const tasks=data.tasks.filter(x=>x.date===key),deadlines=data.deadlines.filter(x=>x.date===key);
+  const lessons=data.schedule.filter(x=>x.day===dayIndex);
+  const dots=[...Array(Math.min(tasks.length,2)).fill("task"),...Array(Math.min(deadlines.length,2)).fill("deadline"),...Array(lessons.length?1:0).fill("lesson")].slice(0,3);
+  cells.push({key,number:d.getDate(),sameMonth:d.getMonth()===month,isToday:key===today,selected:key===selectedCalendarDate,dots});
+ }
+ const selected=dateObj(selectedCalendarDate),day= (selected.getDay()+6)%7;
  const list=data.schedule.filter(t=>t.day===day).sort((a,b)=>a.time.localeCompare(b.time));
- content.innerHTML=`<h1>Расписание 🗓️</h1><p class="muted">Уроки на каждый день недели</p>
- <div class="days">${shortDays.map((d,i)=>`<button class="day ${day===i?"active":""}" data-action="select-day" data-day="${i}">${d}<strong>${i+1}</strong></button>`).join("")}</div>
- ${head(weekdays[day],"Добавить урок","add-lesson")}
- <div class="card">${list.length?list.map(lessonHTML).join(""):empty("📖","На этот день уроков пока нет")}</div>`;
+ const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
+ const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
+ content.innerHTML=`<h1>Расписание 🗓️</h1><p class="muted">Выбери дату, чтобы посмотреть уроки и планы</p>
+ <div class="card">
+  <div class="calendar-toolbar">
+   <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий месяц">‹</button>
+   <div class="calendar-month">${esc(monthName)}</div>
+   <button class="small-btn" data-action="calendar-next" aria-label="Следующий месяц">›</button>
+  </div>
+  <div class="calendar-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<div class="calendar-weekday">${x}</div>`).join("")}
+  ${cells.map(x=>`<button class="calendar-day ${x.sameMonth?"":"muted-day"} ${x.isToday?"today":""} ${x.selected?"selected":""}" data-action="calendar-select" data-date="${x.key}">
+   <span class="day-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div>
+  <button class="secondary full" data-action="calendar-today">Сегодня</button>
+ </div>
+ <div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2><button class="primary" data-action="add-lesson">＋ Урок</button></div>
+ <div class="card">${list.length?list.map(lessonHTML).join(""):empty("📖","На этот день уроков пока нет")}</div>
+ ${chosenTasks.length?`<div class="section-head"><h2>Задания на эту дату</h2></div><div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
+ ${chosenDeadlines.length?`<div class="section-head"><h2>Дедлайны на эту дату</h2></div><div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}`;
 }
 
 function renderCalendar(){
