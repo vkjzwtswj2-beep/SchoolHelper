@@ -252,6 +252,20 @@ function localDate(d=new Date()){
  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
 function dateObj(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d,12)}
+const schoolBreakRanges=[
+ ["2026-10-05","2026-10-11"],
+ ["2026-11-16","2026-11-21"],
+ ["2026-12-30","2027-01-10"],
+ ["2027-02-15","2027-02-21"],
+ ["2027-04-05","2027-04-11"],
+ ["2027-05-26","2027-08-31"]
+];
+const schoolHolidayDates=["2026-11-04","2027-02-22","2027-02-23","2027-03-08","2027-05-03","2027-05-10"];
+function calendarDayType(key){
+ if(schoolBreakRanges.some(([a,b])=>key>=a&&key<=b))return "vacation";
+ const d=dateObj(key);
+ return d.getDay()===0||d.getDay()===6||schoolHolidayDates.includes(key)?"weekend":"";
+}
 function shiftDate(s,n){const d=dateObj(s);d.setDate(d.getDate()+n);return localDate(d)}
 function formatDate(s){return s?dateObj(s).toLocaleDateString("ru-RU",{day:"numeric",month:"long"}):""}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
