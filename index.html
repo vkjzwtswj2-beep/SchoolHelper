@@ -683,7 +683,7 @@ function renderProfile(){
  <div class="card profile-center"><div class="profile-avatar">👩‍🎓</div>
  <h2 style="margin:5px 0">${esc(data.profile.name)}</h2><p class="muted">${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`Класс: ${esc(data.profile.schoolClass)}`:"-"}</p>
  <button class="secondary" data-action="edit-profile">Изменить профиль</button></div>
- <h2>Настройки</h2><div class="card"><h3>Класс и расписание</h3><p class="muted">Выбери свой класс или отключи отображение уроков</p><p style="font-weight:750;margin:10px 0">${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`Выбран класс: ${esc(data.profile.schoolClass)}`:"-"}</p><button class="secondary" data-action="edit-class">Изменить класс</button></div><div class="card"><label style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+ <h2>Настройки</h2><div class="card"><h3>Класс и расписание</h3><p class="muted">Выбери класс — расписание обновится автоматически</p><p style="font-weight:750;margin:10px 0">Сейчас выбран: ${data.profile.schoolClass&&data.profile.schoolClass!=="none"?esc(data.profile.schoolClass):"Нет"}</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" data-action="set-class" data-class="5А" ${data.profile.schoolClass==="5А"?"disabled":""}>5А</button><button class="secondary" data-action="set-class" data-class="none" ${data.profile.schoolClass==="none"?"disabled":""}>Нет</button></div></div><div class="card"><label style="display:flex;justify-content:space-between;gap:12px;align-items:center">
  <span><strong>Напоминания в приложении</strong><p class="muted">Показывать блок напоминаний на главной</p></span>
  <input type="checkbox" data-action="toggle-reminders" ${data.profile.reminders?"checked":""}></label></div>
  <h2>О приложении</h2><div class="card"><h3>SchoolHelper 📚</h3>
@@ -829,6 +829,7 @@ function action(a,el){
  if(a==="edit-goal")return goalForm(el.dataset.subject);
  if(a==="edit-profile")return profileForm();
  if(a==="edit-class")return classForm();
+ if(a==="set-class"){const chosen=el.dataset.class;if(chosen==="5А"||chosen==="none"){data.profile.schoolClass=chosen;save();renderProfile()}return;}
  if(a==="select-day"){data.selectedDay=Number(el.dataset.day);save();return render()}
  if(a==="go-deadlines")return setPage("deadlines");
  if(a==="hide-welcome"||a==="show-welcome"){
