@@ -109,6 +109,16 @@ p{margin:5px 0}
 .week-cell.today .week-number{outline:2px solid var(--gold);outline-offset:2px}
 .week-cell .calendar-dots{height:5px}
 .calendar-month-view{margin-top:12px}
+.calendar-year-view{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.year-month{border:1px solid var(--border);background:#FBF8EF;border-radius:14px;padding:9px 6px;min-width:0;text-align:center;color:var(--text)}
+.year-month-title{font-size:12px;font-weight:800;text-transform:capitalize;margin-bottom:7px}
+.year-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+.year-month-grid span{font-size:9px;line-height:18px;min-width:0;border-radius:5px;color:var(--muted)}
+.year-month-grid .year-weekday{font-size:8px;color:var(--muted);font-weight:700}
+.year-month-grid .year-vacation{background:#D7E4D9;color:#456B5B;font-weight:700}
+.year-month-grid .year-weekend{background:#E8D6CF;color:#76564F;font-weight:700}
+.year-month-grid .year-today{outline:1px solid var(--gold);outline-offset:-1px}
+@media(max-width:380px){.calendar-year-view{gap:7px}.year-month{padding:7px 3px}.year-month-grid span{font-size:8px;line-height:16px}.year-month-title{font-size:11px}}
 
 .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
 .calendar-weekday{text-align:center;color:var(--muted);font-size:11px;padding:5px 0}
@@ -313,6 +323,7 @@ let data=load(),page="home";
 let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 let selectedCalendarDate=today;
 let calendarExpanded=false;
+let calendarYearView=false;
 const schoolBreakRanges=[["2026-10-05","2026-10-11"],["2026-11-16","2026-11-21"],["2026-12-30","2027-01-10"],["2027-02-15","2027-02-21"],["2027-04-05","2027-04-11"],["2027-05-26","2027-08-31"]];
 const schoolHolidayDates=["2026-11-04","2027-02-22","2027-02-23","2027-03-08","2027-05-03","2027-05-10"];
 function calendarDayType(key){
@@ -375,6 +386,7 @@ function renderHome(){
 }
 
 function renderSchedule(){
+ const year=calendarMonth.getFullYear();
  const monthName=calendarMonth.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
  const selected=dateObj(selectedCalendarDate),weekStart=new Date(selected);
  weekStart.setDate(selected.getDate()-((selected.getDay()+6)%7));
@@ -389,28 +401,42 @@ function renderSchedule(){
  const first=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1),offset=(first.getDay()+6)%7;
  const monthStart=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1-offset);
  const monthCells=Array.from({length:42},(_,i)=>{const d=new Date(monthStart);d.setDate(monthStart.getDate()+i);return makeCell(d)});
+ const yearMonths=Array.from({length:12},(_,m)=>{
+  const firstDay=new Date(year,m,1),startOffset=(firstDay.getDay()+6)%7,days=new Date(year,m+1,0).getDate();
+  const cells=Array(startOffset).fill(null).concat(Array.from({length:days},(_,n)=>n+1));
+  while(cells.length%7)cells.push(null);
+  return `<button class="year-month" data-action="calendar-open-month" data-month="${m}" aria-label="Открыть ${new Date(year,m,1).toLocaleDateString("ru-RU",{month:"long"})}">
+   <div class="year-month-title">${new Date(year,m,1).toLocaleDateString("ru-RU",{month:"long"})}</div>
+   <div class="year-month-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<span class="year-weekday">${x[0]}</span>`).join("")}
+   ${cells.map(n=>{
+    if(!n)return "<span></span>";
+    const key=localDate(new Date(year,m,n)),type=calendarDayType(key);
+    return `<span class="${type==="vacation"?"year-vacation":type==="weekend"?"year-weekend":""} ${key===today?"year-today":""}">${n}</span>`;
+   }).join("")}</div></button>`;
+ }).join("");
  const day=(selected.getDay()+6)%7;
  const list=data.schedule.filter(t=>t.day===day).sort((a,b)=>a.time.localeCompare(b.time));
  const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
  const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
- content.innerHTML=`<h1>Расписание 🗓️</h1><p class="muted">Выбери день недели или открой календарь целиком</p>
+ content.innerHTML=`<h1>Расписание 🗓️</h1><p class="muted">Выбери день недели, месяц или посмотри весь год</p>
  <div class="card">
   <div class="calendar-toolbar">
-   <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущая неделя или месяц">‹</button>
-   <div class="calendar-month">${esc(monthName)}</div>
-   <button class="calendar-toggle" data-action="calendar-expand">${calendarExpanded?"Свернуть":"Весь месяц"} ${calendarExpanded?"⌃":"⌄"}</button>
-   <button class="small-btn" data-action="calendar-next" aria-label="Следующая неделя или месяц">›</button>
+   <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий период">‹</button>
+   <div class="calendar-month">${calendarYearView?year:esc(monthName)}</div>
+   <button class="calendar-toggle" data-action="calendar-year-toggle">${calendarYearView?"К месяцу":"Весь год"}</button>
+   <button class="small-btn" data-action="calendar-next" aria-label="Следующий период">›</button>
   </div>
+  ${calendarYearView?`<div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div><div class="calendar-year-view">${yearMonths}</div>`:`
   <div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div>
   ${calendarExpanded?`<div class="calendar-month-view"><div class="calendar-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<div class="calendar-weekday">${x}</div>`).join("")}
   ${monthCells.map(x=>`<button class="calendar-day ${x.sameMonth?"":"muted-day"} ${x.isToday?"today":""} ${x.selected?"selected":""} ${x.type}" data-action="calendar-select" data-date="${x.key}"><span class="day-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div></div>`:
   `<div class="week-strip">${weekCells.map(x=>`<button class="week-cell ${x.selected?"selected":""} ${x.isToday?"today":""} ${x.type}" data-action="calendar-select" data-date="${x.key}"><span class="week-name">${new Date(x.key+"T12:00:00").toLocaleDateString("ru-RU",{weekday:"short"})}</span><span class="week-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div>`}
-  <button class="secondary full" data-action="calendar-today">Сегодня</button>
+  <button class="secondary full" data-action="calendar-today">Сегодня</button>`}
  </div>
- <div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2><button class="primary" data-action="add-lesson">＋ Урок</button></div>
+ ${calendarYearView?"":`<div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2><button class="primary" data-action="add-lesson">＋ Урок</button></div>
  <div class="card">${list.length?list.map(lessonHTML).join(""):empty("📖","На этот день уроков пока нет")}</div>
  ${chosenTasks.length?`<div class="section-head"><h2>Задания на эту дату</h2></div><div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
- ${chosenDeadlines.length?`<div class="section-head"><h2>Дедлайны на эту дату</h2></div><div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}`;
+ ${chosenDeadlines.length?`<div class="section-head"><h2>Дедлайны на эту дату</h2></div><div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}`}`;
 }
 function renderCalendar(){
  const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth();
@@ -625,16 +651,16 @@ function remove(list,idValue,label){
 function action(a,el){
  const n=Number(el.dataset.id);
  if(a==="calendar-prev"||a==="calendar-next"){
-  if(calendarExpanded){
-   calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+(a==="calendar-next"?1:-1),1);
-  }else{
-   const d=dateObj(selectedCalendarDate);d.setDate(d.getDate()+(a==="calendar-next"?7:-7));
-   selectedCalendarDate=localDate(d);calendarMonth=new Date(d.getFullYear(),d.getMonth(),1);
-  }
+  const step=a==="calendar-next"?1:-1;
+  if(calendarYearView)calendarMonth=new Date(calendarMonth.getFullYear()+step,calendarMonth.getMonth(),1);
+  else if(calendarExpanded)calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+step,1);
+  else{const d=dateObj(selectedCalendarDate);d.setDate(d.getDate()+step*7);selectedCalendarDate=localDate(d);calendarMonth=new Date(d.getFullYear(),d.getMonth(),1)}
   return render();
  }
+ if(a==="calendar-year-toggle"){calendarYearView=!calendarYearView;if(calendarYearView)calendarExpanded=false;return render()}
+ if(a==="calendar-open-month"){const m=Number(el.dataset.month);calendarMonth=new Date(calendarMonth.getFullYear(),m,1);selectedCalendarDate=localDate(new Date(calendarMonth.getFullYear(),m,1));calendarYearView=false;calendarExpanded=true;return render()}
  if(a==="calendar-expand"){calendarExpanded=!calendarExpanded;return render()}
- if(a==="calendar-today"){calendarMonth=new Date();selectedCalendarDate=today;return render()}
+ if(a==="calendar-today"){calendarMonth=new Date();selectedCalendarDate=today;calendarYearView=false;calendarExpanded=false;return render()}
  if(a==="calendar-select"){selectedCalendarDate=el.dataset.date;return render()}
  if(a==="calendar-add-task")return taskForm(null,selectedCalendarDate);
  if(a==="calendar-add-deadline")return deadlineForm(null,selectedCalendarDate);
