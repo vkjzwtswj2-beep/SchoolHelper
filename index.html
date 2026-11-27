@@ -431,26 +431,6 @@ function load(){
  }catch(e){return clone(initial)}
 }
 let data=load();
-function getTelegramResetToken(){
- try{
-  const token=window.Telegram?.WebApp?.initDataUnsafe?.start_param||"";
-  return token.startsWith("reset_")?token:"";
- }catch(e){return ""}
-}
-const telegramResetToken=getTelegramResetToken();
-if(telegramResetToken){
- try{
-  if(localStorage.getItem("schoolhelper_last_telegram_reset")!==telegramResetToken){
-   const savedClassSchedules=data.classSchedules;
-   data=clone(initial);
-   data.classSchedules=savedClassSchedules;
-   welcomeHidden=false;
-   localStorage.removeItem(WELCOME_HIDDEN_KEY);
-   localStorage.setItem(KEY,JSON.stringify(data));
-   localStorage.setItem("schoolhelper_last_telegram_reset",telegramResetToken);
-  }
- }catch(e){}
-}
 let page="home";
 let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 let selectedCalendarDate=today;
