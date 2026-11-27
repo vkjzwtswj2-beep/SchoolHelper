@@ -784,7 +784,7 @@ function profileForm(){
  });
 }
 function classForm(){
- const options=[["5А","5А"],["none","Без расписания"]];
+ const options=[["5А","5А"],["none","Нет"]];
  openModal("Класс и расписание",`<div class="field"><label>Выбери класс</label><select name="schoolClass">${options.map(([value,label])=>`<option value="${value}" ${data.profile.schoolClass===value?"selected":""}>${label}</option>`).join("")}</select></div>`,v=>{
   data.profile.schoolClass=v.schoolClass;
  });
