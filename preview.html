@@ -112,13 +112,13 @@ p{margin:5px 0}
 .calendar-year-view{display:grid!important;width:100%;box-sizing:border-box;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:start;gap:8px;margin-top:12px}
 .year-month{display:block!important;width:100%;min-width:0;box-sizing:border-box;appearance:none;border:1px solid var(--border);background:#FBF8EF;border-radius:18px;padding:11px 6px;text-align:center;color:var(--text);font:inherit;overflow:hidden}
 .year-month-title{font-size:14px;font-weight:800;text-transform:capitalize;margin-bottom:9px;white-space:nowrap;color:var(--dark)}
-.year-month-grid{display:grid!important;width:100%;min-width:0;box-sizing:border-box;grid-template-columns:repeat(7,minmax(0,1fr))!important;grid-auto-flow:row;gap:3px;justify-items:center;align-items:center}
-.year-month-grid span{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;max-width:29px;min-width:0;aspect-ratio:1;height:auto;padding:0;font-size:12px;line-height:1;white-space:nowrap;overflow:hidden;border-radius:50%;color:var(--dark);font-weight:600;font-variant-numeric:tabular-nums;background:transparent}
-.year-month-grid .year-weekday{aspect-ratio:auto;height:20px;font-size:10px;color:var(--muted);font-weight:700;border-radius:0}
-.year-month-grid .year-vacation{background:#D7E4D9;color:#456B5B;font-weight:800;border-radius:50%}
-.year-month-grid .year-weekend{background:#E8D6CF;color:#fff;font-weight:800;border-radius:50%}
-.year-month-grid .year-today{outline:1.5px solid var(--gold);outline-offset:1px}
-@media(max-width:380px){.calendar-year-view{gap:7px}.year-month{padding:8px 3px}.year-month-title{font-size:12px}.year-month-grid{gap:2px}.year-month-grid span{font-size:10px;max-width:24px}.year-month-grid .year-weekday{font-size:9px;height:17px}}
+.year-month-grid{display:grid!important;width:100%;min-width:0;box-sizing:border-box;grid-template-columns:repeat(7,minmax(0,1fr))!important;grid-auto-flow:row;gap:2px;justify-items:stretch;align-items:center}
+.year-month-grid span{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;min-width:0;height:22px;aspect-ratio:auto;padding:0;font-size:11px;line-height:22px;white-space:nowrap;overflow:visible;border-radius:10px;color:var(--dark);font-weight:600;font-variant-numeric:tabular-nums;background:transparent}
+.year-month-grid .year-weekday{height:20px;font-size:10px;line-height:20px;color:var(--muted);font-weight:700;border-radius:0}
+.year-month-grid .year-vacation{background:#D7E4D9;color:#456B5B;font-weight:800;border-radius:10px}
+.year-month-grid .year-weekend{background:#E8D6CF;color:#fff;font-weight:800;border-radius:10px}
+.year-month-grid .year-today{outline:1.5px solid var(--gold);outline-offset:-1px}
+@media(max-width:380px){.calendar-year-view{gap:7px}.year-month{padding:8px 3px}.year-month-title{font-size:12px}.year-month-grid{gap:1px}.year-month-grid span{font-size:10px;height:20px;line-height:20px}.year-month-grid .year-weekday{font-size:9px;height:17px;line-height:17px}}
 
 .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
 .calendar-weekday{text-align:center;color:var(--muted);font-size:11px;padding:5px 0}
