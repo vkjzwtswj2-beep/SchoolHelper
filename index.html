@@ -87,7 +87,7 @@ p{margin:5px 0}
 .item+.item{border-top:1px solid var(--border);padding-top:12px;margin-top:12px}
 .item-icon{width:39px;height:39px;border-radius:12px;background:#E5EBE3;color:var(--dark);
  display:grid;place-items:center;flex-shrink:0;font-size:19px}
-.item-main{flex:1;min-width:0}
+.item-main{flex:1;min-width:0}\n.ui-icon{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;line-height:1;flex-shrink:0}\n.ui-icon svg{width:1.25em;height:1.25em;display:block}\n.nav-btn .ui-icon{display:flex;justify-content:center;margin:0 auto 3px;font-size:19px}\n.item-icon .ui-icon{font-size:20px}\n.stat .ui-icon{font-size:23px}
 .item-main p{font-size:13px;color:var(--muted)}
 .item-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .done{opacity:.5}.done .item-title{text-decoration:line-through}
@@ -344,12 +344,12 @@ button,a,input,select,textarea{touch-action:manipulation}
 </div>
 
 <nav class="bottom-nav">
- <button class="nav-btn active" data-page="home"><span>🏠</span>Главная</button>
- <button class="nav-btn" data-page="schedule"><span>🗓️</span>Расписание</button>
- <button class="nav-btn" data-page="tasks"><span>📝</span>Задания</button>
- <button class="nav-btn" data-page="deadlines"><span>⏰</span>Дедлайны</button>
- <button class="nav-btn" data-page="grades"><span>⭐</span>Оценки</button>
- <button class="nav-btn" data-page="profile"><span>👤</span>Профиль</button>
+ <button class="nav-btn active" data-page="home">${uiIcon("home")}Главная</button>
+ <button class="nav-btn" data-page="schedule">${uiIcon("calendar")}Расписание</button>
+ <button class="nav-btn" data-page="tasks">${uiIcon("tasks")}Задания</button>
+ <button class="nav-btn" data-page="deadlines">${uiIcon("clock")}Дедлайны</button>
+ <button class="nav-btn" data-page="grades">${uiIcon("star")}Оценки</button>
+ <button class="nav-btn" data-page="profile">${uiIcon("user")}Профиль</button>
 </nav>
 <div id="modal-root"></div>
 
@@ -448,12 +448,33 @@ function getActiveSchedule(){return Array.isArray(data.classSchedules?.[data.pro
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}
  catch(e){alert("Не удалось сохранить данные на устройстве.")}}
 function setPage(p){if(p==="schedule"){const now=new Date();selectedCalendarDate=localDate(now);calendarMonth=new Date(now.getFullYear(),now.getMonth(),1);calendarExpanded=false;calendarYearView=false}page=p;document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===p));render()}
+
+const ICONS={
+ home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+ calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+ tasks:'<path d="M9 5h11M9 12h11M9 19h11"/><path d="m3 5 1 1 2-2M3 12l1 1 2-2M3 19l1 1 2-2"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ star:'<path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+ check:'<path d="m5 12 4 4L19 6"/>',
+ book:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22z"/><path d="M4 5.5v14A2.5 2.5 0 0 1 6.5 17H20"/>',
+ wave:'<path d="M3 12c2-6 4-6 6 0s4 6 6 0 4-6 6 0"/>',
+ books:'<path d="M4 4h5v16H4zM11 3h5v17h-5zM18 6h3v14h-3z"/>',
+ party:'<path d="m5 21 5-12 5 12zM15 4l1-2m4 6 2-1M4 8 2 7"/><path d="M10 3v2"/>',
+ flower:'<circle cx="12" cy="12" r="2"/><path d="M12 10c-5-7 2-9 3-5 1 3-1 4-3 5zm2 2c8-3 9 4 5 5-3 1-4-2-5-5zm-2 2c3 8-4 9-5 5-1-3 2-4 5-5zm-2-2c-8 3-9-4-5-5 3-1 4 2 5 5z"/>',
+ bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>',
+ target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+ pencil:'<path d="m4 16-.8 4.8L8 20l11-11-4-4zM13.5 6.5l4 4"/>',
+ graduation:'<path d="m2 9 10-5 10 5-10 5zM6 11v5c4 3 8 3 12 0v-5M22 9v6"/>'
+};
+function uiIcon(name,extra=""){return '<span class="ui-icon '+extra+'" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[name]||ICONS.star)+'</svg></span>'}
+
 function empty(icon,msg){return `<div class="empty"><div>${icon}</div>${esc(msg)}</div>`}
 function head(title,btn,action){return `<div class="section-head"><h2>${title}</h2><button class="primary" data-action="${action}">＋ ${btn}</button></div>`}
 function avg(list){return list.length?list.reduce((s,g)=>s+Number(g.value),0)/list.length:null}
 
 function taskHTML(t){return `<div class="item ${t.done?"done":""}">
- <div class="item-icon">${t.done?"✅":"📝"}</div><div class="item-main">
+ <div class="item-icon">${uiIcon(t.done?"check":"tasks")}</div><div class="item-main">
  <h3 class="item-title">${esc(t.title)}</h3><p>${esc(t.subject)} · ${formatDate(t.date)}</p>
  <div class="item-actions">
  <button class="small-btn" data-action="toggle-task" data-id="${t.id}">${t.done?"Вернуть":"Выполнено"}</button>
@@ -464,7 +485,7 @@ function taskHTML(t){return `<div class="item ${t.done?"done":""}">
 function deadlineHTML(t){
  const diff=Math.round((dateObj(t.date)-dateObj(today))/86400000);
  const label=diff<0?"Просрочено":diff===0?"Сегодня":diff===1?"Завтра":`Через ${diff} дн.`;
- return `<div class="item"><div class="item-icon">⏰</div><div class="item-main">
+ return `<div class="item"><div class="item-icon">${uiIcon("clock")}</div><div class="item-main">
  <h3>${esc(t.title)}</h3><p>${esc(t.subject)} · ${formatDate(t.date)}</p>
  <div class="item-actions"><span class="tag ${diff<=1?"red":"green"}">${label}</span>
  <button class="small-btn" data-action="edit-deadline" data-id="${t.id}">Изменить</button>
@@ -473,7 +494,7 @@ function deadlineHTML(t){
 
 function lessonTimeRange(start){const ends={"08:30":"09:15","09:30":"10:15","10:30":"11:15","11:35":"12:20","12:35":"13:20","13:35":"14:20","14:30":"15:15"};return ends[start]?`${start}–${ends[start]}`:start}
 function lessonHTML(t){return `<div class="item">
- <div class="lesson-time">${esc(lessonTimeRange(t.time))}</div><div class="item-icon">📖</div>
+ <div class="lesson-time">${esc(lessonTimeRange(t.time))}</div><div class="item-icon">${uiIcon("book")}</div>
  <div class="item-main"><h3>${esc(t.subject)}</h3><p>${t.teacher?"Учитель: "+esc(t.teacher):"Кабинет: "+esc(t.room||"—")}</p>
  <div class="item-actions">
  <button class="small-btn" data-action="edit-lesson" data-id="${t.id}">Изменить</button>
@@ -485,19 +506,19 @@ function renderHome(){
  const lessons=isNoSchoolDate(today)?[]:getActiveSchedule().filter(t=>t.day===todayIndex);
  const a=avg(data.grades);
  content.innerHTML=`
- ${welcomeHidden?`<button class="secondary" data-action="show-welcome" style="margin:0 0 14px;width:100%">👋 Показать приветствие</button>`:`<section class="welcome"><button class="welcome-close" data-action="hide-welcome" aria-label="Скрыть приветствие" title="Скрыть">×</button><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
- <h1>${data.profile.name?`Привет, ${esc(data.profile.name)}! 👋`:"Привет! 👋"}</h1><p>Всё важное для учёбы — в одном месте.</p></section>`}
+ ${welcomeHidden?`<button class="secondary" data-action="show-welcome" style="margin:0 0 14px;width:100%">${uiIcon("wave")} Показать приветствие</button>`:`<section class="welcome"><button class="welcome-close" data-action="hide-welcome" aria-label="Скрыть приветствие" title="Скрыть">×</button><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
+ <h1>${data.profile.name?`Привет, ${esc(data.profile.name)}! ${uiIcon("wave")}`:"Привет! ${uiIcon("wave")}"}</h1><p>Всё важное для учёбы — в одном месте.</p></section>`}
  <div class="stats">
- <div class="stat"><div>📚</div><div class="stat-number">${lessons.length}</div><div class="muted">Уроков сегодня</div></div>
- <div class="stat"><div>📝</div><div class="stat-number">${pending.length}</div><div class="muted">Незаконченных заданий</div></div>
- <div class="stat"><div>⏰</div><div class="stat-number">${data.deadlines.length}</div><div class="muted">Дедлайнов</div></div>
- <div class="stat"><div>⭐</div><div class="stat-number">${a===null?"—":a.toFixed(2)}</div><div class="muted">Средний балл</div></div>
+ <div class="stat"><div>${uiIcon("books")}</div><div class="stat-number">${lessons.length}</div><div class="muted">Уроков сегодня</div></div>
+ <div class="stat"><div>${uiIcon("tasks")}</div><div class="stat-number">${pending.length}</div><div class="muted">Незаконченных заданий</div></div>
+ <div class="stat"><div>${uiIcon("clock")}</div><div class="stat-number">${data.deadlines.length}</div><div class="muted">Дедлайнов</div></div>
+ <div class="stat"><div>${uiIcon("star")}</div><div class="stat-number">${a===null?"—":a.toFixed(2)}</div><div class="muted">Средний балл</div></div>
  </div>
  ${head("Ближайшие задания","Добавить","add-task")}
- <div class="card">${pending.length?pending.slice(0,3).map(taskHTML).join(""):empty("🎉","Все задания выполнены!")}</div>
+ <div class="card">${pending.length?pending.slice(0,3).map(taskHTML).join(""):empty(uiIcon("party"),"Все задания выполнены!")}</div>
  <div class="section-head"><h2>Ближайшие дедлайны</h2><button class="small-btn" data-action="go-deadlines">Все</button></div>
- <div class="card">${data.deadlines.length?[...data.deadlines].sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3).map(deadlineHTML).join(""):empty("🌸","Пока нет дедлайнов")}</div>
- ${data.profile.reminders?`<div class="card"><div class="item"><div class="item-icon">🔔</div><div class="item-main"><h3>Напоминания включены</h3><p>Ближайшие дела отображаются в приложении. Это не push-уведомления.</p></div></div></div>`:""}`;
+ <div class="card">${data.deadlines.length?[...data.deadlines].sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3).map(deadlineHTML).join(""):empty(uiIcon("flower"),"Пока нет дедлайнов")}</div>
+ ${data.profile.reminders?`<div class="card"><div class="item"><div class="item-icon">${uiIcon("bell")}</div><div class="item-main"><h3>Напоминания включены</h3><p>Ближайшие дела отображаются в приложении. Это не push-уведомления.</p></div></div></div>`:""}`;
 }
 
 function renderSchedule(){
@@ -537,7 +558,7 @@ function renderSchedule(){
  const list=(noSchool?[]:getActiveSchedule().filter(t=>t.day===day)).sort((a,b)=>a.time.localeCompare(b.time));
  const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
  const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
- content.innerHTML=`<h1>Расписание 🗓️</h1><p class="muted">Выбери день недели, месяц или посмотри весь год</p>
+ content.innerHTML=`<h1>Расписание ${uiIcon("calendar")}</h1><p class="muted">Выбери день недели, месяц или посмотри весь год</p>
  <div class="card">
   <div class="calendar-toolbar">
    <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий период">‹</button>
@@ -553,7 +574,7 @@ function renderSchedule(){
   <button class="secondary full" data-action="calendar-today">${selectedCalendarDate===today?"Сегодня":"Вернуться к сегодня"}</button>`}
  </div>
  ${calendarYearView?"":`<div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2><button class="primary" data-action="add-lesson">＋ Урок</button></div>
- <div class="card">${list.length?list.map(lessonHTML).join(""):empty("📖",noSchool?"В этот день занятий нет":"На этот день уроков пока нет")}</div>
+ <div class="card">${list.length?list.map(lessonHTML).join(""):empty(uiIcon("book"),noSchool?"В этот день занятий нет":"На этот день уроков пока нет")}</div>
  ${chosenTasks.length?`<div class="section-head"><h2>Задания на эту дату</h2></div><div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
  ${chosenDeadlines.length?`<div class="section-head"><h2>Дедлайны на эту дату</h2></div><div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}`}`;
 }
@@ -577,7 +598,7 @@ function renderCalendar(){
  const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
  const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
  const chosenLessons=getActiveSchedule().filter(x=>x.day===(dateObj(selectedCalendarDate).getDay()+6)%7).sort((a,b)=>a.time.localeCompare(b.time));
- content.innerHTML=`<h1>Календарь 📅</h1><p class="muted">Текущая дата: ${dateObj(today).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"})}</p>
+ content.innerHTML=`<h1>Календарь ${uiIcon("calendar")}</h1><p class="muted">Текущая дата: ${dateObj(today).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"})}</p>
  <div class="card">
   <div class="calendar-toolbar">
    <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий месяц">‹</button>
@@ -593,23 +614,23 @@ function renderCalendar(){
  ${chosenTasks.length?`<div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
  ${chosenDeadlines.length?`<div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}
  <div class="section-head"><h2>Уроки по расписанию</h2></div>
- <div class="card">${chosenLessons.length?chosenLessons.map(lessonHTML).join(""):empty("📚","На этот день уроков нет")}</div>
- ${(!chosenTasks.length&&!chosenDeadlines.length)?`<div class="card">${empty("🌿","На эту дату нет заданий и дедлайнов")}</div>`:""}
+ <div class="card">${chosenLessons.length?chosenLessons.map(lessonHTML).join(""):empty(uiIcon("books"),"На этот день уроков нет")}</div>
+ ${(!chosenTasks.length&&!chosenDeadlines.length)?`<div class="card">${empty(uiIcon("flower"),"На эту дату нет заданий и дедлайнов")}</div>`:""}
  <button class="secondary full" data-action="calendar-add-deadline">＋ Добавить дедлайн на эту дату</button>`;
 }
 
 function renderTasks(){
  const list=[...data.tasks].sort((a,b)=>Number(a.done)-Number(b.done)||a.date.localeCompare(b.date));
- content.innerHTML=`<h1>Домашние задания 📝</h1><p class="muted">Записывай задания и отмечай выполненные</p>
+ content.innerHTML=`<h1>Домашние задания ${uiIcon("tasks")}</h1><p class="muted">Записывай задания и отмечай выполненные</p>
  ${head("Мои задания","Добавить","add-task")}
- <div class="card">${list.length?list.map(taskHTML).join(""):empty("📚","Заданий пока нет")}</div>`;
+ <div class="card">${list.length?list.map(taskHTML).join(""):empty(uiIcon("books"),"Заданий пока нет")}</div>`;
 }
 
 function renderDeadlines(){
  const list=[...data.deadlines].sort((a,b)=>a.date.localeCompare(b.date));
- content.innerHTML=`<h1>Дедлайны ⏰</h1><p class="muted">Не забывай о важных датах</p>
+ content.innerHTML=`<h1>Дедлайны ${uiIcon("clock")}</h1><p class="muted">Не забывай о важных датах</p>
  ${head("Мои дедлайны","Добавить","add-deadline")}
- <div class="card">${list.length?list.map(deadlineHTML).join(""):empty("🌸","Дедлайнов пока нет")}</div>`;
+ <div class="card">${list.length?list.map(deadlineHTML).join(""):empty(uiIcon("flower"),"Дедлайнов пока нет")}</div>`;
 }
 
 /* Раздел оценок: группировка по предметам и отдельная цель для каждого */
@@ -619,7 +640,7 @@ function renderGrades(){
   ...data.goals.map(g=>g.subject)
  ])].sort((a,b)=>a.localeCompare(b,"ru"));
  const overall=avg(data.grades);
- content.innerHTML=`<h1>Мои оценки ⭐</h1>
+ content.innerHTML=`<h1>Мои оценки ${uiIcon("star")}</h1>
  <p class="muted">История оценок, средний балл и личные цели</p>
  <div class="welcome"><div style="opacity:.8">ОБЩИЙ СРЕДНИЙ БАЛЛ</div>
  <div style="font-size:38px;font-weight:800;margin-top:7px">${overall===null?"—":overall.toFixed(2)}</div>
@@ -636,7 +657,7 @@ function renderGrades(){
   return `<section class="card">
    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
     <h3>${esc(subject)}</h3>
-    <button class="small-btn" data-action="edit-goal" data-subject="${esc(subject)}">🎯 ${target===null?"Поставить цель":"Цель: "+target}</button>
+    <button class="small-btn" data-action="edit-goal" data-subject="${esc(subject)}">${uiIcon("target")} ${target===null?"Поставить цель":"Цель: "+target}</button>
    </div>
    <div style="display:flex;gap:20px;align-items:center;margin-top:12px">
     <div><div class="muted">Средний балл</div><div class="grade-big">${average===null?"—":average.toFixed(2)}</div></div>
@@ -651,7 +672,7 @@ function renderGrades(){
    ${list.length?list.map(g=>`<div class="item" style="align-items:center">
     <div class="grade-big">${g.value}</div><div class="item-main"><h3>${formatDate(g.date)}</h3><p>${esc(g.subject)}</p></div>
     <div class="item-actions">
-     <button class="small-btn" data-action="edit-grade" data-id="${g.id}">✏️</button>
+     <button class="small-btn" data-action="edit-grade" data-id="${g.id}">${uiIcon("pencil")}</button>
      <button class="small-btn danger" data-action="delete-grade" data-id="${g.id}">×</button>
     </div></div>`).join(""):empty("📘","Пока нет оценок по этому предмету")}
   </section>`;
@@ -661,14 +682,14 @@ function renderGrades(){
 
 function renderProfile(){
  const avatar=data.profile.avatar;
- content.innerHTML=`<h1>Профиль 👤</h1><p class="muted">Настройки приложения</p>
- <div class="card profile-center"><div class="profile-avatar ${avatar?"has-photo":""}">${avatar?`<img src="${esc(avatar)}" alt="Аватар профиля">`:"👩‍🎓"}</div>
+ content.innerHTML=`<h1>Профиль ${uiIcon("user")}</h1><p class="muted">Настройки приложения</p>
+ <div class="card profile-center"><div class="profile-avatar ${avatar?"has-photo":""}">${avatar?`<img src="${esc(avatar)}" alt="Аватар профиля">` : uiIcon("graduation")}</div>
  <h2 style="margin:5px 0">${esc(data.profile.name||"Имя не указано")}</h2><p class="muted">${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`Класс: ${esc(data.profile.schoolClass)}`:"-"}</p>
  <button class="secondary" data-action="edit-profile">Изменить профиль</button></div>
  <h2>Настройки</h2><div class="card"><h3>Класс и расписание</h3><p class="muted">Выбери класс — расписание обновится автоматически</p><p style="font-weight:750;margin:10px 0">Сейчас выбран: ${data.profile.schoolClass&&data.profile.schoolClass!=="none"?esc(data.profile.schoolClass):"Нет"}</p><button class="secondary" data-action="edit-class">Изменить класс</button></div><div class="card"><label style="display:flex;justify-content:space-between;gap:12px;align-items:center">
  <span><strong>Напоминания в приложении</strong><p class="muted">Показывать блок напоминаний на главной</p></span>
  <input type="checkbox" data-action="toggle-reminders" ${data.profile.reminders?"checked":""}></label></div>
- <h2>О приложении</h2><div class="card"><h3>SchoolHelper 📚</h3>
+ <h2>О приложении</h2><div class="card"><h3>SchoolHelper ${uiIcon("books")}</h3>
  <p class="muted">Расписание, задания, дедлайны и оценки.</p>
  <p class="muted">Данные хранятся в браузере на этом устройстве.</p></div>
  <div class="card"><h3>Сбросить приложение</h3><p class="muted">Удалить имя, фотографию, выбранный класс, личное расписание, задания, оценки, цели и дедлайны. Настройки календаря, каникулы, выходные и праздники останутся без изменений.</p>
@@ -768,7 +789,7 @@ function profileForm(){
  openModal("Изменить профиль",` ${field("Имя","name",data.profile.name)}
  <div class="field"><label>Аватарка</label>
  <div style="display:flex;align-items:center;gap:14px">
-  <div id="profile-avatar-preview" class="profile-avatar ${avatar?"has-photo":""}" style="width:64px;height:64px;flex:0 0 64px">${avatar?`<img src="${esc(avatar)}" alt="Аватарка">`:"👩‍🎓"}</div>
+  <div id="profile-avatar-preview" class="profile-avatar ${avatar?"has-photo":""}" style="width:64px;height:64px;flex:0 0 64px">${avatar?`<img src="${esc(avatar)}" alt="Аватарка">` : uiIcon("graduation")}</div>
   <div style="flex:1"><input id="profile-avatar-file" type="file" accept="image/jpeg,image/png,image/webp,image/avif" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden" aria-label="Выбрать фотографию">
   <label for="profile-avatar-file" class="secondary" style="display:inline-block;cursor:pointer">Изменить фотографию</label>
   <input id="profile-avatar-data" type="hidden" name="avatarData" value=""></div>
