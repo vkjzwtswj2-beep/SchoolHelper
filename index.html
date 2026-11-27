@@ -121,6 +121,10 @@ p{margin:5px 0}
 .calendar-dots i{width:5px;height:5px;border-radius:50%;background:var(--green)}
 .calendar-day.selected .calendar-dots i{background:#fff}
 .calendar-day .day-number{font-size:13px}
+.calendar-month-view .calendar-day{position:relative;gap:5px}
+.calendar-month-view .calendar-dots{display:flex;align-items:center;justify-content:center;gap:3px;min-height:6px}
+.calendar-month-view .calendar-dots i{display:block;width:5px;height:5px;flex:0 0 5px;border-radius:50%;background:var(--green)}
+.calendar-month-view .calendar-day.selected .calendar-dots i{background:#fff}
 @media(max-width:380px){.calendar-day{min-height:47px}.calendar-grid{gap:3px}}
 .day{border:1px solid var(--border);background:#FBF8EF;color:var(--muted);border-radius:12px;
  min-width:43px;padding:9px 6px}
