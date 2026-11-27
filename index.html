@@ -193,6 +193,26 @@ p{margin:5px 0}
 .profile-avatar{font-size:34px;background:#E5EBE3;color:var(--dark);width:72px;height:72px;
  border-radius:23px;display:grid;place-items:center;margin:0 auto 10px}
 @media(min-width:600px){.modal-bg{align-items:center}}
+
+/* Цвет цифр особых дат: каникулы зелёные, выходные и праздники тёмно-розовые */
+.week-cell.vacation .week-number,
+.calendar-month-view .calendar-day.vacation .day-number{
+ color:#456B5B!important;
+}
+.week-cell.weekend .week-number,
+.calendar-month-view .calendar-day.weekend .day-number{
+ color:#963F5B!important;
+ font-weight:850!important;
+}
+.week-cell.selected.vacation .week-number,
+.calendar-month-view .calendar-day.selected.vacation .day-number{
+ color:#456B5B!important;
+}
+.week-cell.selected.weekend .week-number,
+.calendar-month-view .calendar-day.selected.weekend .day-number{
+ color:#963F5B!important;
+}
+
 </style>
 </head>
 <body>
