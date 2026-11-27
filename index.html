@@ -537,7 +537,7 @@ function renderSchedule(){
  const first=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1),offset=(first.getDay()+6)%7;
  const monthStart=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1-offset);
  const monthCells=Array.from({length:42},(_,i)=>{const d=new Date(monthStart);d.setDate(monthStart.getDate()+i);return makeCell(d)});
- const academicStartYear=calendarMonth.getMonth()>=8?year:year-1;
+ const academicStartYear=2026;
  const academicMonths=Array.from({length:9},(_,i)=>{
   const m=(i+8)%12,monthYear=m>=8?academicStartYear:academicStartYear+1;
   const firstDay=new Date(monthYear,m,1),startOffset=(firstDay.getDay()+6)%7,days=new Date(monthYear,m+1,0).getDate();
