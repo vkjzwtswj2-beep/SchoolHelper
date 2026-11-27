@@ -430,8 +430,7 @@ function renderSchedule(){
   <div class="calendar-toolbar">
    <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий период">‹</button>
    <div class="calendar-month">${calendarYearView?academicYearLabel:esc(monthName)}</div>
-   <button class="calendar-toggle" data-action="calendar-view-toggle">${calendarYearView?"к месяцу":calendarExpanded?"к году":"к месяцу"}</button>
-   ${calendarExpanded?`<button class="calendar-toggle" data-action="calendar-back-week">к неделе</button>`:""}
+   <button class="calendar-toggle" data-action="calendar-view-toggle">${calendarYearView?"месяц":calendarExpanded?"год":"месяц"}</button>
    <button class="small-btn" data-action="calendar-next" aria-label="Следующий период">›</button>
   </div>
   ${calendarYearView?`<div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div><div class="calendar-year-view">${academicMonths}</div>`:`
@@ -670,7 +669,7 @@ function action(a,el){
  if(a==="calendar-open-month"){const m=Number(el.dataset.month),y=Number(el.dataset.year);calendarMonth=new Date(y,m,1);selectedCalendarDate=localDate(new Date(y,m,1));calendarYearView=false;calendarExpanded=true;return render()}
  if(a==="calendar-expand"){calendarExpanded=!calendarExpanded;return render()}
  if(a==="calendar-today"){calendarMonth=new Date();selectedCalendarDate=today;calendarYearView=false;calendarExpanded=false;return render()}
- if(a==="calendar-select"){selectedCalendarDate=el.dataset.date;return render()}
+ if(a==="calendar-select"){selectedCalendarDate=el.dataset.date;if(calendarExpanded){calendarExpanded=false;calendarYearView=false;const picked=dateObj(selectedCalendarDate);calendarMonth=new Date(picked.getFullYear(),picked.getMonth(),1)}return render()}
  if(a==="calendar-add-task")return taskForm(null,selectedCalendarDate);
  if(a==="calendar-add-deadline")return deadlineForm(null,selectedCalendarDate);
  if(a==="add-task")return taskForm();
