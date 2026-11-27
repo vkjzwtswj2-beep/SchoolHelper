@@ -344,12 +344,12 @@ button,a,input,select,textarea{touch-action:manipulation}
 </div>
 
 <nav class="bottom-nav">
- <button class="nav-btn active" data-page="home">${uiIcon("home")}Главная</button>
- <button class="nav-btn" data-page="schedule">${uiIcon("calendar")}Расписание</button>
- <button class="nav-btn" data-page="tasks">${uiIcon("tasks")}Задания</button>
- <button class="nav-btn" data-page="deadlines">${uiIcon("clock")}Дедлайны</button>
- <button class="nav-btn" data-page="grades">${uiIcon("star")}Оценки</button>
- <button class="nav-btn" data-page="profile">${uiIcon("user")}Профиль</button>
+ <button class="nav-btn active" data-page="home"><span>🏠</span>Главная</button>
+ <button class="nav-btn" data-page="schedule"><span>🗓️</span>Расписание</button>
+ <button class="nav-btn" data-page="tasks"><span>📝</span>Задания</button>
+ <button class="nav-btn" data-page="deadlines"><span>⏰</span>Дедлайны</button>
+ <button class="nav-btn" data-page="grades"><span>⭐</span>Оценки</button>
+ <button class="nav-btn" data-page="profile"><span>👤</span>Профиль</button>
 </nav>
 <div id="modal-root"></div>
 
@@ -449,25 +449,8 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}
  catch(e){alert("Не удалось сохранить данные на устройстве.")}}
 function setPage(p){if(p==="schedule"){const now=new Date();selectedCalendarDate=localDate(now);calendarMonth=new Date(now.getFullYear(),now.getMonth(),1);calendarExpanded=false;calendarYearView=false}page=p;document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===p));render()}
 
-const ICONS={
- home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
- calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
- tasks:'<path d="M9 5h11M9 12h11M9 19h11"/><path d="m3 5 1 1 2-2M3 12l1 1 2-2M3 19l1 1 2-2"/>',
- clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
- star:'<path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
- user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
- check:'<path d="m5 12 4 4L19 6"/>',
- book:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22z"/><path d="M4 5.5v14A2.5 2.5 0 0 1 6.5 17H20"/>',
- wave:'<path d="M3 12c2-6 4-6 6 0s4 6 6 0 4-6 6 0"/>',
- books:'<path d="M4 4h5v16H4zM11 3h5v17h-5zM18 6h3v14h-3z"/>',
- party:'<path d="m5 21 5-12 5 12zM15 4l1-2m4 6 2-1M4 8 2 7"/><path d="M10 3v2"/>',
- flower:'<circle cx="12" cy="12" r="2"/><path d="M12 10c-5-7 2-9 3-5 1 3-1 4-3 5zm2 2c8-3 9 4 5 5-3 1-4-2-5-5zm-2 2c3 8-4 9-5 5-1-3 2-4 5-5zm-2-2c-8 3-9-4-5-5 3-1 4 2 5 5z"/>',
- bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>',
- target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
- pencil:'<path d="m4 16-.8 4.8L8 20l11-11-4-4zM13.5 6.5l4 4"/>',
- graduation:'<path d="m2 9 10-5 10 5-10 5zM6 11v5c4 3 8 3 12 0v-5M22 9v6"/>'
-};
-function uiIcon(name,extra=""){return '<span class="ui-icon '+extra+'" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[name]||ICONS.star)+'</svg></span>'}
+const ICONS={home:"🏠",calendar:"🗓️",tasks:"📝",clock:"⏰",star:"⭐",user:"👤",check:"✅",book:"📚",wave:"👋",books:"📚",party:"🎉",flower:"🌸",bell:"🔔",target:"🎯",pencil:"✏️",graduation:"👩‍🎓"};
+function uiIcon(name){return ICONS[name]||"⭐"}
 
 function empty(icon,msg){return `<div class="empty"><div>${icon}</div>${esc(msg)}</div>`}
 function head(title,btn,action){return `<div class="section-head"><h2>${title}</h2><button class="primary" data-action="${action}">＋ ${btn}</button></div>`}
@@ -683,7 +666,7 @@ function renderGrades(){
 function renderProfile(){
  const avatar=data.profile.avatar;
  content.innerHTML=`<h1>Профиль ${uiIcon("user")}</h1><p class="muted">Настройки приложения</p>
- <div class="card profile-center"><div class="profile-avatar ${avatar?"has-photo":""}">${avatar?`<img src="${esc(avatar)}" alt="Аватар профиля">` : uiIcon("graduation")}</div>
+ <div class="card profile-center"><div class="profile-avatar ${avatar?"has-photo":""}">${avatar?`<img src="${esc(avatar)}" alt="Аватар профиля">` : "👩‍🎓"}</div>
  <h2 style="margin:5px 0">${esc(data.profile.name||"Имя не указано")}</h2><p class="muted">${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`Класс: ${esc(data.profile.schoolClass)}`:"-"}</p>
  <button class="secondary" data-action="edit-profile">Изменить профиль</button></div>
  <h2>Настройки</h2><div class="card"><h3>Класс и расписание</h3><p class="muted">Выбери класс — расписание обновится автоматически</p><p style="font-weight:750;margin:10px 0">Сейчас выбран: ${data.profile.schoolClass&&data.profile.schoolClass!=="none"?esc(data.profile.schoolClass):"Нет"}</p><button class="secondary" data-action="edit-class">Изменить класс</button></div><div class="card"><label style="display:flex;justify-content:space-between;gap:12px;align-items:center">
