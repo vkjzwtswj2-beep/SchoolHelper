@@ -96,6 +96,20 @@ p{margin:5px 0}
 .tag.green{background:#e7f7ef;color:#39845e}
 .tag.red{background:#fff0f1;color:#c65e6c}
 .days{display:flex;gap:7px;overflow-x:auto;padding:3px 0 12px}
+.calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0}
+.calendar-month{font-size:17px;font-weight:800;text-transform:capitalize}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.calendar-weekday{text-align:center;color:var(--muted);font-size:11px;padding:5px 0}
+.calendar-day{min-width:0;min-height:54px;padding:6px 2px;border:1px solid var(--border);border-radius:11px;background:#FBF8EF;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:5px}
+.calendar-day.muted-day{opacity:.35}
+.calendar-day.today{border:2px solid var(--gold);font-weight:800}
+.calendar-day.selected{background:var(--dark);color:#fff;border-color:var(--dark)}
+.calendar-day.selected .calendar-dots i{background:#fff}
+.calendar-dots{display:flex;gap:3px;min-height:5px}
+.calendar-dots i{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.calendar-day.selected .calendar-dots i{background:#fff}
+.calendar-day .day-number{font-size:13px}
+@media(max-width:380px){.calendar-day{min-height:47px}.calendar-grid{gap:3px}}
 .day{border:1px solid var(--border);background:#FBF8EF;color:var(--muted);border-radius:12px;
  min-width:43px;padding:9px 6px}
 .day strong{display:block;color:var(--text);margin-top:4px}
@@ -146,6 +160,7 @@ p{margin:5px 0}
 <nav class="bottom-nav">
  <button class="nav-btn active" data-page="home"><span>🏠</span>Главная</button>
  <button class="nav-btn" data-page="schedule"><span>🗓️</span>Расписание</button>
+ <button class="nav-btn" data-page="calendar"><span>📅</span>Календарь</button>
  <button class="nav-btn" data-page="tasks"><span>📝</span>Задания</button>
  <button class="nav-btn" data-page="deadlines"><span>⏰</span>Дедлайны</button>
  <button class="nav-btn" data-page="grades"><span>⭐</span>Оценки</button>
@@ -249,6 +264,8 @@ function load(){
  }catch(e){return clone(initial)}
 }
 let data=load(),page="home";
+let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+let selectedCalendarDate=today;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}
  catch(e){alert("Не удалось сохранить данные на устройстве.")}}
 function setPage(p){page=p;document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===p));render()}
@@ -310,6 +327,47 @@ function renderSchedule(){
  <div class="days">${shortDays.map((d,i)=>`<button class="day ${day===i?"active":""}" data-action="select-day" data-day="${i}">${d}<strong>${i+1}</strong></button>`).join("")}</div>
  ${head(weekdays[day],"Добавить урок","add-lesson")}
  <div class="card">${list.length?list.map(lessonHTML).join(""):empty("📖","На этот день уроков пока нет")}</div>`;
+}
+
+function renderCalendar(){
+ const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth();
+ const monthName=calendarMonth.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
+ const first=new Date(year,month,1);
+ const offset=(first.getDay()+6)%7;
+ const start=new Date(year,month,1-offset);
+ const cells=[];
+ for(let i=0;i<42;i++){
+  const d=new Date(start);d.setDate(start.getDate()+i);
+  const key=localDate(d);
+  const tasks=data.tasks.filter(x=>x.date===key);
+  const deadlines=data.deadlines.filter(x=>x.date===key);
+  const lessons=data.schedule.filter(x=>x.day===(d.getDay()+6)%7);
+  const count=tasks.length+deadlines.length+lessons.length;
+  cells.push({key,number:d.getDate(),sameMonth:d.getMonth()===month,isToday:key===today,selected:key===selectedCalendarDate,count,
+   dots:[...Array(Math.min(tasks.length,2)).fill("task"),...Array(Math.min(deadlines.length,2)).fill("deadline"),...Array(Math.min(lessons.length,1)).fill("lesson")].slice(0,3)});
+ }
+ const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
+ const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
+ const chosenLessons=data.schedule.filter(x=>x.day===(dateObj(selectedCalendarDate).getDay()+6)%7).sort((a,b)=>a.time.localeCompare(b.time));
+ content.innerHTML=`<h1>Календарь 📅</h1><p class="muted">Текущая дата: ${dateObj(today).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"})}</p>
+ <div class="card">
+  <div class="calendar-toolbar">
+   <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий месяц">‹</button>
+   <div class="calendar-month">${esc(monthName)}</div>
+   <button class="small-btn" data-action="calendar-next" aria-label="Следующий месяц">›</button>
+  </div>
+  <div class="calendar-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<div class="calendar-weekday">${x}</div>`).join("")}
+  ${cells.map(x=>`<button class="calendar-day ${x.sameMonth?"":"muted-day"} ${x.isToday?"today":""} ${x.selected?"selected":""}" data-action="calendar-select" data-date="${x.key}">
+   <span class="day-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div>
+  <button class="secondary full" data-action="calendar-today">Перейти к сегодня</button>
+ </div>
+ <div class="section-head"><h2>${dateObj(selectedCalendarDate).toLocaleDateString("ru-RU",{day:"numeric",month:"long"})}</h2><button class="small-btn" data-action="calendar-add-task">＋ Задание</button></div>
+ ${chosenTasks.length?`<div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
+ ${chosenDeadlines.length?`<div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}
+ <div class="section-head"><h2>Уроки по расписанию</h2></div>
+ <div class="card">${chosenLessons.length?chosenLessons.map(lessonHTML).join(""):empty("📚","На этот день уроков нет")}</div>
+ ${(!chosenTasks.length&&!chosenDeadlines.length)?`<div class="card">${empty("🌿","На эту дату нет заданий и дедлайнов")}</div>`:""}
+ <button class="secondary full" data-action="calendar-add-deadline">＋ Добавить дедлайн на эту дату</button>`;
 }
 
 function renderTasks(){
@@ -388,7 +446,7 @@ function renderProfile(){
  <button class="small-btn danger" data-action="reset-data">Сбросить приложение</button></div>`;
 }
 function render(){
- ({home:renderHome,schedule:renderSchedule,tasks:renderTasks,deadlines:renderDeadlines,grades:renderGrades,profile:renderProfile}[page]||renderHome)();
+ ({home:renderHome,schedule:renderSchedule,calendar:renderCalendar,tasks:renderTasks,deadlines:renderDeadlines,grades:renderGrades,profile:renderProfile}[page]||renderHome)();
 }
 
 /* Формы */
@@ -413,22 +471,22 @@ function selectField(label,name,options,selected){
  </select></div>`;
 }
 
-function taskForm(idValue=null){
+function taskForm(idValue=null,presetDate=null){
  const old=data.tasks.find(x=>x.id===idValue);
  openModal(old?"Изменить задание":"Новое задание",`
  ${field("Название задания","title",old?.title||"")}
  ${field("Предмет","subject",old?.subject||"")}
- ${field("Срок выполнения","date",old?.date||today,"date")}`,v=>{
+ ${field("Срок выполнения","date",old?.date||presetDate||today,"date")}`,v=>{
   if(!v.title.trim()||!v.subject.trim())return false;
   if(old)Object.assign(old,v);else data.tasks.push({id:id(),...v,done:false});
  });
 }
-function deadlineForm(idValue=null){
+function deadlineForm(idValue=null,presetDate=null){
  const old=data.deadlines.find(x=>x.id===idValue);
  openModal(old?"Изменить дедлайн":"Новый дедлайн",`
  ${field("Название","title",old?.title||"")}
  ${field("Предмет","subject",old?.subject||"")}
- ${field("Дата","date",old?.date||today,"date")}`,v=>{
+ ${field("Дата","date",old?.date||presetDate||today,"date")}`,v=>{
   if(!v.title.trim()||!v.subject.trim())return false;
   if(old)Object.assign(old,v);else data.deadlines.push({id:id(),...v});
  });
@@ -483,6 +541,13 @@ function remove(list,idValue,label){
 
 function action(a,el){
  const n=Number(el.dataset.id);
+ if(a==="calendar-prev"||a==="calendar-next"){
+  calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+(a==="calendar-next"?1:-1),1);return render();
+ }
+ if(a==="calendar-today"){calendarMonth=new Date();selectedCalendarDate=today;return render()}
+ if(a==="calendar-select"){selectedCalendarDate=el.dataset.date;return render()}
+ if(a==="calendar-add-task")return taskForm(null,selectedCalendarDate);
+ if(a==="calendar-add-deadline")return deadlineForm(null,selectedCalendarDate);
  if(a==="add-task")return taskForm();
  if(a==="edit-task")return taskForm(n);
  if(a==="delete-task")return remove("tasks",n,"задание");
