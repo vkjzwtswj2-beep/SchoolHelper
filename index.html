@@ -507,7 +507,7 @@ function renderHome(){
  const a=avg(data.grades);
  content.innerHTML=`
  ${welcomeHidden?`<button class="secondary" data-action="show-welcome" style="margin:0 0 14px;width:100%">${uiIcon("wave")} Показать приветствие</button>`:`<section class="welcome"><button class="welcome-close" data-action="hide-welcome" aria-label="Скрыть приветствие" title="Скрыть">×</button><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
- <h1>${data.profile.name?`Привет, ${esc(data.profile.name)}! ${uiIcon("wave")}`:"Привет! ${uiIcon("wave")}"}</h1><p>Всё важное для учёбы — в одном месте.</p></section>`}
+ <h1>${data.profile.name?`Привет, ${esc(data.profile.name)}! ${uiIcon("wave")}`:`Привет! ${uiIcon("wave")}`}</h1><p>Всё важное для учёбы — в одном месте.</p></section>`}
  <div class="stats">
  <div class="stat"><div>${uiIcon("books")}</div><div class="stat-number">${lessons.length}</div><div class="muted">Уроков сегодня</div></div>
  <div class="stat"><div>${uiIcon("tasks")}</div><div class="stat-number">${pending.length}</div><div class="muted">Незаконченных заданий</div></div>
