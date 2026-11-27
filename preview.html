@@ -4,8 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#DCE5E3">
-<title>SchoolHelper — прототип логотипа</title>
+<meta name="theme-color" content="#E8EEEC">
+<title>SchoolHelper</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{
@@ -60,7 +60,7 @@ h1,h2,h3,p,.muted,.tag,.nav-btn{overflow-wrap:anywhere;word-break:normal}
 }
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
 .logo{font-size:22px;font-weight:800;letter-spacing:-.7px;color:var(--dark)}.logo span{color:var(--gold)}
-.avatar{width:100px;height:74px;flex:0 0 100px;display:flex;align-items:center;justify-content:center;padding:0;background:transparent;border:0;border-radius:0;overflow:visible;filter:none;box-shadow:none}.avatar img{display:block;width:100%;height:100%;object-fit:contain;background:transparent;filter:none;box-shadow:none;mix-blend-mode:normal}
+.avatar{width:74px;height:55px;flex:0 0 74px;display:flex;align-items:center;justify-content:center;padding:0;background:transparent;border:0;border-radius:0;overflow:visible;filter:none;box-shadow:none}.avatar img{display:block;width:100%;height:100%;object-fit:contain;background:transparent;filter:none;box-shadow:none;mix-blend-mode:normal}
 h1{font-size:25px;margin:8px 0}
 h2{font-size:19px;margin:23px 0 12px}
 h3{font-size:16px;margin:0 0 6px}
@@ -96,6 +96,67 @@ p{margin:5px 0}
 .tag.green{background:#e7f7ef;color:#39845e}
 .tag.red{background:#fff0f1;color:#c65e6c}
 .days{display:flex;gap:7px;overflow-x:auto;padding:3px 0 12px}
+.calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0}
+
+.calendar-month{font-size:16px;font-weight:800;text-transform:capitalize}
+.calendar-toggle{border:0;background:#E9EEE8;color:var(--dark);border-radius:10px;padding:8px 11px;font-size:12px;font-weight:750;white-space:nowrap}
+.week-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:12px 0 4px}
+.week-cell{border:0;background:transparent;color:var(--muted);border-radius:12px;padding:7px 1px;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0}
+.week-cell .week-name{font-size:10px}
+.week-cell .week-number{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:750;color:var(--text);background:#F2F0E8}
+.week-cell.selected{background:#F3F0E8;color:var(--dark)}
+.week-cell.selected .week-number{background:var(--dark);color:white}
+.week-cell.today .week-number{outline:2px solid var(--gold);outline-offset:2px}
+.week-cell .calendar-dots{height:5px}
+.calendar-month-view{margin-top:12px}
+
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.calendar-weekday{text-align:center;color:var(--muted);font-size:11px;padding:5px 0}
+.calendar-day{min-width:0;min-height:54px;padding:6px 2px;border:1px solid var(--border);border-radius:18px;background:#FBF8EF;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:5px}
+.calendar-day.muted-day{opacity:.35}
+.calendar-day.today{border:2px solid var(--gold);font-weight:800}
+.calendar-day.selected{background:var(--dark);color:#fff;border-color:var(--dark)}
+.calendar-day.selected .calendar-dots i{background:#fff}
+.calendar-dots{display:flex;gap:3px;min-height:5px}
+.calendar-dots i{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.calendar-day.selected .calendar-dots i{background:#fff}
+.calendar-day .day-number{font-size:13px}
+.calendar-month-view .calendar-day{position:relative;gap:5px}
+.calendar-month-view .calendar-dots{display:flex;align-items:center;justify-content:center;gap:3px;min-height:6px}
+.calendar-month-view .calendar-dots i{display:block;width:5px;height:5px;flex:0 0 5px;border-radius:50%;background:var(--green)}
+.calendar-month-view .calendar-day.selected .calendar-dots i{background:var(--green)}
+.calendar-legend{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 2px;color:var(--muted);font-size:11px}
+.calendar-legend span{display:inline-flex;align-items:center;gap:6px}
+.calendar-legend i{width:11px;height:11px;border-radius:4px;display:inline-block}
+.calendar-legend .legend-vacation{background:#AFC8FF}
+.calendar-legend .legend-weekend{background:#F04B61}
+.week-cell.vacation .week-number,.calendar-month-view .calendar-day.vacation .day-number{background:#AFC8FF;color:#24324A}
+.week-cell.weekend .week-number,.calendar-month-view .calendar-day.weekend .day-number{background:#F04B61;color:#fff}
+.week-cell.selected.vacation .week-number,.calendar-month-view .calendar-day.selected.vacation .day-number{background:#AFC8FF;color:#24324A;outline:2px solid var(--dark);outline-offset:2px}
+.week-cell.selected.weekend .week-number,.calendar-month-view .calendar-day.selected.weekend .day-number{background:#F04B61;color:#fff;outline:2px solid var(--dark);outline-offset:2px}
+
+/* Month view follows the same circular, minimal style as the week strip */
+.calendar-month-view .calendar-grid{gap:4px}
+.calendar-month-view .calendar-weekday{font-size:10px;padding:5px 0}
+.calendar-month-view .calendar-day{
+ min-height:58px;padding:4px 1px;border:0;border-radius:12px;background:transparent;
+ color:var(--muted);gap:5px;justify-content:flex-start
+}
+.calendar-month-view .calendar-day .day-number{
+ width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+ background:#F2F0E8;color:var(--text);font-size:14px;font-weight:750
+}
+.calendar-month-view .calendar-day.selected{background:#F3F0E8;color:var(--dark);border:0}
+.calendar-month-view .calendar-day.selected .day-number{background:var(--dark);color:#fff}
+.calendar-month-view .calendar-day.today .day-number{outline:2px solid var(--gold);outline-offset:2px}
+.calendar-month-view .calendar-day.muted-day{opacity:.3}
+.calendar-month-view .calendar-day .calendar-dots{height:5px;min-height:5px}
+.calendar-month-view .calendar-day.selected .calendar-dots i{background:var(--green)}
+@media(max-width:380px){
+ .calendar-month-view .calendar-day{min-height:54px}
+ .calendar-month-view .calendar-day .day-number{width:31px;height:31px}
+}
+@media(max-width:380px){.calendar-day{min-height:47px}.calendar-grid{gap:3px}}
 .day{border:1px solid var(--border);background:#FBF8EF;color:var(--muted);border-radius:12px;
  min-width:43px;padding:9px 6px}
 .day strong{display:block;color:var(--text);margin-top:4px}
@@ -178,8 +239,8 @@ if(tg){
  });
 }
 
-const KEY="schoolhelper_preview_data_v1";
-const WELCOME_HIDDEN_KEY="schoolhelper_preview_welcome_hidden";
+const KEY="schoolhelper_data_v2";
+const WELCOME_HIDDEN_KEY="schoolhelper_welcome_hidden";
 let welcomeHidden=false;
 try{welcomeHidden=localStorage.getItem(WELCOME_HIDDEN_KEY)==="1"}catch(e){}
 const weekdays=["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"];
@@ -249,6 +310,16 @@ function load(){
  }catch(e){return clone(initial)}
 }
 let data=load(),page="home";
+let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+let selectedCalendarDate=today;
+let calendarExpanded=false;
+const schoolBreakRanges=[["2026-10-05","2026-10-11"],["2026-11-16","2026-11-21"],["2026-12-30","2027-01-10"],["2027-02-15","2027-02-21"],["2027-04-05","2027-04-11"],["2027-05-26","2027-08-31"]];
+const schoolHolidayDates=["2026-11-04","2027-02-22","2027-02-23","2027-03-08","2027-05-03","2027-05-10"];
+function calendarDayType(key){
+ if(schoolBreakRanges.some(([a,b])=>key>=a&&key<=b))return "vacation";
+ const d=dateObj(key);
+ return d.getDay()===0||d.getDay()===6||schoolHolidayDates.includes(key)?"weekend":"";
+}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}
  catch(e){alert("Не удалось сохранить данные на устройстве.")}}
 function setPage(p){page=p;document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===p));render()}
@@ -304,12 +375,82 @@ function renderHome(){
 }
 
 function renderSchedule(){
- const day=Math.max(0,Math.min(6,Number(data.selectedDay)||0));
+ const monthName=calendarMonth.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
+ const selected=dateObj(selectedCalendarDate),weekStart=new Date(selected);
+ weekStart.setDate(selected.getDate()-((selected.getDay()+6)%7));
+ const makeCell=d=>{
+  const key=localDate(d),dayIndex=(d.getDay()+6)%7;
+  const tasks=data.tasks.filter(x=>x.date===key),deadlines=data.deadlines.filter(x=>x.date===key);
+  const lessons=data.schedule.filter(x=>x.day===dayIndex);
+  const dots=[...Array(Math.min(tasks.length,2)).fill("task"),...Array(Math.min(deadlines.length,2)).fill("deadline"),...Array(lessons.length?1:0).fill("lesson")].slice(0,3);
+  return {key,number:d.getDate(),sameMonth:d.getMonth()===calendarMonth.getMonth(),isToday:key===today,selected:key===selectedCalendarDate,type:calendarDayType(key),dots};
+ };
+ const weekCells=Array.from({length:7},(_,i)=>{const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);return makeCell(d)});
+ const first=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1),offset=(first.getDay()+6)%7;
+ const monthStart=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1-offset);
+ const monthCells=Array.from({length:42},(_,i)=>{const d=new Date(monthStart);d.setDate(monthStart.getDate()+i);return makeCell(d)});
+ const day=(selected.getDay()+6)%7;
  const list=data.schedule.filter(t=>t.day===day).sort((a,b)=>a.time.localeCompare(b.time));
- content.innerHTML=`<h1>Расписание 🗓️</h1><p class="muted">Уроки на каждый день недели</p>
- <div class="days">${shortDays.map((d,i)=>`<button class="day ${day===i?"active":""}" data-action="select-day" data-day="${i}">${d}<strong>${i+1}</strong></button>`).join("")}</div>
- ${head(weekdays[day],"Добавить урок","add-lesson")}
- <div class="card">${list.length?list.map(lessonHTML).join(""):empty("📖","На этот день уроков пока нет")}</div>`;
+ const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
+ const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
+ content.innerHTML=`<h1>Расписание 🗓️</h1><p class="muted">Выбери день недели или открой календарь целиком</p>
+ <div class="card">
+  <div class="calendar-toolbar">
+   <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущая неделя или месяц">‹</button>
+   <div class="calendar-month">${esc(monthName)}</div>
+   <button class="calendar-toggle" data-action="calendar-expand">${calendarExpanded?"Свернуть":"Весь месяц"} ${calendarExpanded?"⌃":"⌄"}</button>
+   <button class="small-btn" data-action="calendar-next" aria-label="Следующая неделя или месяц">›</button>
+  </div>
+  <div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div>
+  ${calendarExpanded?`<div class="calendar-month-view"><div class="calendar-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<div class="calendar-weekday">${x}</div>`).join("")}
+  ${monthCells.map(x=>`<button class="calendar-day ${x.sameMonth?"":"muted-day"} ${x.isToday?"today":""} ${x.selected?"selected":""} ${x.type}" data-action="calendar-select" data-date="${x.key}"><span class="day-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div></div>`:
+  `<div class="week-strip">${weekCells.map(x=>`<button class="week-cell ${x.selected?"selected":""} ${x.isToday?"today":""} ${x.type}" data-action="calendar-select" data-date="${x.key}"><span class="week-name">${new Date(x.key+"T12:00:00").toLocaleDateString("ru-RU",{weekday:"short"})}</span><span class="week-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div>`}
+  <button class="secondary full" data-action="calendar-today">Сегодня</button>
+ </div>
+ <div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2><button class="primary" data-action="add-lesson">＋ Урок</button></div>
+ <div class="card">${list.length?list.map(lessonHTML).join(""):empty("📖","На этот день уроков пока нет")}</div>
+ ${chosenTasks.length?`<div class="section-head"><h2>Задания на эту дату</h2></div><div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
+ ${chosenDeadlines.length?`<div class="section-head"><h2>Дедлайны на эту дату</h2></div><div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}`;
+}
+function renderCalendar(){
+ const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth();
+ const monthName=calendarMonth.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
+ const first=new Date(year,month,1);
+ const offset=(first.getDay()+6)%7;
+ const start=new Date(year,month,1-offset);
+ const cells=[];
+ for(let i=0;i<42;i++){
+  const d=new Date(start);d.setDate(start.getDate()+i);
+  const key=localDate(d);
+  const tasks=data.tasks.filter(x=>x.date===key);
+  const deadlines=data.deadlines.filter(x=>x.date===key);
+  const lessons=data.schedule.filter(x=>x.day===(d.getDay()+6)%7);
+  const count=tasks.length+deadlines.length+lessons.length;
+  cells.push({key,number:d.getDate(),sameMonth:d.getMonth()===month,isToday:key===today,selected:key===selectedCalendarDate,count,
+   dots:[...Array(Math.min(tasks.length,2)).fill("task"),...Array(Math.min(deadlines.length,2)).fill("deadline"),...Array(Math.min(lessons.length,1)).fill("lesson")].slice(0,3)});
+ }
+ const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
+ const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
+ const chosenLessons=data.schedule.filter(x=>x.day===(dateObj(selectedCalendarDate).getDay()+6)%7).sort((a,b)=>a.time.localeCompare(b.time));
+ content.innerHTML=`<h1>Календарь 📅</h1><p class="muted">Текущая дата: ${dateObj(today).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"})}</p>
+ <div class="card">
+  <div class="calendar-toolbar">
+   <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий месяц">‹</button>
+   <div class="calendar-month">${esc(monthName)}</div>
+   <button class="small-btn" data-action="calendar-next" aria-label="Следующий месяц">›</button>
+  </div>
+  <div class="calendar-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<div class="calendar-weekday">${x}</div>`).join("")}
+  ${cells.map(x=>`<button class="calendar-day ${x.sameMonth?"":"muted-day"} ${x.isToday?"today":""} ${x.selected?"selected":""}" data-action="calendar-select" data-date="${x.key}">
+   <span class="day-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div>
+  <button class="secondary full" data-action="calendar-today">Перейти к сегодня</button>
+ </div>
+ <div class="section-head"><h2>${dateObj(selectedCalendarDate).toLocaleDateString("ru-RU",{day:"numeric",month:"long"})}</h2><button class="small-btn" data-action="calendar-add-task">＋ Задание</button></div>
+ ${chosenTasks.length?`<div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
+ ${chosenDeadlines.length?`<div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}
+ <div class="section-head"><h2>Уроки по расписанию</h2></div>
+ <div class="card">${chosenLessons.length?chosenLessons.map(lessonHTML).join(""):empty("📚","На этот день уроков нет")}</div>
+ ${(!chosenTasks.length&&!chosenDeadlines.length)?`<div class="card">${empty("🌿","На эту дату нет заданий и дедлайнов")}</div>`:""}
+ <button class="secondary full" data-action="calendar-add-deadline">＋ Добавить дедлайн на эту дату</button>`;
 }
 
 function renderTasks(){
@@ -388,7 +529,7 @@ function renderProfile(){
  <button class="small-btn danger" data-action="reset-data">Сбросить приложение</button></div>`;
 }
 function render(){
- ({home:renderHome,schedule:renderSchedule,tasks:renderTasks,deadlines:renderDeadlines,grades:renderGrades,profile:renderProfile}[page]||renderHome)();
+ ({home:renderHome,schedule:renderSchedule,calendar:renderCalendar,tasks:renderTasks,deadlines:renderDeadlines,grades:renderGrades,profile:renderProfile}[page]||renderHome)();
 }
 
 /* Формы */
@@ -413,22 +554,22 @@ function selectField(label,name,options,selected){
  </select></div>`;
 }
 
-function taskForm(idValue=null){
+function taskForm(idValue=null,presetDate=null){
  const old=data.tasks.find(x=>x.id===idValue);
  openModal(old?"Изменить задание":"Новое задание",`
  ${field("Название задания","title",old?.title||"")}
  ${field("Предмет","subject",old?.subject||"")}
- ${field("Срок выполнения","date",old?.date||today,"date")}`,v=>{
+ ${field("Срок выполнения","date",old?.date||presetDate||today,"date")}`,v=>{
   if(!v.title.trim()||!v.subject.trim())return false;
   if(old)Object.assign(old,v);else data.tasks.push({id:id(),...v,done:false});
  });
 }
-function deadlineForm(idValue=null){
+function deadlineForm(idValue=null,presetDate=null){
  const old=data.deadlines.find(x=>x.id===idValue);
  openModal(old?"Изменить дедлайн":"Новый дедлайн",`
  ${field("Название","title",old?.title||"")}
  ${field("Предмет","subject",old?.subject||"")}
- ${field("Дата","date",old?.date||today,"date")}`,v=>{
+ ${field("Дата","date",old?.date||presetDate||today,"date")}`,v=>{
   if(!v.title.trim()||!v.subject.trim())return false;
   if(old)Object.assign(old,v);else data.deadlines.push({id:id(),...v});
  });
@@ -483,6 +624,20 @@ function remove(list,idValue,label){
 
 function action(a,el){
  const n=Number(el.dataset.id);
+ if(a==="calendar-prev"||a==="calendar-next"){
+  if(calendarExpanded){
+   calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+(a==="calendar-next"?1:-1),1);
+  }else{
+   const d=dateObj(selectedCalendarDate);d.setDate(d.getDate()+(a==="calendar-next"?7:-7));
+   selectedCalendarDate=localDate(d);calendarMonth=new Date(d.getFullYear(),d.getMonth(),1);
+  }
+  return render();
+ }
+ if(a==="calendar-expand"){calendarExpanded=!calendarExpanded;return render()}
+ if(a==="calendar-today"){calendarMonth=new Date();selectedCalendarDate=today;return render()}
+ if(a==="calendar-select"){selectedCalendarDate=el.dataset.date;return render()}
+ if(a==="calendar-add-task")return taskForm(null,selectedCalendarDate);
+ if(a==="calendar-add-deadline")return deadlineForm(null,selectedCalendarDate);
  if(a==="add-task")return taskForm();
  if(a==="edit-task")return taskForm(n);
  if(a==="delete-task")return remove("tasks",n,"задание");
