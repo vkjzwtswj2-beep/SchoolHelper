@@ -113,10 +113,10 @@ p{margin:5px 0}
 .year-month{display:block!important;width:100%;min-width:0;box-sizing:border-box;appearance:none;border:1px solid var(--border);background:#FBF8EF;border-radius:14px;padding:9px 4px;text-align:center;color:var(--text);font:inherit;overflow:hidden}
 .year-month-title{font-size:12px;font-weight:800;text-transform:capitalize;margin-bottom:7px;white-space:nowrap}
 .year-month-grid{display:grid!important;width:100%;min-width:0;box-sizing:border-box;grid-template-columns:repeat(7,minmax(0,1fr))!important;grid-auto-flow:row;gap:2px;justify-items:stretch}
-.year-month-grid span{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;min-width:0;height:18px;padding:0;font-size:9px;line-height:18px;white-space:nowrap;overflow:hidden;border-radius:5px;color:var(--muted);font-variant-numeric:tabular-nums}
-.year-month-grid .year-weekday{font-size:8px;color:var(--muted);font-weight:700}
-.year-month-grid .year-vacation{background:#D7E4D9;color:#456B5B;font-weight:700}
-.year-month-grid .year-weekend{background:#E8D6CF;color:#fff;font-weight:700}
+.year-month-grid span{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;min-width:0;height:20px;padding:0;font-size:10px;line-height:20px;white-space:nowrap;overflow:hidden;border-radius:8px;color:var(--text);font-variant-numeric:tabular-nums}
+.year-month-grid .year-weekday{height:18px;font-size:9px;color:var(--muted);font-weight:700}
+.year-month-grid .year-vacation{background:#D7E4D9;color:#456B5B;font-weight:700;border-radius:50%}
+.year-month-grid .year-weekend{background:#E8D6CF;color:#fff;font-weight:700;border-radius:50%}
 .year-month-grid .year-today{outline:1px solid var(--gold);outline-offset:-1px}
 @media(max-width:380px){.calendar-year-view{gap:7px}.year-month{padding:7px 3px}.year-month-grid span{font-size:8px;height:16px;line-height:16px}.year-month-title{font-size:11px}}
 
@@ -430,7 +430,7 @@ function renderSchedule(){
   <div class="calendar-toolbar">
    <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий период">‹</button>
    <div class="calendar-month">${calendarYearView?academicYearLabel:esc(monthName)}</div>
-   <button class="calendar-toggle" data-action="calendar-view-toggle">${calendarYearView?"месяц":calendarExpanded?"год":"месяц"}</button>
+   ${calendarYearView?"":`<button class="calendar-toggle" data-action="calendar-view-toggle">${calendarExpanded?"год":"месяц"}</button>`}
    <button class="small-btn" data-action="calendar-next" aria-label="Следующий период">›</button>
   </div>
   ${calendarYearView?`<div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div><div class="calendar-year-view">${academicMonths}</div>`:`
