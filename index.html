@@ -396,7 +396,13 @@ function id(){return Date.now()+Math.floor(Math.random()*10000)}
 function clone(v){return JSON.parse(JSON.stringify(v))}
 
 const initial={
- profile:{name:"Ученик",schoolClass:"9 класс",reminders:true},
+ profile:{name:"Ученик",schoolClass:"5А",reminders:true},
+ classSchedules:{"5А":[
+ {id:501,day:0,time:"08:30",subject:"Разговоры о важном",teacher:"Федорова ИЮ"},{id:502,day:0,time:"09:30",subject:"Русский язык",teacher:"Букина АА"},{id:503,day:0,time:"10:30",subject:"Литература",teacher:"Букина АА"},{id:504,day:0,time:"11:35",subject:"География",teacher:"Владимирова ЕА"},{id:505,day:0,time:"12:35",subject:"Киберурок",teacher:"Федорова ИЮ"},{id:506,day:0,time:"13:35",subject:"Математика",teacher:"Федорова ИЮ"},
+ {id:507,day:1,time:"08:30",subject:"Математика",teacher:"Федорова ИЮ"},{id:508,day:1,time:"09:30",subject:"Компьютерная грамотность",teacher:"Деклау НВ"},{id:509,day:1,time:"10:30",subject:"Русский язык",teacher:"Букина АА"},{id:510,day:1,time:"11:35",subject:"Изобразительное искусство",teacher:"Афанасьева ДВ"},{id:511,day:1,time:"12:35",subject:"Физическая культура",teacher:"Красновейкин ВА"},{id:512,day:1,time:"13:35",subject:"Литература",teacher:"Букина АА"},
+ {id:513,day:2,time:"08:30",subject:"Физическая культура",teacher:"Красновейкин ВА"},{id:514,day:2,time:"09:30",subject:"Математика",teacher:"Федорова ИЮ"},{id:515,day:2,time:"10:30",subject:"Английский язык",teacher:"Деклау НВ"},{id:516,day:2,time:"11:35",subject:"Биология",teacher:"Кочетова МР"},{id:517,day:2,time:"12:35",subject:"Русский язык",teacher:"Букина АА"},{id:518,day:2,time:"13:35",subject:"Математика",teacher:"Федорова ИЮ"},{id:519,day:2,time:"14:30",subject:"История",teacher:"Зенцов СБ"},
+ {id:520,day:3,time:"08:30",subject:"Практикум по математике",teacher:"Федорова ИЮ"},{id:521,day:3,time:"09:30",subject:"Математика",teacher:"Федорова ИЮ"},{id:522,day:3,time:"10:30",subject:"Труд (технология)",teacher:"Спирлиев ДВ"},{id:523,day:3,time:"11:35",subject:"Труд (технология)",teacher:"Спирлиев ДВ"},{id:524,day:3,time:"12:35",subject:"История",teacher:"Зенцов СБ"},{id:525,day:3,time:"13:35",subject:"Русский язык",teacher:"Букина АА"},
+ {id:526,day:4,time:"08:30",subject:"Английский язык",teacher:"Деклау НВ"},{id:527,day:4,time:"09:30",subject:"Музыка",teacher:"Таранюк ОВ"},{id:528,day:4,time:"10:30",subject:"История",teacher:"Зенцов СБ"},{id:529,day:4,time:"11:35",subject:"Функциональная грамотность",teacher:"Таранюк ОВ"},{id:530,day:4,time:"12:35",subject:"Русский язык",teacher:"Букина АА"},{id:531,day:4,time:"13:35",subject:"Литература",teacher:"Букина АА"}]},
  selectedDay:todayIndex,
  schedule:[
  {id:1,day:0,time:"08:30",subject:"Математика",room:"12"},
@@ -437,8 +443,9 @@ function load(){
   const x=JSON.parse(saved);
   return {
    ...clone(initial),...x,
-   profile:{...initial.profile,...(x.profile||{})},
+   profile:{...initial.profile,...(x.profile||{}),schoolClass:initial.classSchedules?.[x.profile?.schoolClass]?x.profile.schoolClass:"5А"},
    schedule:Array.isArray(x.schedule)?x.schedule:[],
+   classSchedules:{...clone(initial.classSchedules),...(x.classSchedules&&typeof x.classSchedules==="object"?x.classSchedules:{})},
    tasks:Array.isArray(x.tasks)?x.tasks:[],
    deadlines:Array.isArray(x.deadlines)?x.deadlines:[],
    grades:Array.isArray(x.grades)?x.grades:[],
@@ -458,6 +465,7 @@ function calendarDayType(key){
  const d=dateObj(key);
  return d.getDay()===0||d.getDay()===6||schoolHolidayDates.includes(key)?"weekend":"";
 }
+function getActiveSchedule(){return Array.isArray(data.classSchedules?.[data.profile.schoolClass])?data.classSchedules[data.profile.schoolClass]:[]}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}
  catch(e){alert("Не удалось сохранить данные на устройстве.")}}
 function setPage(p){if(p==="schedule"){const now=new Date();selectedCalendarDate=localDate(now);calendarMonth=new Date(now.getFullYear(),now.getMonth(),1);calendarExpanded=false;calendarYearView=false}page=p;document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===p));render()}
@@ -486,7 +494,7 @@ function deadlineHTML(t){
 
 function lessonHTML(t){return `<div class="item">
  <div class="lesson-time">${esc(t.time)}</div><div class="item-icon">📖</div>
- <div class="item-main"><h3>${esc(t.subject)}</h3><p>Кабинет: ${esc(t.room||"—")}</p>
+ <div class="item-main"><h3>${esc(t.subject)}</h3><p>${t.teacher?"Учитель: "+esc(t.teacher):"Кабинет: "+esc(t.room||"—")}</p>
  <div class="item-actions">
  <button class="small-btn" data-action="edit-lesson" data-id="${t.id}">Изменить</button>
  <button class="small-btn danger" data-action="delete-lesson" data-id="${t.id}">Удалить</button>
@@ -494,7 +502,7 @@ function lessonHTML(t){return `<div class="item">
 
 function renderHome(){
  const pending=data.tasks.filter(t=>!t.done);
- const lessons=data.schedule.filter(t=>t.day===todayIndex);
+ const lessons=getActiveSchedule().filter(t=>t.day===todayIndex);
  const a=avg(data.grades);
  content.innerHTML=`
  ${welcomeHidden?`<button class="secondary" data-action="show-welcome" style="margin:0 0 14px;width:100%">👋 Показать приветствие</button>`:`<section class="welcome"><button class="welcome-close" data-action="hide-welcome" aria-label="Скрыть приветствие" title="Скрыть">×</button><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
@@ -520,7 +528,7 @@ function renderSchedule(){
  const makeCell=d=>{
   const key=localDate(d),dayIndex=(d.getDay()+6)%7;
   const tasks=data.tasks.filter(x=>x.date===key),deadlines=data.deadlines.filter(x=>x.date===key);
-  const lessons=data.schedule.filter(x=>x.day===dayIndex);
+  const lessons=getActiveSchedule().filter(x=>x.day===dayIndex);
   const dots=[...Array(Math.min(tasks.length,2)).fill("task"),...Array(Math.min(deadlines.length,2)).fill("deadline"),...Array(lessons.length?1:0).fill("lesson")].slice(0,3);
   return {key,number:d.getDate(),sameMonth:d.getMonth()===calendarMonth.getMonth(),isToday:key===today,selected:key===selectedCalendarDate,type:calendarDayType(key),dots};
  };
@@ -545,7 +553,7 @@ function renderSchedule(){
  }).join("");
  const academicYearLabel=`${academicStartYear}–${academicStartYear+1}`;
  const day=(selected.getDay()+6)%7;
- const list=data.schedule.filter(t=>t.day===day).sort((a,b)=>a.time.localeCompare(b.time));
+ const list=getActiveSchedule().filter(t=>t.day===day).sort((a,b)=>a.time.localeCompare(b.time));
  const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
  const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
  content.innerHTML=`<h1>Расписание 🗓️</h1><p class="muted">Выбери день недели, месяц или посмотри весь год</p>
@@ -580,14 +588,14 @@ function renderCalendar(){
   const key=localDate(d);
   const tasks=data.tasks.filter(x=>x.date===key);
   const deadlines=data.deadlines.filter(x=>x.date===key);
-  const lessons=data.schedule.filter(x=>x.day===(d.getDay()+6)%7);
+  const lessons=getActiveSchedule().filter(x=>x.day===(d.getDay()+6)%7);
   const count=tasks.length+deadlines.length+lessons.length;
   cells.push({key,number:d.getDate(),sameMonth:d.getMonth()===month,isToday:key===today,selected:key===selectedCalendarDate,count,
    dots:[...Array(Math.min(tasks.length,2)).fill("task"),...Array(Math.min(deadlines.length,2)).fill("deadline"),...Array(Math.min(lessons.length,1)).fill("lesson")].slice(0,3)});
  }
  const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
  const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
- const chosenLessons=data.schedule.filter(x=>x.day===(dateObj(selectedCalendarDate).getDay()+6)%7).sort((a,b)=>a.time.localeCompare(b.time));
+ const chosenLessons=getActiveSchedule().filter(x=>x.day===(dateObj(selectedCalendarDate).getDay()+6)%7).sort((a,b)=>a.time.localeCompare(b.time));
  content.innerHTML=`<h1>Календарь 📅</h1><p class="muted">Текущая дата: ${dateObj(today).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"})}</p>
  <div class="card">
   <div class="calendar-toolbar">
@@ -770,8 +778,9 @@ function goalForm(subjectPreset=""){
  });
 }
 function profileForm(){
+ const classes=["5А"];
  openModal("Мой профиль",`${field("Имя","name",data.profile.name)}
- ${field("Класс","schoolClass",data.profile.schoolClass)}`,v=>{
+ ${selectField("Мой класс","schoolClass",classes,data.profile.schoolClass)}`,v=>{
   if(!v.name.trim()||!v.schoolClass.trim())return false;
   data.profile.name=v.name.trim();data.profile.schoolClass=v.schoolClass.trim();
  });
