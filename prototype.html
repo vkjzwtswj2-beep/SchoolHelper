@@ -343,6 +343,12 @@ button,a,input,select,textarea{touch-action:manipulation}
 .class-no-results{padding:10px 12px}
 
 .modal{max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain}
+@media(max-width:600px){
+ .modal-bg.keyboard-open{align-items:flex-start;padding-top:8px;padding-bottom:8px}
+ .modal-bg.keyboard-open .modal{max-height:var(--keyboard-modal-height,calc(100dvh - 16px));overflow-y:auto}
+ .modal-bg.keyboard-open .class-picker-panel{position:relative;top:auto;left:auto;right:auto;max-height:none;overflow:visible;margin-top:6px}
+ .modal-bg.keyboard-open .class-picker-options{max-height:clamp(110px,24vh,190px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+}
 </style>
 </head>
 <body>
@@ -712,7 +718,11 @@ function openModal(title,html,submit){
   e.stopPropagation();
  });
 }
-function closeModal(){modalRoot.innerHTML=""}
+let classPickerViewportCleanup=null;
+function closeModal(){
+ if(classPickerViewportCleanup){classPickerViewportCleanup();classPickerViewportCleanup=null;}
+ modalRoot.innerHTML="";
+}
 function field(label,name,value="",type="text",required=true){
  return `<div class="field"><label>${esc(label)}</label><input type="${type}" name="${name}" value="${esc(value)}" ${required?"required":""}></div>`;
 }
@@ -835,6 +845,38 @@ function classForm(){
   data.schedule=[];
  });
  const trigger=$("#class-picker-trigger"), panel=$("#class-picker-panel"), search=$("#classSearch"), list=$("#class-picker-options"), hidden=$("#schoolClassSelect"), groupField=$("#subgroup-field");
+ const modalBackdrop=$(".modal-bg"), modalElement=$(".modal");
+ if(classPickerViewportCleanup){classPickerViewportCleanup();classPickerViewportCleanup=null;}
+ const viewport=window.visualViewport;
+ const updateKeyboardLayout=()=>{
+  if(!modalBackdrop||!modalElement||!search)return;
+  const keyboardOpen=document.activeElement===search && viewport && (window.innerHeight-viewport.height)>120;
+  modalBackdrop.classList.toggle("keyboard-open",!!keyboardOpen);
+  if(keyboardOpen){
+   const available=Math.max(220,viewport.height-16);
+   modalBackdrop.style.top=Math.max(0,viewport.offsetTop)+"px";
+   modalBackdrop.style.bottom=Math.max(0,window.innerHeight-(viewport.height+viewport.offsetTop))+"px";
+   modalElement.style.setProperty("--keyboard-modal-height",available+"px");
+   modalElement.style.maxHeight=available+"px";
+  }else{
+   modalBackdrop.style.top="";
+   modalBackdrop.style.bottom="";
+   modalElement.style.removeProperty("--keyboard-modal-height");
+   modalElement.style.maxHeight="";
+  }
+ };
+ const onViewportChange=()=>updateKeyboardLayout();
+ search?.addEventListener("focus",updateKeyboardLayout);
+ search?.addEventListener("blur",()=>{modalBackdrop?.classList.remove("keyboard-open");});
+ viewport?.addEventListener("resize",onViewportChange);
+ viewport?.addEventListener("scroll",onViewportChange);
+ window.addEventListener("resize",onViewportChange);
+ classPickerViewportCleanup=()=>{
+  viewport?.removeEventListener("resize",onViewportChange);
+  viewport?.removeEventListener("scroll",onViewportChange);
+  window.removeEventListener("resize",onViewportChange);
+ };
+
  trigger?.addEventListener("click",()=>{
   const opening=panel.style.display==="none";
   panel.style.display=opening?"block":"none";
