@@ -1029,49 +1029,33 @@ function profileForm(){
 }
 function classForm(){
  const options=Object.keys(data.classSchedules).sort((a,b)=>a.localeCompare(b,"ru"));
- const current=data.profile.schoolClass==="none"?"":(data.profile.schoolClass||"");
+ const current=data.profile.schoolClass||"none";
+ const subgroupClasses=["6М","8А","8В","8Г","8Д","8Е","9А","9Б","9В","9Г"];
+ const hasGroups=subgroupClasses.includes(current);
  openModal("Класс и расписание",`
- <div class="field"><label for="class-search">Найти и выбрать класс</label>
- <input id="class-search" type="search" placeholder="Поиск по списку классов" value="${esc(current)}" autocomplete="off">
- <input id="school-class-value" type="hidden" name="schoolClass" value="${esc(current||"none")}"></div>
- <div id="class-options" style="max-height:240px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border,#ddd);border-radius:14px;padding:6px;background:var(--card,#fff)" role="listbox" aria-label="Список классов">
- <button type="button" class="class-option" data-class="none" style="display:block;width:100%;text-align:left;padding:12px 14px;border:0;border-radius:10px;background:${!current?"var(--soft,#eef1f8)":"transparent"};color:inherit;font:inherit">Класс не выбран</button>
- ${options.map(x=>`<button type="button" class="class-option" data-class="${esc(x)}" style="display:block;width:100%;text-align:left;padding:12px 14px;border:0;border-radius:10px;background:${x===current?"var(--soft,#eef1f8)":"transparent"};color:inherit;font:inherit">${esc(x)}</button>`).join("")}
- </div>
- <div id="subgroup-field" class="field" style="display:${["6М","8А","8В","8Г","8Д","8Е","9А","9Б","9В","9Г"].includes(current)?"block":"none"}">
- <label for="subGroup" id="subgroup-label">${current==="6М"?"Моя подгруппа (для уроков труда)":"Моя подгруппа (для английского языка)"}</label>
- <select id="subGroup" name="subGroup">
- ${["1-я подгруппа","2-я подгруппа"].map((label,i)=>`<option value="${i+1}" ${(data.profile.subGroup||"1")===String(i+1)?"selected":""}>${label}</option>`).join("")}
+ <div class="field"><label for="schoolClassSelect">Выбрать класс</label>
+ <select id="schoolClassSelect" name="schoolClass" required>
+ <option value="none" ${current==="none"?"selected":""}>Класс не выбран</option>
+ ${options.map(x=>`<option value="${esc(x)}" ${x===current?"selected":""}>${esc(x)}</option>`).join("")}
  </select></div>
- <p class="muted">Можно выбрать класс или оставить вариант «Класс не выбран».</p>`,v=>{
-  const raw=v.schoolClass.trim();
-  const chosen=raw==="none"?"none":raw.toLocaleUpperCase("ru");
+ <div id="subgroup-field" class="field" style="display:${hasGroups?"block":"none"}">
+ <label for="subGroup">Моя подгруппа</label>
+ <select id="subGroup" name="subGroup">
+ <option value="1" ${(data.profile.subGroup||"1")==="1"?"selected":""}>1-я подгруппа</option>
+ <option value="2" ${(data.profile.subGroup||"1")==="2"?"selected":""}>2-я подгруппа</option>
+ </select></div>
+ <p class="muted">Выбери класс и сохрани изменения.</p>`,v=>{
+  const chosen=v.schoolClass||"none";
   if(chosen!=="none"&&!options.includes(chosen))return false;
   data.profile.schoolClass=chosen;
-  if(["6М","8А","8В","8Г","8Д","8Е","9А","9Б","9В","9Г"].includes(chosen))data.profile.subGroup=v.subGroup||"1";
+  if(subgroupClasses.includes(chosen))data.profile.subGroup=v.subGroup||"1";
   data.schedule=[];
  });
- const search=$("#class-search"),hidden=$("#school-class-value"),list=$("#class-options");
+ const classSelect=$("#schoolClassSelect");
  const groupField=$("#subgroup-field");
- const filter=()=>{
-  const q=search.value.trim().toLocaleLowerCase("ru");
-  list.querySelectorAll("[data-class]").forEach(el=>{
-   const label=el.dataset.class==="none"?"класс не выбран":el.dataset.class;
-   const match=!q||label.toLocaleLowerCase("ru").includes(q);
-   el.hidden=!match;el.style.display=match?"block":"none";
-  });
- };
- search?.addEventListener("input",filter);filter();
- list?.addEventListener("click",e=>{
-  const option=e.target.closest("[data-class]");if(!option)return;
-  hidden.value=option.dataset.class;
-  search.value=option.dataset.class==="none"?"":option.dataset.class;
-  const chosenClass=option.dataset.class;groupField.style.display=["6М","8А","8В","8Г","8Д","8Е","9А","9Б","9В","9Г"].includes(chosenClass)?"block":"none";const subgroupSelect=$("#subGroup"),subgroupLabel=$("#subgroup-label");if(subgroupSelect&&["6М","8А","8В","8Г","8Д","8Е","9А","9Б","9В","9Г"].includes(chosenClass)){const labels=["1-я подгруппа","2-я подгруппа"];subgroupSelect.innerHTML=labels.map((label,i)=>`<option value="${i+1}">${label}</option>`).join("");subgroupSelect.value=data.profile.subGroup||"1";if(subgroupLabel)subgroupLabel.textContent="Моя подгруппа";}
-  list.querySelectorAll("[data-class]").forEach(el=>{
-   const active=el===option;el.setAttribute("aria-selected",String(active));
-   el.style.background=active?"var(--soft,#eef1f8)":"transparent";
-  });
-  filter();
+ classSelect?.addEventListener("change",()=>{
+  const show=subgroupClasses.includes(classSelect.value);
+  if(groupField)groupField.style.display=show?"block":"none";
  });
 }
 function remove(list,idValue,label){
