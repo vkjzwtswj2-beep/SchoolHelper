@@ -737,8 +737,8 @@ function renderSchedule(){
   `<div class="week-strip">${weekCells.map(x=>`<button class="week-cell ${x.selected?"selected":""} ${x.isToday?"today":""} ${x.type}" data-action="calendar-select" data-date="${x.key}"><span class="week-name">${new Date(x.key+"T12:00:00").toLocaleDateString("ru-RU",{weekday:"short"})}</span><span class="week-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div>`}
   <button class="secondary full" data-action="calendar-today">${selectedCalendarDate===today?"Сегодня":"Вернуться к сегодня"}</button>`}
  </div>
- ${calendarYearView?"":`<div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2><button class="primary" data-action="add-lesson">＋ Урок</button></div>
- <div class="card">${list.length?list.map(lessonHTML).join(""):empty(uiIcon("book"),noSchool?"В этот день занятий нет":"На этот день уроков пока нет")}</div>
+ ${calendarYearView?"":`<div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2>${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`<button class="primary" data-action="add-lesson">＋ Урок</button>`:""}</div>
+ <div class="card">${list.length?list.map(lessonHTML).join(""):empty(uiIcon("book"),noSchool?"В этот день занятий нет":(!data.profile.schoolClass||data.profile.schoolClass==="none"?"Класс не выбран. Выбери класс в профиле, чтобы увидеть расписание.":"На этот день уроков пока нет"))}</div>
  ${chosenTasks.length?`<div class="section-head"><h2>Задания на эту дату</h2></div><div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
  ${chosenDeadlines.length?`<div class="section-head"><h2>Дедлайны на эту дату</h2></div><div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}`}`;
 }
@@ -969,8 +969,9 @@ function classForm(){
  openModal("Класс и расписание",`
  <div class="field"><label for="class-search">Найти и выбрать класс</label>
  <input id="class-search" type="search" placeholder="Поиск по списку классов" value="${esc(current)}" autocomplete="off">
- <input id="school-class-value" type="hidden" name="schoolClass" value="${esc(current)}"></div>
+ <input id="school-class-value" type="hidden" name="schoolClass" value="${esc(current||"none")}"></div>
  <div id="class-options" style="max-height:240px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border,#ddd);border-radius:14px;padding:6px;background:var(--card,#fff)" role="listbox" aria-label="Список классов">
+ <button type="button" class="class-option" data-class="none" style="display:block;width:100%;text-align:left;padding:12px 14px;border:0;border-radius:10px;background:${!current?"var(--soft,#eef1f8)":"transparent"};color:inherit;font:inherit">Класс не выбран</button>
  ${options.map(x=>`<button type="button" class="class-option" data-class="${esc(x)}" style="display:block;width:100%;text-align:left;padding:12px 14px;border:0;border-radius:10px;background:${x===current?"var(--soft,#eef1f8)":"transparent"};color:inherit;font:inherit">${esc(x)}</button>`).join("")}
  </div>
  <div id="subgroup-field" class="field" style="display:${current==="6М"?"block":"none"}">
@@ -979,9 +980,10 @@ function classForm(){
  <option value="1" ${(data.profile.subGroup||"1")==="1"?"selected":""}>1-я подгруппа — Спирлиев Д.В.</option>
  <option value="2" ${data.profile.subGroup==="2"?"selected":""}>2-я подгруппа — Парамонова О.В.</option>
  </select></div>
- <p class="muted">Прокручивай список или начни вводить название класса для поиска.</p>`,v=>{
-  const chosen=v.schoolClass.trim().toLocaleUpperCase("ru");
-  if(!options.includes(chosen))return false;
+ <p class="muted">Можно выбрать класс или оставить вариант «Класс не выбран».</p>`,v=>{
+  const raw=v.schoolClass.trim();
+  const chosen=raw==="none"?"none":raw.toLocaleUpperCase("ru");
+  if(chosen!=="none"&&!options.includes(chosen))return false;
   data.profile.schoolClass=chosen;
   if(chosen==="6М")data.profile.subGroup=v.subGroup||"1";
   data.schedule=[];
@@ -991,19 +993,22 @@ function classForm(){
  const filter=()=>{
   const q=search.value.trim().toLocaleLowerCase("ru");
   list.querySelectorAll("[data-class]").forEach(el=>{
-   const match=el.dataset.class.toLocaleLowerCase("ru").includes(q);
+   const label=el.dataset.class==="none"?"класс не выбран":el.dataset.class;
+   const match=!q||label.toLocaleLowerCase("ru").includes(q);
    el.hidden=!match;el.style.display=match?"block":"none";
   });
  };
  search?.addEventListener("input",filter);filter();
  list?.addEventListener("click",e=>{
   const option=e.target.closest("[data-class]");if(!option)return;
-  hidden.value=option.dataset.class;search.value=option.dataset.class;
+  hidden.value=option.dataset.class;
+  search.value=option.dataset.class==="none"?"":option.dataset.class;
   groupField.style.display=option.dataset.class==="6М"?"block":"none";
   list.querySelectorAll("[data-class]").forEach(el=>{
    const active=el===option;el.setAttribute("aria-selected",String(active));
    el.style.background=active?"var(--soft,#eef1f8)":"transparent";
   });
+  filter();
  });
 }
 function remove(list,idValue,label){
