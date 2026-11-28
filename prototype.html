@@ -811,20 +811,40 @@ function profileForm(){
  });
 }
 function classForm(){
- const options=["none",...Object.keys(data.classSchedules).sort((a,b)=>a.localeCompare(b,"ru"))];
- const labels=options.map(x=>x==="none"?"Не выбран":x);
- openModal("Класс и расписание",`<div class="field"><label for="class-search">Найти класс</label><input id="class-search" type="search" placeholder="Начни вводить, например 6Г" autocomplete="off"></div><div class="field"><label for="class-choice">Выбери класс</label><select id="class-choice" name="schoolClass" required size="7">${options.map((x,i)=>`<option value="${esc(x)}" ${x===data.profile.schoolClass?"selected":""}>${labels[i]}</option>`).join("")}</select></div><p class="muted">Начни вводить номер или букву класса — список отфильтруется.</p>`,v=>{
-  data.profile.schoolClass=v.schoolClass;
+ const options=Object.keys(data.classSchedules).sort((a,b)=>a.localeCompare(b,"ru"));
+ const current=data.profile.schoolClass==="none"?"":(data.profile.schoolClass||"");
+ openModal("Класс и расписание",`
+ <div class="field"><label for="class-search">Найти и выбрать класс</label>
+ <input id="class-search" type="search" placeholder="Начни вводить, например 6Г" value="${esc(current)}" autocomplete="off">
+ <input id="school-class-value" type="hidden" name="schoolClass" value="${esc(current)}"></div>
+ <div id="class-options" style="max-height:240px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border,#ddd);border-radius:14px;padding:6px;background:var(--card,#fff)" role="listbox" aria-label="Список классов">
+ ${options.map(x=>`<button type="button" class="class-option" data-class="${esc(x)}" aria-selected="${x===current}" style="display:block;width:100%;text-align:left;padding:12px 14px;border:0;border-radius:10px;background:${x===current?"var(--soft,#eef1f8)":"transparent"};color:inherit;font:inherit">${esc(x)}</button>`).join("")}
+ </div>
+ <p class="muted">Прокручивай список или начни вводить название класса для поиска.</p>`,v=>{
+  const chosen=v.schoolClass.trim().toLocaleUpperCase("ru");
+  if(!options.includes(chosen))return false;
+  data.profile.schoolClass=chosen;
   data.schedule=[];
  });
- const search=$("#class-search"),choice=$("#class-choice");
- search?.addEventListener("input",()=>{
-  const query=search.value.trim().toLocaleLowerCase("ru");
-  const current=choice.value;
-  const filtered=options.map((value,i)=>({value,label:labels[i]})).filter(x=>!query||x.label.toLocaleLowerCase("ru").includes(query));
-  choice.innerHTML=filtered.map(x=>`<option value="${esc(x.value)}">${esc(x.label)}</option>`).join("");
-  if(filtered.some(x=>x.value===current))choice.value=current;
-  else if(filtered.length)choice.value=filtered[0].value;
+ const search=$("#class-search"),hidden=$("#school-class-value"),list=$("#class-options");
+ const filter=()=>{
+  const q=search.value.trim().toLocaleLowerCase("ru");
+  list.querySelectorAll("[data-class]").forEach(el=>{
+   const match=el.dataset.class.toLocaleLowerCase("ru").includes(q);
+   el.hidden=!match;
+  });
+ };
+ search?.addEventListener("input",filter);
+ list?.addEventListener("click",e=>{
+  const option=e.target.closest("[data-class]");
+  if(!option)return;
+  hidden.value=option.dataset.class;
+  search.value=option.dataset.class;
+  list.querySelectorAll("[data-class]").forEach(el=>{
+   const active=el===option;
+   el.setAttribute("aria-selected",String(active));
+   el.style.background=active?"var(--soft,#eef1f8)":"transparent";
+  });
  });
 }
 function remove(list,idValue,label){
