@@ -1,0 +1,891 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#E8EEEC">
+<title>SchoolHelper</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+ --purple:#1D2D4D;--dark:#14223D;--light:#E9EEE8;
+ --bg:#DCE5E3;--text:#1D2D4D;--muted:#77817D;
+ --border:#DCE4DE;--green:#66866F;--red:#B96B62;
+ --gold:#C49A55;--cream:#F5F0E5;--sage:#A9BCA8;
+}
+*{box-sizing:border-box}
+html,body{width:100%;min-width:0;max-width:100%;min-height:100%;overflow-x:hidden}
+html{height:100%;background:var(--bg)}
+body{margin:0;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--text);
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ padding-bottom:calc(82px + max(env(safe-area-inset-bottom),var(--tg-content-safe-area-inset-bottom,0px)))}
+img,svg,video,canvas{display:block;max-width:100%;height:auto}
+button,input,select,textarea{font:inherit;max-width:100%;min-width:0}
+button{cursor:pointer}
+.app{width:100%;max-width:680px;min-width:0;min-height:100vh;min-height:100dvh;margin:0 auto;padding:max(104px,calc(40px + max(env(safe-area-inset-top),var(--tg-content-safe-area-inset-top,0px)))) 16px 22px}
+#content{width:100%;min-width:0;overflow-wrap:anywhere}
+#content *{min-width:0}
+.card,.stat,.welcome,.item-main{min-width:0;max-width:100%}
+h1,h2,h3,p,.muted,.tag,.nav-btn{overflow-wrap:anywhere;word-break:normal}
+.item-main h3,.item-main p{overflow-wrap:anywhere}
+.top{min-width:0;gap:10px}
+.logo{min-width:0;overflow-wrap:anywhere}
+.avatar{flex-shrink:0}
+.welcome{position:relative;padding:22px 54px 22px 22px;overflow:hidden}
+.welcome h1,.welcome p{max-width:100%}
+.welcome-close{position:absolute;right:12px;top:12px;width:32px;height:32px;min-width:32px;padding:0;border:0;border-radius:10px;background:#ffffff30;color:#fff;font-size:22px;line-height:1}
+.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+.stat{overflow-wrap:anywhere}
+.card{overflow-wrap:anywhere}
+.item{min-width:0}
+.item-main{overflow-wrap:anywhere}
+.item-actions{flex-wrap:wrap}
+.bottom-nav{width:100%;max-width:100%;left:0;right:0;overflow-x:auto;overscroll-behavior-x:contain}
+.nav-btn{flex:1 1 0;min-width:0;padding:2px 1px;white-space:normal;line-height:1.2}
+.nav-btn span{line-height:1.2}
+.modal-bg{padding:10px max(10px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+.modal{width:100%;min-width:0;overflow-x:hidden}
+.field input,.field select{min-width:0;width:100%}
+@media(max-width:380px){
+ .app{padding-left:12px;padding-right:12px}
+ .card{padding:13px}
+ .stat{padding:12px}
+ .welcome{padding:18px 48px 18px 18px}
+ .item-actions{gap:5px}
+ .small-btn{padding:8px 9px}
+ .bottom-nav{padding-left:2px;padding-right:2px}
+ .nav-btn{font-size:9px}
+ .nav-btn span{font-size:18px}
+}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.7px;color:var(--dark)}.logo span{color:var(--gold)}
+.avatar{width:74px;height:55px;flex:0 0 74px;display:flex;align-items:center;justify-content:center;padding:0;background:transparent;border:0;border-radius:0;overflow:visible;filter:none;box-shadow:none}.avatar img{display:block;width:100%;height:100%;object-fit:contain;background:transparent;filter:none;box-shadow:none;mix-blend-mode:normal}
+h1{font-size:25px;margin:8px 0}
+h2{font-size:19px;margin:23px 0 12px}
+h3{font-size:16px;margin:0 0 6px}
+p{margin:5px 0}
+.muted{color:var(--muted);font-size:13px}
+.card{background:#FBF8EF;border:1px solid rgba(29,45,77,.06);border-radius:19px;padding:16px;margin-bottom:12px;
+ box-shadow:0 5px 22px rgba(29,45,77,.055)}
+.welcome{background:linear-gradient(135deg,#1D2D4D 0%,#263B60 100%);
+ color:#F5F0E5;padding:22px;border-radius:22px;margin-bottom:17px;border:1px solid rgba(196,154,85,.42);box-shadow:0 10px 26px rgba(29,45,77,.15)}
+.welcome h1{color:#FFFFFF}.welcome p{color:#E8EEEC}.welcome-close{background:rgba(245,240,229,.14);color:#F5F0E5}
+.welcome p{opacity:.85;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.stat{background:#FBF8EF;padding:15px;border-radius:17px;border:1px solid rgba(29,45,77,.06);box-shadow:0 4px 16px rgba(29,45,77,.04)}
+.stat-number{font-size:26px;font-weight:800;margin:7px 0 2px}
+.section-head{display:flex;justify-content:space-between;align-items:center;
+ gap:8px;margin:23px 0 12px}
+.section-head h2{margin:0}
+.primary,.secondary,.small-btn{border:0;border-radius:11px;padding:10px 13px;font-weight:650}
+.primary{background:var(--dark);color:#F5F0E5;box-shadow:0 3px 8px rgba(29,45,77,.12)}
+.secondary{background:#E4EAE2;color:var(--dark);border:1px solid #D5DED5}
+.small-btn{background:#E9EEE8;color:var(--dark);font-size:12px;padding:8px 10px;border:1px solid rgba(29,45,77,.05)}
+.danger{background:#fff0f1;color:#c65e6c}
+.item{display:flex;align-items:flex-start;gap:11px}
+.item+.item{border-top:1px solid var(--border);padding-top:12px;margin-top:12px}
+.item-icon{width:39px;height:39px;border-radius:12px;background:#E5EBE3;color:var(--dark);
+ display:grid;place-items:center;flex-shrink:0;font-size:19px}
+.item-main{flex:1;min-width:0}\n.ui-icon{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;line-height:1;flex-shrink:0}\n.ui-icon svg{width:1.25em;height:1.25em;display:block}\n.nav-btn .ui-icon{display:flex;justify-content:center;margin:0 auto 3px;font-size:19px}\n.item-icon .ui-icon{font-size:20px}\n.stat .ui-icon{font-size:23px}
+.item-main p{font-size:13px;color:var(--muted)}
+.item-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.done{opacity:.5}.done .item-title{text-decoration:line-through}
+.tag{display:inline-block;background:#E9EEE8;color:var(--dark);
+ padding:5px 9px;border-radius:9px;font-size:11px;font-weight:650}
+.tag.green{background:#e7f7ef;color:#39845e}
+.tag.red{background:#fff0f1;color:#c65e6c}
+.days{display:flex;gap:7px;overflow-x:auto;padding:3px 0 12px}
+.calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0}
+
+.calendar-month{font-size:16px;font-weight:800;text-transform:capitalize}
+.calendar-toggle{border:0;background:#E9EEE8;color:var(--dark);border-radius:10px;padding:8px 11px;font-size:12px;font-weight:750;white-space:nowrap}
+.week-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:12px 0 4px}
+.week-cell{border:0;background:transparent;color:var(--muted);border-radius:12px;padding:7px 1px;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0}
+.week-cell .week-name{font-size:10px}
+.week-cell .week-number{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:750;color:var(--text);background:#F2F0E8}
+.week-cell.selected{background:#F3F0E8;color:var(--dark)}
+.week-cell.selected .week-number{background:var(--dark);color:white}
+.week-cell.today .week-number{outline:2px solid var(--gold);outline-offset:2px}
+.week-cell .calendar-dots{height:5px}
+.calendar-month-view{margin-top:12px}
+.calendar-year-view{display:grid!important;width:100%;box-sizing:border-box;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:start;gap:8px;margin-top:12px}
+.year-month{display:block!important;width:100%;min-width:0;box-sizing:border-box;appearance:none;border:1px solid var(--border);background:#FBF8EF;border-radius:18px;padding:10px 5px;text-align:center;color:var(--text);font:inherit;overflow:hidden}
+.year-month-title{font-size:13px;font-weight:800;text-transform:capitalize;margin-bottom:7px;white-space:nowrap;color:var(--dark)}
+.year-month-grid{display:grid!important;width:100%;min-width:0;box-sizing:border-box;grid-template-columns:repeat(7,minmax(0,1fr))!important;grid-auto-flow:row;gap:3px 0;justify-items:stretch;align-items:center}
+.year-month-grid span{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;height:20px;min-width:0;padding:0;border-radius:0;font-size:10px;line-height:20px;white-space:nowrap;overflow:visible;color:var(--dark);font-weight:700;font-variant-numeric:tabular-nums;background:radial-gradient(circle 9px at center,#F2F0E8 98%,transparent 100%)}
+.year-month-grid .year-weekday{width:100%;height:16px;background:transparent;font-size:9px;line-height:16px;color:var(--muted);font-weight:700}
+.year-month-grid span:empty{background:transparent}
+.year-month-grid .year-vacation{background:radial-gradient(circle 9px at center,#D7E4D9 98%,transparent 100%);color:#456B5B;font-weight:800}
+.year-month-grid .year-weekend{background:radial-gradient(circle 9px at center,#E8D6CF 98%,transparent 100%);color:#fff;font-weight:800}
+.year-month-grid .year-today{outline:1.5px solid var(--gold);outline-offset:-2px;border-radius:50%}
+@media(max-width:380px){.calendar-year-view{gap:7px}.year-month{padding:8px 3px}.year-month-title{font-size:12px}.year-month-grid{gap:2px 0}.year-month-grid span{height:19px;font-size:9px;line-height:19px;background:radial-gradient(circle 8px at center,#F2F0E8 98%,transparent 100%)}.year-month-grid .year-vacation{background:radial-gradient(circle 8px at center,#D7E4D9 98%,transparent 100%)}.year-month-grid .year-weekend{background:radial-gradient(circle 8px at center,#E8D6CF 98%,transparent 100%)}.year-month-grid .year-weekday{height:15px;line-height:15px;font-size:8px}}
+
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.calendar-weekday{text-align:center;color:var(--muted);font-size:11px;padding:5px 0}
+.calendar-day{min-width:0;min-height:54px;padding:6px 2px;border:1px solid var(--border);border-radius:18px;background:#FBF8EF;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:5px}
+.calendar-day.muted-day{opacity:.35}
+.calendar-day.today{border:2px solid var(--gold);font-weight:800}
+.calendar-day.selected{background:var(--dark);color:#fff;border-color:var(--dark)}
+.calendar-day.selected .calendar-dots i{background:#fff}
+.calendar-dots{display:flex;gap:3px;min-height:5px}
+.calendar-dots i{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.calendar-day.selected .calendar-dots i{background:#fff}
+.calendar-day .day-number{font-size:13px}
+.calendar-month-view .calendar-day{position:relative;gap:5px}
+.calendar-month-view .calendar-dots{display:flex;align-items:center;justify-content:center;gap:3px;min-height:6px}
+.calendar-month-view .calendar-dots i{display:block;width:5px;height:5px;flex:0 0 5px;border-radius:50%;background:var(--green)}
+.calendar-month-view .calendar-day.selected .calendar-dots i{background:var(--green)}
+.calendar-legend{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 2px;color:var(--muted);font-size:11px}
+.calendar-legend span{display:inline-flex;align-items:center;gap:6px}
+.calendar-legend i{width:11px;height:11px;border-radius:4px;display:inline-block}
+.calendar-legend .legend-vacation{background:#D7E4D9}
+.calendar-legend .legend-weekend{background:#E8D6CF}
+.week-cell.vacation .week-number,.calendar-month-view .calendar-day.vacation .day-number{background:#D7E4D9;color:#456B5B}
+.week-cell.weekend .week-number,.calendar-month-view .calendar-day.weekend .day-number{background:#E8D6CF;color:#fff}
+.week-cell.selected.vacation .week-number,.calendar-month-view .calendar-day.selected.vacation .day-number{background:#D7E4D9;color:#456B5B;outline:2px solid var(--dark);outline-offset:2px}
+.week-cell.selected.weekend .week-number,.calendar-month-view .calendar-day.selected.weekend .day-number{background:#E8D6CF;color:#fff;outline:2px solid var(--dark);outline-offset:2px}
+/* Restore the original warm terracotta treatment in the month calendar */
+.calendar-month-view .calendar-day.weekend .day-number{background:#E8D6CF;color:#fff}
+.calendar-month-view .calendar-day.selected.weekend .day-number{background:#E8D6CF;color:#fff;outline:2px solid var(--dark);outline-offset:2px}
+
+
+/* Month view follows the same circular, minimal style as the week strip */
+.calendar-month-view .calendar-grid{gap:4px}
+.calendar-month-view .calendar-weekday{font-size:10px;padding:5px 0}
+.calendar-month-view .calendar-day{
+ min-height:58px;padding:4px 1px;border:0;border-radius:12px;background:transparent;
+ color:var(--muted);gap:5px;justify-content:flex-start
+}
+.calendar-month-view .calendar-day .day-number{
+ width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+ background:#F2F0E8;color:var(--text);font-size:14px;font-weight:750
+}
+.calendar-month-view .calendar-day.selected{background:#F3F0E8;color:var(--dark);border:0}
+.calendar-month-view .calendar-day.selected .day-number{background:var(--dark);color:#fff}
+.calendar-month-view .calendar-day.today .day-number{outline:2px solid var(--gold);outline-offset:2px}
+.calendar-month-view .calendar-day.muted-day{opacity:.3}
+.calendar-month-view .calendar-day .calendar-dots{height:5px;min-height:5px}
+.calendar-month-view .calendar-day.selected .calendar-dots i{background:var(--green)}
+@media(max-width:380px){
+ .calendar-month-view .calendar-day{min-height:54px}
+ .calendar-month-view .calendar-day .day-number{width:31px;height:31px}
+}
+@media(max-width:380px){.calendar-day{min-height:47px}.calendar-grid{gap:3px}}
+.day{border:1px solid var(--border);background:#FBF8EF;color:var(--muted);border-radius:12px;
+ min-width:43px;padding:9px 6px}
+.day strong{display:block;color:var(--text);margin-top:4px}
+.day.active{background:var(--dark);color:#F5F0E5;border-color:var(--gold);box-shadow:0 3px 9px rgba(29,45,77,.14)}
+.day.active strong{color:white}
+.lesson-time{color:#A87932;font-weight:800;font-size:13px;min-width:42px}
+.empty{text-align:center;padding:23px 8px;color:var(--muted);font-size:14px}
+.empty div{font-size:29px;margin-bottom:7px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:20;
+ display:flex;justify-content:space-around;align-items:center;background:rgba(251,248,239,.98);
+ border-top:1px solid var(--border);padding:8px 2px calc(8px + max(env(safe-area-inset-bottom),var(--tg-content-safe-area-inset-bottom,0px)));}
+.bottom-nav{padding-left:max(2px,env(safe-area-inset-left));padding-right:max(2px,env(safe-area-inset-right));}
+.nav-btn{min-height:48px;justify-content:center;flex:1 1 0;}
+.nav-btn{background:none;border:0;color:#9995a8;display:flex;flex-direction:column;
+ align-items:center;gap:3px;font-size:10px;min-width:0;flex:1}
+.nav-btn span{font-size:20px}
+.nav-btn.active{color:var(--dark);font-weight:800}
+.modal-bg{position:fixed;inset:0;z-index:100;background:#231d375e;
+ display:flex;align-items:flex-end;justify-content:center;
+ padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));
+ box-sizing:border-box}
+.modal{background:#FBF8EF;border:1px solid #DCE4DE;border-radius:23px;padding:20px 17px;width:100%;
+ max-width:600px;max-height:calc(100dvh - max(20px,env(safe-area-inset-top)) - max(20px,env(safe-area-inset-bottom)));
+ overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box}
+.modal form{padding-bottom:8px}
+.modal .primary.full{margin-bottom:4px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.close{border:0;background:#f3f0f8;border-radius:10px;width:34px;height:34px;font-size:19px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:13px;font-weight:650;margin-bottom:6px}
+.field input,.field select{width:100%;border:1px solid #DCE4DE;
+ border-radius:11px;padding:12px;background:#F5F0E5;color:var(--text)}
+.full{width:100%;margin-top:5px}
+.grade-big{font-size:25px;color:#A87932;font-weight:800}
+.progress{height:8px;background:#E2E8E1;border-radius:10px;overflow:hidden;margin-top:8px}
+.progress>div{height:100%;background:linear-gradient(90deg,#1D2D4D,#C49A55);border-radius:10px}
+.goal-box{background:#F1EEE3;border:1px solid #E6DDC8;border-radius:14px;padding:12px;margin-top:10px}
+.profile-center{text-align:center;padding:23px}
+.profile-avatar{font-size:34px;background:#E5EBE3;color:var(--dark);width:88px;height:88px;
+ border-radius:50%;display:grid;place-items:center;margin:0 auto 12px;overflow:hidden;border:3px solid #E5EBE3}
+.profile-avatar.has-photo{background:#E5EBE3}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+@media(min-width:600px){.modal-bg{align-items:center}}
+
+/* Годовой календарь: фиксированная равномерная сетка */
+.calendar-year-view{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ align-items:start!important;
+ justify-items:stretch!important;
+ gap:10px!important;
+ width:100%!important;
+}
+.year-month{
+ display:block!important;
+ width:100%!important;
+ min-width:0!important;
+ padding:9px 4px!important;
+ box-sizing:border-box!important;
+ overflow:hidden!important;
+}
+.year-month-title{margin:0 0 6px!important;text-align:center!important}
+.year-month-grid{
+ display:grid!important;
+ grid-template-columns:repeat(7,minmax(0,1fr))!important;
+ grid-auto-flow:row!important;
+ justify-items:center!important;
+ align-items:center!important;
+ align-content:start!important;
+ gap:3px 0!important;
+ width:100%!important;
+ min-width:0!important;
+ box-sizing:border-box!important;
+}
+.year-month-grid span{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ justify-self:center!important;
+ width:18px!important;
+ max-width:100%!important;
+ height:18px!important;
+ min-width:0!important;
+ padding:0!important;
+ margin:0!important;
+ box-sizing:border-box!important;
+ border-radius:50%!important;
+ font-size:9px!important;
+ line-height:18px!important;
+ overflow:hidden!important;
+ white-space:nowrap!important;
+}
+.year-month-grid .year-weekday{
+ width:100%!important;
+ height:14px!important;
+ border-radius:0!important;
+ background:transparent!important;
+ font-size:8px!important;
+ line-height:14px!important;
+}
+.year-month-grid span:empty{background:transparent!important}
+.year-month-grid .year-vacation{background:#D7E4D9!important;color:#456B5B!important}
+.year-month-grid .year-weekend{background:#E8D6CF!important;color:#fff!important}
+@media(max-width:520px){
+ .calendar-year-view{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+ .year-month{padding:8px 3px!important}
+ .year-month-grid span{width:20px!important;height:20px!important;font-size:10px!important;line-height:20px!important}
+ .year-month-grid .year-weekday{height:15px!important;font-size:9px!important;line-height:15px!important}
+}
+
+
+/* Более заметные тёмно-розовые цифры для особых дат во всех режимах */
+.week-cell.vacation .week-number,
+.calendar-month-view .calendar-day.vacation .day-number,
+.calendar-year-view .year-vacation{
+ color:#456B5B!important;
+ font-weight:800!important;
+}
+.week-cell.weekend .week-number,
+.calendar-month-view .calendar-day.weekend .day-number,
+.calendar-year-view .year-weekend{
+ color:#963F5B!important;
+ font-weight:850!important;
+}
+
+
+/* Consistent active state for every bottom navigation item */
+.nav-btn{
+ white-space:nowrap!important;
+ overflow-wrap:normal!important;
+ word-break:keep-all!important;
+ transition:transform .18s ease,background .18s ease,color .18s ease;
+ border-radius:14px;
+}
+.nav-btn.active{
+ color:var(--dark)!important;
+ font-weight:800!important;
+ background:#E9EEE8!important;
+ transform:translateY(-5px);
+}
+@media(max-width:380px){
+ .nav-btn{font-size:9px!important;gap:2px!important}
+ .nav-btn span{font-size:18px!important}
+}
+
+/* Fix modal close controls and native date/time input sizing on mobile */
+.modal-head .close{position:relative;z-index:2;flex:0 0 42px;width:42px;height:42px;cursor:pointer;pointer-events:auto}
+.modal .field{min-width:0;width:100%}
+.modal .field input,.modal .field select{
+ display:block;box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important
+}
+.modal .field input[type="time"],.modal .field input[type="date"],.modal .field input[type="datetime-local"]{
+ -webkit-appearance:none;appearance:none;font:inherit;font-size:16px;min-height:52px;padding:12px 10px
+}
+.modal .field input[type="time"]::-webkit-date-and-time-value{text-align:center}
+
+/* App-like fixed scale: prevent browser double-tap and pinch zoom */
+html,body{touch-action:pan-x pan-y; -webkit-text-size-adjust:100%}
+button,a,input,select,textarea{touch-action:manipulation}
+
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="top">
+  <div class="logo">School<span>Helper</span></div>
+  <div class="avatar"><img src="https://vkjzwtswj2-beep.github.io/SchoolHelper/assets/schoolhelper-logo-v2.png" alt="SchoolHelper logo"></div>
+ </header>
+ <main id="content"></main>
+</div>
+
+<nav class="bottom-nav">
+ <button class="nav-btn active" data-page="home"><span>🏠</span>Главная</button>
+ <button class="nav-btn" data-page="schedule"><span>🗓️</span>Расписание</button>
+ <button class="nav-btn" data-page="tasks"><span>📝</span>Задания</button>
+ <button class="nav-btn" data-page="deadlines"><span>⏰</span>Дедлайны</button>
+ <button class="nav-btn" data-page="grades"><span>⭐</span>Оценки</button>
+ <button class="nav-btn" data-page="profile"><span>👤</span>Профиль</button>
+</nav>
+<div id="modal-root"></div>
+
+<script>
+(() => {
+"use strict";
+const $=s=>document.querySelector(s);
+const content=$("#content"),modalRoot=$("#modal-root");
+const tg=window.Telegram?.WebApp;
+if(tg){
+ tg.ready();
+ try{tg.expand()}catch(e){}
+ const updateTelegramInsets=()=>{
+  const safe=tg.safeAreaInset||{};
+  const contentSafe=tg.contentSafeAreaInset||{};
+  const top=Math.max(Number(safe.top)||0,Number(contentSafe.top)||0);
+  const bottom=Math.max(Number(safe.bottom)||0,Number(contentSafe.bottom)||0);
+  document.documentElement.style.setProperty("--tg-safe-area-inset-top",`${Number(safe.top)||0}px`);
+  document.documentElement.style.setProperty("--tg-safe-area-inset-bottom",`${Number(safe.bottom)||0}px`);
+  document.documentElement.style.setProperty("--tg-content-safe-area-inset-top",`${top}px`);
+  document.documentElement.style.setProperty("--tg-content-safe-area-inset-bottom",`${bottom}px`);
+ };
+ updateTelegramInsets();
+ ["safeAreaChanged","contentSafeAreaChanged","viewportChanged","fullscreenChanged"].forEach(event=>{
+  try{tg.onEvent(event,updateTelegramInsets)}catch(e){}
+ });
+}
+
+const KEY="schoolhelper_data_v2";
+const WELCOME_HIDDEN_KEY="schoolhelper_welcome_hidden";
+let welcomeHidden=false;
+try{welcomeHidden=localStorage.getItem(WELCOME_HIDDEN_KEY)==="1"}catch(e){}
+const weekdays=["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"];
+const shortDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+const today=localDate();
+const todayIndex=(new Date().getDay()+6)%7;
+
+function localDate(d=new Date()){
+ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function dateObj(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d,12)}
+function shiftDate(s,n){const d=dateObj(s);d.setDate(d.getDate()+n);return localDate(d)}
+function formatDate(s){return s?dateObj(s).toLocaleDateString("ru-RU",{day:"numeric",month:"long"}):""}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function id(){return Date.now()+Math.floor(Math.random()*10000)}
+function clone(v){return JSON.parse(JSON.stringify(v))}
+
+const initial={
+ profile:{name:"",schoolClass:"none",reminders:false},
+ classSchedules:{"5А":[{"id":"5А-1","day":0,"time":"08:30","subject":"Разговоры о важном","teacher":"Федорова И.Ю."},{"id":"5А-2","day":0,"time":"09:30","subject":"Русский язык","teacher":"Букина А.А."},{"id":"5А-3","day":0,"time":"10:30","subject":"Литература","teacher":"Букина А.А."},{"id":"5А-4","day":0,"time":"11:35","subject":"География","teacher":"Владимирова Е.А."},{"id":"5А-5","day":0,"time":"12:35","subject":"Киберурок","teacher":"Федорова И.Ю."},{"id":"5А-6","day":0,"time":"13:35","subject":"Математика","teacher":"Федорова И.Ю."},{"id":"5А-7","day":1,"time":"08:30","subject":"Математика","teacher":"Федорова И.Ю."},{"id":"5А-8","day":1,"time":"09:30","subject":"Компьютерная грамотность","teacher":"Деклау Н.В."},{"id":"5А-9","day":1,"time":"10:30","subject":"Русский язык","teacher":"Букина А.А."},{"id":"5А-10","day":1,"time":"11:35","subject":"Изобразительное искусство","teacher":"Афанасьева Д.В."},{"id":"5А-11","day":1,"time":"12:35","subject":"Физическая культура","teacher":"Красновейкин В.А."},{"id":"5А-12","day":1,"time":"13:35","subject":"Литература","teacher":"Букина А.А."},{"id":"5А-13","day":2,"time":"08:30","subject":"Физическая культура","teacher":"Красновейкин В.А."},{"id":"5А-14","day":2,"time":"09:30","subject":"Математика","teacher":"Федорова И.Ю."},{"id":"5А-15","day":2,"time":"10:30","subject":"Английский язык","teacher":"Деклау Н.В."},{"id":"5А-16","day":2,"time":"11:35","subject":"Биология","teacher":"Кочетова М.Р."},{"id":"5А-17","day":2,"time":"12:35","subject":"Русский язык","teacher":"Букина А.А."},{"id":"5А-18","day":2,"time":"13:35","subject":"Математика","teacher":"Федорова И.Ю."},{"id":"5А-19","day":2,"time":"14:30","subject":"История","teacher":"Зенцов С.Б."},{"id":"5А-20","day":3,"time":"08:30","subject":"Практикум по математике","teacher":"Федорова И.Ю."},{"id":"5А-21","day":3,"time":"09:30","subject":"Математика","teacher":"Федорова И.Ю."},{"id":"5А-22","day":3,"time":"10:30","subject":"Труд (технология)","teacher":"Спирлиев Д.В."},{"id":"5А-23","day":3,"time":"11:35","subject":"Труд (технология)","teacher":"Спирлиев Д.В."},{"id":"5А-24","day":3,"time":"12:35","subject":"История","teacher":"Зенцов С.Б."},{"id":"5А-25","day":3,"time":"13:35","subject":"Русский язык","teacher":"Букина А.А."},{"id":"5А-26","day":4,"time":"08:30","subject":"Английский язык","teacher":"Деклау Н.В."},{"id":"5А-27","day":4,"time":"09:30","subject":"Музыка","teacher":"Таранюк О.В."},{"id":"5А-28","day":4,"time":"10:30","subject":"История","teacher":"Зенцов С.Б."},{"id":"5А-29","day":4,"time":"11:35","subject":"Функциональная грамотность","teacher":"Таранюк О.В."},{"id":"5А-30","day":4,"time":"12:35","subject":"Русский язык","teacher":"Букина А.А."},{"id":"5А-31","day":4,"time":"13:35","subject":"Литература","teacher":"Букина А.А."}],"5Б":[{"id":"5Б-1","day":0,"time":"08:30","subject":"Разговоры о важном","teacher":"Парамонова О.В."},{"id":"5Б-2","day":0,"time":"09:30","subject":"Английский язык","teacher":"Гнитиева В.Т."},{"id":"5Б-3","day":0,"time":"10:30","subject":"Русский язык","teacher":"Богданова Т.М."},{"id":"5Б-4","day":0,"time":"11:35","subject":"География","teacher":"Федосова Е.И."},{"id":"5Б-5","day":0,"time":"12:35","subject":"Математика","teacher":"Воронцова Н.В."},{"id":"5Б-6","day":0,"time":"13:35","subject":"Русский язык","teacher":"Богданова Т.М."},{"id":"5Б-7","day":1,"time":"08:30","subject":"Математика","teacher":"Воронцова Н.В."},{"id":"5Б-8","day":1,"time":"09:30","subject":"История","teacher":"Зенцов С.Б."},{"id":"5Б-9","day":1,"time":"10:30","subject":"Изобразительное искусство","teacher":"Афанасьева Д.В."},{"id":"5Б-10","day":1,"time":"11:35","subject":"Математика","teacher":"Воронцова Н.В."},{"id":"5Б-11","day":1,"time":"12:35","subject":"Литература","teacher":"Богданова Т.М."},{"id":"5Б-12","day":1,"time":"13:35","subject":"Физическая культура","teacher":"Лебедева И.В."},{"id":"5Б-13","day":2,"time":"08:30","subject":"Математика","teacher":"Воронцова Н.В."},{"id":"5Б-14","day":2,"time":"09:30","subject":"Музыка","teacher":"Таранюк О.В."},{"id":"5Б-15","day":2,"time":"10:30","subject":"Русский язык","teacher":"Богданова Т.М."},{"id":"5Б-16","day":2,"time":"11:35","subject":"История","teacher":"Зенцов С.Б."},{"id":"5Б-17","day":2,"time":"12:35","subject":"Компьютерная грамотность","teacher":"Деклау Н.В."},{"id":"5Б-18","day":2,"time":"13:35","subject":"Русский язык","teacher":"Богданова Т.М."},{"id":"5Б-19","day":2,"time":"14:30","subject":"Финансовая грамотность","teacher":"Воронцова Н.В."},{"id":"5Б-20","day":3,"time":"08:30","subject":"История","teacher":"Зенцов С.Б."},{"id":"5Б-21","day":3,"time":"09:30","subject":"Литература","teacher":"Богданова Т.М."},{"id":"5Б-22","day":3,"time":"10:30","subject":"Труд (технология)","teacher":"Парамонова О.В."},{"id":"5Б-23","day":3,"time":"11:35","subject":"Труд (технология)","teacher":"Парамонова О.В."},{"id":"5Б-24","day":3,"time":"12:35","subject":"Математика","teacher":"Воронцова Н.В."},{"id":"5Б-25","day":3,"time":"13:35","subject":"Английский язык","teacher":"Гнитиева В.Т."},{"id":"5Б-26","day":3,"time":"14:30","subject":"Спортивные танцы","teacher":"Попкова И.М."},{"id":"5Б-27","day":4,"time":"08:30","subject":"Русский язык","teacher":"Богданова Т.М."},{"id":"5Б-28","day":4,"time":"09:30","subject":"Математика","teacher":"Воронцова Н.В."},{"id":"5Б-29","day":4,"time":"10:30","subject":"Биология","teacher":"Кочетова М.Р."},{"id":"5Б-30","day":4,"time":"11:35","subject":"Практикум по математике","teacher":"Воронцова Н.В."},{"id":"5Б-31","day":4,"time":"12:35","subject":"Физическая культура","teacher":"Лебедева И.В."},{"id":"5Б-32","day":4,"time":"13:35","subject":"Литература","teacher":"Богданова Т.М."}],"5В":[{"id":"5В-1","day":0,"time":"08:30","subject":"Разговоры о важном","teacher":"Кузнецова О.Ю."},{"id":"5В-2","day":0,"time":"09:30","subject":"Математика","teacher":"Федорова И.Ю."},{"id":"5В-3","day":0,"time":"10:30","subject":"Русский язык","teacher":"Кузнецова О.Ю."},{"id":"5В-4","day":0,"time":"11:35","subject":"История","teacher":"Зенцов С.Б."},{"id":"5В-5","day":0,"time":"12:35","subject":"Литература","teacher":"Кузнецова О.Ю."},{"id":"5В-6","day":0,"time":"13:35","subject":"Биология","teacher":"Кочетова М.Р."},{"id":"5В-7","day":1,"time":"08:30","subject":"Английский язык","teacher":"Деклау Н.В."},{"id":"5В-8","day":1,"time":"09:30","subject":"Русский язык","teacher":"Кузнецова О.Ю."},{"id":"5В-9","day":1,"time":"10:30","subject":"География","teacher":"Федосова Е.И."},{"id":"5В-10","day":1,"time":"11:35","subject":"Функциональная грамотность","teacher":"Таранюк О.В."},{"id":"5В-11","day":1,"time":"12:35","subject":"Физическая культура","teacher":"Лебедева И.В."},{"id":"5В-12","day":1,"time":"13:35","subject":"Математика","teacher":"Федорова И.Ю."},{"id":"5В-13","day":2,"time":"08:30","subject":"Математика","teacher":"Федорова И.Ю."},{"id":"5В-14","day":2,"time":"09:30","subject":"Труд (технология)","teacher":"Спирлиев Д.В."},{"id":"5В-15","day":2,"time":"10:30","subject":"Труд (технология)","teacher":"Спирлиев Д.В."},{"id":"5В-16","day":2,"time":"11:35","subject":"Литература","teacher":"Кузнецова О.Ю."},{"id":"5В-17","day":2,"time":"12:35","subject":"История","teacher":"Зенцов С.Б."},{"id":"5В-18","day":2,"time":"13:35","subject":"Английский язык","teacher":"Деклау Н.В."},{"id":"5В-19","day":3,"time":"08:30","subject":"Русский язык","teacher":"Кузнецова О.Ю."},{"id":"5В-20","day":3,"time":"09:30","subject":"Музыка","teacher":"Таранюк О.В."},{"id":"5В-21","day":3,"time":"10:30","subject":"Русский язык","teacher":"Кузнецова О.Ю."},{"id":"5В-22","day":3,"time":"11:35","subject":"История","teacher":"Зенцов С.Б."},{"id":"5В-23","day":3,"time":"12:35","subject":"Математика","teacher":"Федорова И.Ю."},{"id":"5В-24","day":3,"time":"13:35","subject":"Компьютерная грамотность","teacher":"Деклау Н.В."},{"id":"5В-25","day":4,"time":"08:30","subject":"Практикум по математике","teacher":"Федорова И.Ю."},{"id":"5В-26","day":4,"time":"09:30","subject":"Литература","teacher":"Кузнецова О.Ю."},{"id":"5В-27","day":4,"time":"10:30","subject":"Изобразительное искусство","teacher":"Афанасьева Д.В."},{"id":"5В-28","day":4,"time":"11:35","subject":"Русский язык","teacher":"Кузнецова О.Ю."},{"id":"5В-29","day":4,"time":"12:35","subject":"Математика","teacher":"Федорова И.Ю."},{"id":"5В-30","day":4,"time":"13:35","subject":"Физическая культура","teacher":"Лебедева И.В."}],"5М":[{"id":"5М-1","day":0,"time":"08:30","subject":"Разговоры о важном","teacher":"Короткова О.В."},{"id":"5М-2","day":0,"time":"09:30","subject":"Русский язык","teacher":"Лубшева А.А."},{"id":"5М-3","day":0,"time":"10:30","subject":"Математика","teacher":"Короткова О.В."},{"id":"5М-4","day":0,"time":"11:35","subject":"Литература","teacher":"Мартыненко Л.К."},{"id":"5М-5","day":0,"time":"12:35","subject":"Изобразительное искусство","teacher":"Афанасьева Д.В."},{"id":"5М-6","day":0,"time":"13:35","subject":"Физическая культура","teacher":"Лебедева И.В."},{"id":"5М-7","day":0,"time":"14:30","subject":"Олимпиадная математика","teacher":"Короткова О.В."},{"id":"5М-8","day":0,"time":"15:35","subject":"Спортивные танцы","teacher":"Попкова И.М."},{"id":"5М-9","day":1,"time":"08:30","subject":"Литература","teacher":"Мартыненко Л.К."},{"id":"5М-10","day":1,"time":"09:30","subject":"Русский язык","teacher":"Лубшева А.А."},{"id":"5М-11","day":1,"time":"10:30","subject":"Математика","teacher":"Короткова О.В."},{"id":"5М-12","day":1,"time":"11:35","subject":"Русский язык","teacher":"Лубшева А.А."},{"id":"5М-13","day":1,"time":"12:35","subject":"Финансовая грамотность","teacher":"Короткова О.В."},{"id":"5М-14","day":1,"time":"13:35","subject":"История","teacher":"Зенцов С.Б."},{"id":"5М-15","day":1,"time":"14:30","subject":"Физическая культура","teacher":"Лебедева И.В."},{"id":"5М-16","day":2,"time":"08:30","subject":"Математика","teacher":"Короткова О.В."},{"id":"5М-17","day":2,"time":"09:30","subject":"Труд (технология)","teacher":"Парамонова О.В."},{"id":"5М-18","day":2,"time":"10:30","subject":"Труд (технология)","teacher":"Парамонова О.В."},{"id":"5М-19","day":2,"time":"11:35","subject":"Музыка","teacher":"Таранюк О.В."},{"id":"5М-20","day":2,"time":"12:35","subject":"Английский язык","teacher":"Гнитиева В.Т."},{"id":"5М-21","day":2,"time":"13:35","subject":"Практикум по математике","teacher":"Короткова О.В."},{"id":"5М-22","day":3,"time":"08:30","subject":"Математика","teacher":"Короткова О.В."},{"id":"5М-23","day":3,"time":"09:30","subject":"География","teacher":"Федосова Е.И."},{"id":"5М-24","day":3,"time":"10:30","subject":"Русский язык","teacher":"Лубшева А.А."},{"id":"5М-25","day":3,"time":"11:35","subject":"Литература","teacher":"Мартыненко Л.К."},{"id":"5М-26","day":3,"time":"12:35","subject":"Английский язык","teacher":"Гнитиева В.Т."},{"id":"5М-27","day":3,"time":"13:35","subject":"История","teacher":"Зенцов С.Б."},{"id":"5М-28","day":3,"time":"14:30","subject":"Практическая математика","teacher":"Короткова О.В."},{"id":"5М-29","day":4,"time":"08:30","subject":"Математика","teacher":"Короткова О.В."},{"id":"5М-30","day":4,"time":"09:30","subject":"Биология","teacher":"Кочетова М.Р."},{"id":"5М-31","day":4,"time":"10:30","subject":"Математика","teacher":"Короткова О.В."},{"id":"5М-32","day":4,"time":"11:35","subject":"История","teacher":"Зенцов С.Б."},{"id":"5М-33","day":4,"time":"12:35","subject":"Русский язык","teacher":"Лубшева А.А."},{"id":"5М-34","day":4,"time":"13:35","subject":"Программирование на Scratch","teacher":"Росток"}],"6А":[{"id":"6А-1","day":0,"time":"08:30","subject":"Разговоры о важном","teacher":"Есина М.Д."},{"id":"6А-2","day":0,"time":"09:30","subject":"Русский язык","teacher":"Джанумова С.А."},{"id":"6А-3","day":0,"time":"10:30","subject":"Английский язык","teacher":"Деклау Н.В."},{"id":"6А-4","day":0,"time":"11:35","subject":"Труд (технология)","teacher":"Спирлиев Д.В."},{"id":"6А-5","day":0,"time":"12:35","subject":"Труд (технология)","teacher":"Спирлиев Д.В."},{"id":"6А-6","day":0,"time":"13:35","subject":"Компьютерная грамотность","teacher":"Деклау Н.В."},{"id":"6А-7","day":1,"time":"08:30","subject":"Изобразительное искусство","teacher":"Афанасьева Д.В."},{"id":"6А-8","day":1,"time":"09:30","subject":"Русский язык","teacher":"Джанумова С.А."},{"id":"6А-9","day":1,"time":"10:30","subject":"Практикум по математике","teacher":"Есина М.Д."},{"id":"6А-10","day":1,"time":"11:35","subject":"История","teacher":"Зенцов С.Б."},{"id":"6А-11","day":1,"time":"12:35","subject":"Математика","teacher":"Есина М.Д."},{"id":"6А-12","day":1,"time":"13:35","subject":"Русский язык","teacher":"Джанумова С.А."},{"id":"6А-13","day":2,"time":"08:30","subject":"Физическая культура","teacher":"Герасимов А.В."},{"id":"6А-14","day":2,"time":"09:30","subject":"История","teacher":"Зенцов С.Б."},{"id":"6А-15","day":2,"time":"10:30","subject":"География","teacher":"Федосова Е.И."},{"id":"6А-16","day":2,"time":"11:35","subject":"Математика","teacher":"Есина М.Д."},{"id":"6А-17","day":2,"time":"12:35","subject":"Музыка","teacher":"Таранюк О.В."},{"id":"6А-18","day":2,"time":"13:35","subject":"Русский язык","teacher":"Джанумова С.А."},{"id":"6А-19","day":2,"time":"14:30","subject":"Литература","teacher":"Джанумова С.А."},{"id":"6А-20","day":3,"time":"08:30","subject":"Россия — мои горизонты","teacher":"Есина М.Д."},{"id":"6А-21","day":3,"time":"09:30","subject":"Русский язык","teacher":"Джанумова С.А."},{"id":"6А-22","day":3,"time":"10:30","subject":"Математика","teacher":"Есина М.Д."},{"id":"6А-23","day":3,"time":"11:35","subject":"Математика","teacher":"Есина М.Д."},{"id":"6А-24","day":3,"time":"12:35","subject":"Биология","teacher":"Парамонова А.А."},{"id":"6А-25","day":3,"time":"13:35","subject":"Русский язык","teacher":"Джанумова С.А."},{"id":"6А-26","day":3,"time":"14:30","subject":"Английский язык","teacher":"Деклау Н.В."},{"id":"6А-27","day":4,"time":"08:30","subject":"История","teacher":"Зенцов С.Б."},{"id":"6А-28","day":4,"time":"09:30","subject":"Литература","teacher":"Джанумова С.А."},{"id":"6А-29","day":4,"time":"10:30","subject":"Литература","teacher":"Джанумова С.А."},{"id":"6А-30","day":4,"time":"11:35","subject":"Английский язык","teacher":"Деклау Н.В."},{"id":"6А-31","day":4,"time":"12:35","subject":"Математика","teacher":"Есина М.Д."},{"id":"6А-32","day":4,"time":"13:35","subject":"Физическая культура","teacher":"Герасимов А.В."}],"6В":[{"id":"6В-1","day":0,"time":"08:30","subject":"Английский язык","teacher":"Ширяева В.С."},{"id":"6В-2","day":0,"time":"09:30","subject":"Разговоры о важном","teacher":"Афанасьева Д.В."},{"id":"6В-3","day":0,"time":"10:30","subject":"Русский язык","teacher":"Белова С.А."},{"id":"6В-4","day":0,"time":"11:35","subject":"Труд (технология)","teacher":"Парамонова О.В."},{"id":"6В-5","day":0,"time":"12:35","subject":"Труд (технология)","teacher":"Парамонова О.В."},{"id":"6В-6","day":0,"time":"13:35","subject":"География","teacher":"Федосова Е.И."},{"id":"6В-7","day":1,"time":"08:30","subject":"Русский язык","teacher":"Белова С.А."},{"id":"6В-8","day":1,"time":"09:30","subject":"Музыка","teacher":"Таранюк О.В."},{"id":"6В-9","day":1,"time":"10:30","subject":"Математика","teacher":"Семнякова Е.А."},{"id":"6В-10","day":1,"time":"11:35","subject":"Русский язык","teacher":"Белова С.А."},{"id":"6В-11","day":1,"time":"12:35","subject":"Компьютерная грамотность","teacher":"Деклау Н.В."},{"id":"6В-12","day":1,"time":"13:35","subject":"Изобразительное искусство","teacher":"Афанасьева Д.В."},{"id":"6В-13","day":2,"time":"08:30","subject":"Русский язык","teacher":"Белова С.А."},{"id":"6В-14","day":2,"time":"09:30","subject":"История","teacher":"Островская И.В."},{"id":"6В-15","day":2,"time":"10:30","subject":"Литература","teacher":"Белова С.А."},{"id":"6В-16","day":2,"time":"11:35","subject":"Математика","teacher":"Семнякова Е.А."},{"id":"6В-17","day":2,"time":"12:35","subject":"Физическая культура","teacher":"Красновейкин В.А."},{"id":"6В-18","day":2,"time":"13:35","subject":"Английский язык","teacher":"Ширяева В.С."},{"id":"6В-19","day":2,"time":"14:30","subject":"Математика","teacher":"Семнякова Е.А."},{"id":"6В-20","day":3,"time":"08:30","subject":"Английский язык","teacher":"Ширяева В.С."},{"id":"6В-21","day":3,"time":"09:30","subject":"Россия — мои горизонты","teacher":"Афанасьева Д.В."},{"id":"6В-22","day":3,"time":"10:30","subject":"История","teacher":"Островская И.В."},{"id":"6В-23","day":3,"time":"11:35","subject":"Литература","teacher":"Белова С.А."},{"id":"6В-24","day":3,"time":"12:35","subject":"Русский язык","teacher":"Белова С.А."},{"id":"6В-25","day":3,"time":"13:35","subject":"Физическая культура","teacher":"Красновейкин В.А."},{"id":"6В-26","day":3,"time":"14:30","subject":"Практикум по математике","teacher":"Семнякова Е.А."},{"id":"6В-27","day":4,"time":"08:30","subject":"Математика","teacher":"Семнякова Е.А."},{"id":"6В-28","day":4,"time":"09:30","subject":"Русский язык","teacher":"Белова С.А."},{"id":"6В-29","day":4,"time":"10:30","subject":"Биология","teacher":"Парамонова А.А."},{"id":"6В-30","day":4,"time":"11:35","subject":"Литература","teacher":"Белова С.А."},{"id":"6В-31","day":4,"time":"12:35","subject":"Математика","teacher":"Семнякова Е.А."},{"id":"6В-32","day":4,"time":"13:35","subject":"История","teacher":"Островская И.В."}]},
+ selectedDay:todayIndex,
+ schedule:[],
+ tasks:[],
+ deadlines:[],
+ grades:[],
+ goals:[]
+};
+
+function load(){
+ try{
+  const saved=localStorage.getItem(KEY);
+  if(!saved)return clone(initial);
+  const x=JSON.parse(saved);
+  return {
+   ...clone(initial),...x,
+   profile:{...initial.profile,...(x.profile||{})},
+   schedule:Array.isArray(x.schedule)?x.schedule:[],
+   classSchedules:{...initial.classSchedules,...(x.classSchedules||{})},
+   tasks:Array.isArray(x.tasks)?x.tasks:[],
+   deadlines:Array.isArray(x.deadlines)?x.deadlines:[],
+   grades:Array.isArray(x.grades)?x.grades:[],
+   goals:Array.isArray(x.goals)?x.goals:[]
+  };
+ }catch(e){return clone(initial)}
+}
+let data=load();
+let page="home";
+let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+let selectedCalendarDate=today;
+let calendarExpanded=false;
+let calendarYearView=false;
+const schoolBreakRanges=[["2026-10-05","2026-10-11"],["2026-11-16","2026-11-22"],["2026-12-30","2027-01-10"],["2027-02-15","2027-02-21"],["2027-04-05","2027-04-11"],["2027-05-26","2027-08-31"]];
+const schoolHolidayDates=["2026-11-04","2027-02-22","2027-02-23","2027-03-08","2027-05-03","2027-05-10"];
+function calendarDayType(key){
+ if(schoolBreakRanges.some(([a,b])=>key>=a&&key<=b))return "vacation";
+ const d=dateObj(key);
+ return d.getDay()===0||d.getDay()===6||schoolHolidayDates.includes(key)?"weekend":"";
+}
+function isNoSchoolDate(key){return key<"2026-09-01"||key>"2027-05-31"||calendarDayType(key)!=="";}
+function getActiveSchedule(){return Array.isArray(data.classSchedules?.[data.profile.schoolClass])?data.classSchedules[data.profile.schoolClass]:[]}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}
+ catch(e){alert("Не удалось сохранить данные на устройстве.")}}
+function setPage(p){if(p==="schedule"){const now=new Date();selectedCalendarDate=localDate(now);calendarMonth=new Date(now.getFullYear(),now.getMonth(),1);calendarExpanded=false;calendarYearView=false}page=p;document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===p));render()}
+
+const ICONS={home:"🏠",calendar:"🗓️",tasks:"📝",clock:"⏰",star:"⭐",user:"👤",check:"✅",book:"📚",wave:"👋",books:"📚",party:"🎉",flower:"🌸",bell:"🔔",target:"🎯",pencil:"✏️",graduation:"👩‍🎓"};
+function uiIcon(name){return ICONS[name]||"⭐"}
+
+function empty(icon,msg){return `<div class="empty"><div>${icon}</div>${esc(msg)}</div>`}
+function head(title,btn,action){return `<div class="section-head"><h2>${title}</h2><button class="primary" data-action="${action}">＋ ${btn}</button></div>`}
+function avg(list){return list.length?list.reduce((s,g)=>s+Number(g.value),0)/list.length:null}
+
+function taskHTML(t){return `<div class="item ${t.done?"done":""}">
+ <div class="item-icon">${uiIcon(t.done?"check":"tasks")}</div><div class="item-main">
+ <h3 class="item-title">${esc(t.title)}</h3><p>${esc(t.subject)} · ${formatDate(t.date)}</p>
+ <div class="item-actions">
+ <button class="small-btn" data-action="toggle-task" data-id="${t.id}">${t.done?"Вернуть":"Выполнено"}</button>
+ <button class="small-btn" data-action="edit-task" data-id="${t.id}">Изменить</button>
+ <button class="small-btn danger" data-action="delete-task" data-id="${t.id}">Удалить</button>
+ </div></div></div>`}
+
+function deadlineHTML(t){
+ const diff=Math.round((dateObj(t.date)-dateObj(today))/86400000);
+ const label=diff<0?"Просрочено":diff===0?"Сегодня":diff===1?"Завтра":`Через ${diff} дн.`;
+ return `<div class="item"><div class="item-icon">${uiIcon("clock")}</div><div class="item-main">
+ <h3>${esc(t.title)}</h3><p>${esc(t.subject)} · ${formatDate(t.date)}</p>
+ <div class="item-actions"><span class="tag ${diff<=1?"red":"green"}">${label}</span>
+ <button class="small-btn" data-action="edit-deadline" data-id="${t.id}">Изменить</button>
+ <button class="small-btn danger" data-action="delete-deadline" data-id="${t.id}">Удалить</button>
+ </div></div></div>`}
+
+function lessonTimeRange(start){const ends={"08:30":"09:15","09:30":"10:15","10:30":"11:15","11:35":"12:20","12:35":"13:20","13:35":"14:20","14:30":"15:15"};return ends[start]?`${start}–${ends[start]}`:start}
+function lessonHTML(t){return `<div class="item">
+ <div class="lesson-time">${esc(lessonTimeRange(t.time))}</div><div class="item-icon">${uiIcon("book")}</div>
+ <div class="item-main"><h3>${esc(t.subject)}</h3><p>${t.teacher?"Учитель: "+esc(t.teacher):"Кабинет: "+esc(t.room||"—")}</p>
+ <div class="item-actions">
+ <button class="small-btn" data-action="edit-lesson" data-id="${t.id}">Изменить</button>
+ <button class="small-btn danger" data-action="delete-lesson" data-id="${t.id}">Удалить</button>
+ </div></div></div>`}
+
+function renderHome(){
+ const pending=data.tasks.filter(t=>!t.done);
+ const lessons=isNoSchoolDate(today)?[]:getActiveSchedule().filter(t=>t.day===todayIndex);
+ const a=avg(data.grades);
+ content.innerHTML=`
+ ${welcomeHidden?`<button class="secondary" data-action="show-welcome" style="margin:0 0 14px;width:100%">${uiIcon("wave")} Показать приветствие</button>`:`<section class="welcome"><button class="welcome-close" data-action="hide-welcome" aria-label="Скрыть приветствие" title="Скрыть">×</button><div style="opacity:.8;font-size:12px">ТВОЙ ШКОЛЬНЫЙ ПОМОЩНИК</div>
+ <h1>${data.profile.name?`Привет, ${esc(data.profile.name)}! ${uiIcon("wave")}`:`Привет! ${uiIcon("wave")}`}</h1><p>Всё важное для учёбы — в одном месте.</p></section>`}
+ <div class="stats">
+ <div class="stat"><div>${uiIcon("books")}</div><div class="stat-number">${lessons.length}</div><div class="muted">Уроков сегодня</div></div>
+ <div class="stat"><div>${uiIcon("tasks")}</div><div class="stat-number">${pending.length}</div><div class="muted">Незаконченных заданий</div></div>
+ <div class="stat"><div>${uiIcon("clock")}</div><div class="stat-number">${data.deadlines.length}</div><div class="muted">Дедлайнов</div></div>
+ <div class="stat"><div>${uiIcon("star")}</div><div class="stat-number">${a===null?"—":a.toFixed(2)}</div><div class="muted">Средний балл</div></div>
+ </div>
+ ${head("Ближайшие задания","Добавить","add-task")}
+ <div class="card">${pending.length?pending.slice(0,3).map(taskHTML).join(""):empty(uiIcon("party"),"Все задания выполнены!")}</div>
+ <div class="section-head"><h2>Ближайшие дедлайны</h2><button class="small-btn" data-action="go-deadlines">Все</button></div>
+ <div class="card">${data.deadlines.length?[...data.deadlines].sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3).map(deadlineHTML).join(""):empty(uiIcon("flower"),"Пока нет дедлайнов")}</div>
+ ${data.profile.reminders?`<div class="card"><div class="item"><div class="item-icon">${uiIcon("bell")}</div><div class="item-main"><h3>Напоминания включены</h3><p>Ближайшие дела отображаются в приложении. Это не push-уведомления.</p></div></div></div>`:""}`;
+}
+
+function renderSchedule(){
+ const year=calendarMonth.getFullYear();
+ const monthName=calendarMonth.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
+ const selected=dateObj(selectedCalendarDate),weekStart=new Date(selected);
+ weekStart.setDate(selected.getDate()-((selected.getDay()+6)%7));
+ const makeCell=d=>{
+  const key=localDate(d),dayIndex=(d.getDay()+6)%7;
+  const tasks=data.tasks.filter(x=>x.date===key),deadlines=data.deadlines.filter(x=>x.date===key);
+  const lessons=isNoSchoolDate(key)?[]:getActiveSchedule().filter(x=>x.day===dayIndex);
+  const dots=[...Array(Math.min(tasks.length,2)).fill("task"),...Array(Math.min(deadlines.length,2)).fill("deadline"),...Array(lessons.length?1:0).fill("lesson")].slice(0,3);
+  return {key,number:d.getDate(),sameMonth:d.getMonth()===calendarMonth.getMonth(),isToday:key===today,selected:key===selectedCalendarDate,type:calendarDayType(key),dots};
+ };
+ const weekCells=Array.from({length:7},(_,i)=>{const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);return makeCell(d)});
+ const first=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1),offset=(first.getDay()+6)%7;
+ const monthStart=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1-offset);
+ const monthCells=Array.from({length:42},(_,i)=>{const d=new Date(monthStart);d.setDate(monthStart.getDate()+i);return makeCell(d)});
+ const academicStartYear=2026;
+ const academicMonths=Array.from({length:9},(_,i)=>{
+  const m=(i+8)%12,monthYear=m>=8?academicStartYear:academicStartYear+1;
+  const firstDay=new Date(monthYear,m,1),startOffset=(firstDay.getDay()+6)%7,days=new Date(monthYear,m+1,0).getDate();
+  const cells=Array(startOffset).fill(null).concat(Array.from({length:days},(_,n)=>n+1));
+  while(cells.length%7)cells.push(null);
+  return `<button class="year-month" data-action="calendar-open-month" data-month="${m}" data-year="${monthYear}" aria-label="Открыть ${new Date(monthYear,m,1).toLocaleDateString("ru-RU",{month:"long"})}">
+   <div class="year-month-title">${new Date(monthYear,m,1).toLocaleDateString("ru-RU",{month:"long"})}</div>
+   <div class="year-month-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<span class="year-weekday">${x[0]}</span>`).join("")}
+   ${cells.map(n=>{
+    if(!n)return "<span></span>";
+    const key=localDate(new Date(monthYear,m,n)),type=calendarDayType(key);
+    return `<span class="${type==="vacation"?"year-vacation":type==="weekend"?"year-weekend":""} ${key===today?"year-today":""}">${n}</span>`;
+   }).join("")}</div></button>`;
+ }).join("");
+ const academicYearLabel=`${academicStartYear}–${academicStartYear+1}`;
+ const day=(selected.getDay()+6)%7;
+ const noSchool=isNoSchoolDate(selectedCalendarDate);
+ const list=(noSchool?[]:getActiveSchedule().filter(t=>t.day===day)).sort((a,b)=>a.time.localeCompare(b.time));
+ const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
+ const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
+ content.innerHTML=`<h1>Расписание ${uiIcon("calendar")}</h1><p class="muted">Выбери день недели, месяц или посмотри весь год</p>
+ <div class="card">
+  <div class="calendar-toolbar">
+   <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий период">‹</button>
+   <div class="calendar-month">${calendarYearView?academicYearLabel:esc(monthName)}</div>
+   ${calendarYearView?"":`<button class="calendar-toggle" data-action="calendar-view-toggle">${calendarExpanded?"год":"месяц"}</button>`}
+   <button class="small-btn" data-action="calendar-next" aria-label="Следующий период">›</button>
+  </div>
+  ${calendarYearView?`<div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div><div class="calendar-year-view">${academicMonths}</div>`:`
+  <div class="calendar-legend"><span><i class="legend-vacation"></i> Каникулы</span><span><i class="legend-weekend"></i> Выходные и праздники</span></div>
+  ${calendarExpanded?`<div class="calendar-month-view"><div class="calendar-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<div class="calendar-weekday">${x}</div>`).join("")}
+  ${monthCells.map(x=>`<button class="calendar-day ${x.sameMonth?"":"muted-day"} ${x.isToday?"today":""} ${x.selected?"selected":""} ${x.type}" data-action="calendar-select" data-date="${x.key}"><span class="day-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div></div>`:
+  `<div class="week-strip">${weekCells.map(x=>`<button class="week-cell ${x.selected?"selected":""} ${x.isToday?"today":""} ${x.type}" data-action="calendar-select" data-date="${x.key}"><span class="week-name">${new Date(x.key+"T12:00:00").toLocaleDateString("ru-RU",{weekday:"short"})}</span><span class="week-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div>`}
+  <button class="secondary full" data-action="calendar-today">${selectedCalendarDate===today?"Сегодня":"Вернуться к сегодня"}</button>`}
+ </div>
+ ${calendarYearView?"":`<div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2><button class="primary" data-action="add-lesson">＋ Урок</button></div>
+ <div class="card">${list.length?list.map(lessonHTML).join(""):empty(uiIcon("book"),noSchool?"В этот день занятий нет":"На этот день уроков пока нет")}</div>
+ ${chosenTasks.length?`<div class="section-head"><h2>Задания на эту дату</h2></div><div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
+ ${chosenDeadlines.length?`<div class="section-head"><h2>Дедлайны на эту дату</h2></div><div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}`}`;
+}
+function renderCalendar(){
+ const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth();
+ const monthName=calendarMonth.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
+ const first=new Date(year,month,1);
+ const offset=(first.getDay()+6)%7;
+ const start=new Date(year,month,1-offset);
+ const cells=[];
+ for(let i=0;i<42;i++){
+  const d=new Date(start);d.setDate(start.getDate()+i);
+  const key=localDate(d);
+  const tasks=data.tasks.filter(x=>x.date===key);
+  const deadlines=data.deadlines.filter(x=>x.date===key);
+  const lessons=getActiveSchedule().filter(x=>x.day===(d.getDay()+6)%7);
+  const count=tasks.length+deadlines.length+lessons.length;
+  cells.push({key,number:d.getDate(),sameMonth:d.getMonth()===month,isToday:key===today,selected:key===selectedCalendarDate,count,
+   dots:[...Array(Math.min(tasks.length,2)).fill("task"),...Array(Math.min(deadlines.length,2)).fill("deadline"),...Array(Math.min(lessons.length,1)).fill("lesson")].slice(0,3)});
+ }
+ const chosenTasks=data.tasks.filter(x=>x.date===selectedCalendarDate);
+ const chosenDeadlines=data.deadlines.filter(x=>x.date===selectedCalendarDate);
+ const chosenLessons=getActiveSchedule().filter(x=>x.day===(dateObj(selectedCalendarDate).getDay()+6)%7).sort((a,b)=>a.time.localeCompare(b.time));
+ content.innerHTML=`<h1>Календарь ${uiIcon("calendar")}</h1><p class="muted">Текущая дата: ${dateObj(today).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"})}</p>
+ <div class="card">
+  <div class="calendar-toolbar">
+   <button class="small-btn" data-action="calendar-prev" aria-label="Предыдущий месяц">‹</button>
+   <div class="calendar-month">${esc(monthName)}</div>
+   <button class="small-btn" data-action="calendar-next" aria-label="Следующий месяц">›</button>
+  </div>
+  <div class="calendar-grid">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x=>`<div class="calendar-weekday">${x}</div>`).join("")}
+  ${cells.map(x=>`<button class="calendar-day ${x.sameMonth?"":"muted-day"} ${x.isToday?"today":""} ${x.selected?"selected":""}" data-action="calendar-select" data-date="${x.key}">
+   <span class="day-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div>
+  <button class="secondary full" data-action="calendar-today">Перейти к сегодня</button>
+ </div>
+ <div class="section-head"><h2>${dateObj(selectedCalendarDate).toLocaleDateString("ru-RU",{day:"numeric",month:"long"})}</h2><button class="small-btn" data-action="calendar-add-task">＋ Задание</button></div>
+ ${chosenTasks.length?`<div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
+ ${chosenDeadlines.length?`<div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}
+ <div class="section-head"><h2>Уроки по расписанию</h2></div>
+ <div class="card">${chosenLessons.length?chosenLessons.map(lessonHTML).join(""):empty(uiIcon("books"),"На этот день уроков нет")}</div>
+ ${(!chosenTasks.length&&!chosenDeadlines.length)?`<div class="card">${empty(uiIcon("flower"),"На эту дату нет заданий и дедлайнов")}</div>`:""}
+ <button class="secondary full" data-action="calendar-add-deadline">＋ Добавить дедлайн на эту дату</button>`;
+}
+
+function renderTasks(){
+ const list=[...data.tasks].sort((a,b)=>Number(a.done)-Number(b.done)||a.date.localeCompare(b.date));
+ content.innerHTML=`<h1>Домашние задания ${uiIcon("tasks")}</h1><p class="muted">Записывай задания и отмечай выполненные</p>
+ ${head("Мои задания","Добавить","add-task")}
+ <div class="card">${list.length?list.map(taskHTML).join(""):empty(uiIcon("books"),"Заданий пока нет")}</div>`;
+}
+
+function renderDeadlines(){
+ const list=[...data.deadlines].sort((a,b)=>a.date.localeCompare(b.date));
+ content.innerHTML=`<h1>Дедлайны ${uiIcon("clock")}</h1><p class="muted">Не забывай о важных датах</p>
+ ${head("Мои дедлайны","Добавить","add-deadline")}
+ <div class="card">${list.length?list.map(deadlineHTML).join(""):empty(uiIcon("flower"),"Дедлайнов пока нет")}</div>`;
+}
+
+/* Раздел оценок: группировка по предметам и отдельная цель для каждого */
+function renderGrades(){
+ const subjects=[...new Set([
+  ...data.grades.map(g=>g.subject),
+  ...data.goals.map(g=>g.subject)
+ ])].sort((a,b)=>a.localeCompare(b,"ru"));
+ const overall=avg(data.grades);
+ content.innerHTML=`<h1>Мои оценки ${uiIcon("star")}</h1>
+ <p class="muted">История оценок, средний балл и личные цели</p>
+ <div class="welcome"><div style="opacity:.8">ОБЩИЙ СРЕДНИЙ БАЛЛ</div>
+ <div style="font-size:38px;font-weight:800;margin-top:7px">${overall===null?"—":overall.toFixed(2)}</div>
+ <p>Всего оценок: ${data.grades.length}</p></div>
+ <div class="section-head"><h2>По предметам</h2><button class="primary" data-action="add-grade">＋ Оценка</button></div>
+ <div class="section-head" style="margin-top:0"><span class="muted">Добавляй предметы и ставь себе желаемую оценку.</span>
+ <button class="small-btn" data-action="add-goal">＋ Цель</button></div>
+ ${subjects.length?subjects.map(subject=>{
+  const list=data.grades.filter(g=>g.subject===subject).sort((a,b)=>b.date.localeCompare(a.date));
+  const average=avg(list);
+  const goal=data.goals.find(g=>g.subject===subject);
+  const target=goal?Number(goal.value):null;
+  const progress=average===null?0:Math.min(100,average/5*100);
+  return `<section class="card">
+   <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+    <h3>${esc(subject)}</h3>
+    <button class="small-btn" data-action="edit-goal" data-subject="${esc(subject)}">${uiIcon("target")} ${target===null?"Поставить цель":"Цель: "+target}</button>
+   </div>
+   <div style="display:flex;gap:20px;align-items:center;margin-top:12px">
+    <div><div class="muted">Средний балл</div><div class="grade-big">${average===null?"—":average.toFixed(2)}</div></div>
+    <div><div class="muted">Оценок</div><div class="grade-big">${list.length}</div></div>
+    ${target!==null?`<div><div class="muted">Желаю</div><div class="grade-big">${target}</div></div>`:""}
+   </div>
+   <div class="progress"><div style="width:${progress}%"></div></div>
+   ${target!==null?`<div class="goal-box"><strong>Моя цель: ${target}</strong><p class="muted">${average===null?"Добавь первую оценку, чтобы отслеживать результат.":average>=target?"Цель достигнута по текущему среднему баллу!":"Продолжай заниматься — отслеживай свой прогресс."}</p></div>`:""}
+   <div class="section-head" style="margin:15px 0 10px"><strong>История оценок</strong>
+    <button class="small-btn" data-action="add-grade-subject" data-subject="${esc(subject)}">＋ Добавить</button>
+   </div>
+   ${list.length?list.map(g=>`<div class="item" style="align-items:center">
+    <div class="grade-big">${g.value}</div><div class="item-main"><h3>${formatDate(g.date)}</h3><p>${esc(g.subject)}</p></div>
+    <div class="item-actions">
+     <button class="small-btn" data-action="edit-grade" data-id="${g.id}">${uiIcon("pencil")}</button>
+     <button class="small-btn danger" data-action="delete-grade" data-id="${g.id}">×</button>
+    </div></div>`).join(""):empty("📘","Пока нет оценок по этому предмету")}
+  </section>`;
+ }).join(""):`
+ <div class="card">${empty("⭐","Добавь первую оценку или создай цель по предмету.")}</div>`}`;
+}
+
+function renderProfile(){
+ const avatar=data.profile.avatar;
+ content.innerHTML=`<h1>Профиль ${uiIcon("user")}</h1><p class="muted">Настройки приложения</p>
+ <div class="card profile-center"><div class="profile-avatar ${avatar?"has-photo":""}">${avatar?`<img src="${esc(avatar)}" alt="Аватар профиля">` : "👩‍🎓"}</div>
+ <h2 style="margin:5px 0">${esc(data.profile.name||"Имя не указано")}</h2><p class="muted">${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`Класс: ${esc(data.profile.schoolClass)}`:"-"}</p>
+ <button class="secondary" data-action="edit-profile">Изменить профиль</button></div>
+ <h2>Настройки</h2><div class="card"><h3>Класс и расписание</h3><p class="muted">Выбери класс — расписание обновится автоматически</p><p style="font-weight:750;margin:10px 0">Сейчас выбран: ${data.profile.schoolClass&&data.profile.schoolClass!=="none"?esc(data.profile.schoolClass):"Нет"}</p><button class="secondary" data-action="edit-class">Изменить класс</button></div><div class="card"><label style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+ <span><strong>Напоминания в приложении</strong><p class="muted">Показывать блок напоминаний на главной</p></span>
+ <input type="checkbox" data-action="toggle-reminders" ${data.profile.reminders?"checked":""}></label></div>
+ <h2>О приложении</h2><div class="card"><h3>SchoolHelper ${uiIcon("books")}</h3>
+ <p class="muted">Расписание, задания, дедлайны и оценки.</p>
+ <p class="muted">Данные хранятся в браузере на этом устройстве.</p></div>
+ <div class="card"><h3>Сбросить приложение</h3><p class="muted">Удалить имя, фотографию, выбранный класс, личное расписание, задания, оценки, цели и дедлайны. Настройки календаря, каникулы, выходные и праздники останутся без изменений.</p>
+ <button class="small-btn danger" data-action="reset-data">Сбросить приложение</button></div>`;
+}
+function render(){
+ ({home:renderHome,schedule:renderSchedule,calendar:renderCalendar,tasks:renderTasks,deadlines:renderDeadlines,grades:renderGrades,profile:renderProfile}[page]||renderHome)();
+}
+
+/* Формы */
+function openModal(title,html,submit){
+ modalRoot.innerHTML=`<div class="modal-bg"><div class="modal">
+ <div class="modal-head"><h2 style="margin:0">${esc(title)}</h2><button class="close" type="button" data-action="close-modal">×</button></div>
+ <form id="edit-form">${html}<button class="primary full" type="submit">Сохранить</button></form>
+ </div></div>`;
+ const backdrop=$(".modal-bg");
+ backdrop.addEventListener("click",e=>{if(e.target===backdrop)closeModal()});
+ $("#edit-form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const values=Object.fromEntries(new FormData(e.currentTarget).entries());
+  if(submit(values)!==false){save();closeModal();render()}
+ });
+ $(".modal").addEventListener("click",e=>{
+  const close=e.target.closest('[data-action="close-modal"]');
+  if(close){e.preventDefault();closeModal();return}
+  e.stopPropagation();
+ });
+}
+function closeModal(){modalRoot.innerHTML=""}
+function field(label,name,value="",type="text",required=true){
+ return `<div class="field"><label>${esc(label)}</label><input type="${type}" name="${name}" value="${esc(value)}" ${required?"required":""}></div>`;
+}
+function selectField(label,name,options,selected){
+ return `<div class="field"><label>${esc(label)}</label><select name="${name}" required>
+ ${options.map(o=>`<option value="${esc(o)}" ${String(o)===String(selected)?"selected":""}>${esc(o)}</option>`).join("")}
+ </select></div>`;
+}
+
+function taskForm(idValue=null,presetDate=null){
+ const old=data.tasks.find(x=>x.id===idValue);
+ openModal(old?"Изменить задание":"Новое задание",`
+ ${field("Название задания","title",old?.title||"")}
+ ${field("Предмет","subject",old?.subject||"")}
+ ${field("Срок выполнения","date",old?.date||presetDate||today,"date")}`,v=>{
+  if(!v.title.trim()||!v.subject.trim())return false;
+  if(old)Object.assign(old,v);else data.tasks.push({id:id(),...v,done:false});
+ });
+}
+function deadlineForm(idValue=null,presetDate=null){
+ const old=data.deadlines.find(x=>x.id===idValue);
+ openModal(old?"Изменить дедлайн":"Новый дедлайн",`
+ ${field("Название","title",old?.title||"")}
+ ${field("Предмет","subject",old?.subject||"")}
+ ${field("Дата","date",old?.date||presetDate||today,"date")}`,v=>{
+  if(!v.title.trim()||!v.subject.trim())return false;
+  if(old)Object.assign(old,v);else data.deadlines.push({id:id(),...v});
+ });
+}
+function lessonForm(idValue=null){
+ const old=data.schedule.find(x=>x.id===idValue);
+ openModal(old?"Изменить урок":"Новый урок",`
+ ${field("Предмет","subject",old?.subject||"")}
+ ${field("Время начала","time",old?.time||"08:30","time")}
+ ${field("Кабинет","room",old?.room||"", "text",false)}
+ ${selectField("День недели","day",weekdays,weekdays[old?old.day:data.selectedDay])}`,v=>{
+  if(!v.subject.trim())return false;
+  const item={subject:v.subject,time:v.time,room:v.room,day:weekdays.indexOf(v.day)};
+  if(old)Object.assign(old,item);else data.schedule.push({id:id(),...item});
+  data.selectedDay=item.day;
+ });
+}
+function gradeForm(idValue=null,subjectPreset=""){
+ const old=data.grades.find(x=>x.id===idValue);
+ openModal(old?"Изменить оценку":"Добавить оценку",`
+ ${field("Предмет","subject",old?.subject||subjectPreset)}
+ ${selectField("Оценка","value",["2","3","4","5"],String(old?.value||"5"))}
+ ${field("Дата","date",old?.date||today,"date")}`,v=>{
+  if(!v.subject.trim())return false;
+  const item={subject:v.subject.trim(),value:Number(v.value),date:v.date};
+  if(old)Object.assign(old,item);else data.grades.push({id:id(),...item});
+ });
+}
+function goalForm(subjectPreset=""){
+ const existing=data.goals.find(g=>g.subject===subjectPreset);
+ openModal(existing?"Изменить цель":"Желаемая оценка",`
+ ${field("Предмет","subject",subjectPreset)}
+ ${selectField("Какую оценку хочешь получать?","value",["3","4","5"],String(existing?.value||"5"))}`,v=>{
+  if(!v.subject.trim())return false;
+  const subject=v.subject.trim();
+  const found=data.goals.find(g=>g.subject.toLowerCase()===subject.toLowerCase());
+  if(found)found.value=Number(v.value);
+  else data.goals.push({subject,value:Number(v.value)});
+ });
+}
+function profileForm(){
+ const avatar=data.profile.avatar||"";
+ openModal("Изменить профиль",` ${field("Имя","name",data.profile.name)}
+ <div class="field"><label>Аватарка</label>
+ <div style="display:flex;align-items:center;gap:14px">
+  <div id="profile-avatar-preview" class="profile-avatar ${avatar?"has-photo":""}" style="width:64px;height:64px;flex:0 0 64px">${avatar?`<img src="${esc(avatar)}" alt="Аватарка">` : uiIcon("graduation")}</div>
+  <div style="flex:1"><input id="profile-avatar-file" type="file" accept="image/jpeg,image/png,image/webp,image/avif" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden" aria-label="Выбрать фотографию">
+  <label for="profile-avatar-file" class="secondary" style="display:inline-block;cursor:pointer">Изменить фотографию</label>
+  <input id="profile-avatar-data" type="hidden" name="avatarData" value=""></div>
+ </div></div>`,v=>{
+  if(!v.name.trim())return false;
+  data.profile.name=v.name.trim();
+  if(v.avatarData)data.profile.avatar=v.avatarData;
+ });
+}
+function classForm(){
+ const options=["none",...Object.keys(data.classSchedules).sort((a,b)=>a.localeCompare(b,"ru"))];
+ const labels=options.map(x=>x==="none"?"Не выбран":x);
+ openModal("Класс и расписание",`<div class="field"><label>Выбери свой класс</label><select name="schoolClass" required>${options.map((x,i)=>`<option value="${esc(x)}" ${x===data.profile.schoolClass?"selected":""}>${labels[i]}</option>`).join("")}</select></div><p class="muted">Пока доступны проверенные расписания: 5А, 5Б, 5В, 5М, 6А и 6В. Остальные добавим после проверки.</p>`,v=>{
+  data.profile.schoolClass=v.schoolClass;
+  data.schedule=[];
+ });
+}
+function remove(list,idValue,label){
+ if(!confirm(`Удалить ${label}?`))return;
+ data[list]=data[list].filter(x=>x.id!==idValue);save();render();
+}
+
+function action(a,el){
+ const n=Number(el.dataset.id);
+ if(a==="calendar-prev"||a==="calendar-next"){
+  const step=a==="calendar-next"?1:-1;
+  if(calendarYearView)calendarMonth=new Date(calendarMonth.getFullYear()+step,calendarMonth.getMonth(),1);
+  else if(calendarExpanded)calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+step,1);
+  else{const d=dateObj(selectedCalendarDate);d.setDate(d.getDate()+step*7);selectedCalendarDate=localDate(d);calendarMonth=new Date(d.getFullYear(),d.getMonth(),1)}
+  return render();
+ }
+ if(a==="calendar-view-toggle"){if(calendarYearView){calendarYearView=false;calendarExpanded=true}else if(calendarExpanded){calendarExpanded=false;calendarYearView=true}else{calendarExpanded=true}return render()}
+ if(a==="calendar-back-week"){calendarYearView=false;calendarExpanded=false;calendarMonth=new Date(dateObj(selectedCalendarDate).getFullYear(),dateObj(selectedCalendarDate).getMonth(),1);return render()}
+ if(a==="calendar-open-month"){const m=Number(el.dataset.month),y=Number(el.dataset.year);calendarMonth=new Date(y,m,1);selectedCalendarDate=localDate(new Date(y,m,1));calendarYearView=false;calendarExpanded=true;return render()}
+ if(a==="calendar-expand"){calendarExpanded=!calendarExpanded;return render()}
+ if(a==="calendar-today"){calendarMonth=new Date();selectedCalendarDate=today;calendarYearView=false;calendarExpanded=false;return render()}
+ if(a==="calendar-select"){selectedCalendarDate=el.dataset.date;if(calendarExpanded){calendarExpanded=false;calendarYearView=false;const picked=dateObj(selectedCalendarDate);calendarMonth=new Date(picked.getFullYear(),picked.getMonth(),1)}return render()}
+ if(a==="calendar-add-task")return taskForm(null,selectedCalendarDate);
+ if(a==="calendar-add-deadline")return deadlineForm(null,selectedCalendarDate);
+ if(a==="add-task")return taskForm();
+ if(a==="edit-task")return taskForm(n);
+ if(a==="delete-task")return remove("tasks",n,"задание");
+ if(a==="toggle-task"){const t=data.tasks.find(x=>x.id===n);if(t)t.done=!t.done;save();return render()}
+ if(a==="add-deadline")return deadlineForm();
+ if(a==="edit-deadline")return deadlineForm(n);
+ if(a==="delete-deadline")return remove("deadlines",n,"дедлайн");
+ if(a==="add-lesson")return lessonForm();
+ if(a==="edit-lesson")return lessonForm(n);
+ if(a==="delete-lesson")return remove("schedule",n,"урок");
+ if(a==="add-grade")return gradeForm();
+ if(a==="add-grade-subject")return gradeForm(null,el.dataset.subject);
+ if(a==="edit-grade")return gradeForm(n);
+ if(a==="delete-grade")return remove("grades",n,"оценку");
+ if(a==="add-goal")return goalForm();
+ if(a==="edit-goal")return goalForm(el.dataset.subject);
+ if(a==="choose-avatar"){document.getElementById("avatar-file")?.click();return;}
+ if(a==="remove-avatar"){data.profile.avatar="";save();return renderProfile();}
+ if(a==="edit-profile")return profileForm();
+ if(a==="edit-class")return classForm();
+ if(a==="set-class"){const chosen=el.dataset.class;data.profile.schoolClass=chosen;save();renderProfile();return;}
+ if(a==="select-day"){data.selectedDay=Number(el.dataset.day);save();return render()}
+ if(a==="go-deadlines")return setPage("deadlines");
+ if(a==="hide-welcome"||a==="show-welcome"){
+  welcomeHidden=a==="hide-welcome";
+  try{
+   if(welcomeHidden)localStorage.setItem(WELCOME_HIDDEN_KEY,"1");
+   else localStorage.removeItem(WELCOME_HIDDEN_KEY);
+  }catch(e){}
+  return render();
+ }
+ if(a==="close-modal")return closeModal();
+ if(a==="reset-data"){if(confirm("Сбросить приложение?\n\nИмя, фотография, выбранный класс, личное расписание, задания, оценки, цели и дедлайны будут удалены. Календарь, каникулы, выходные и праздники останутся без изменений.")){data=clone(initial);welcomeHidden=false;try{localStorage.removeItem(WELCOME_HIDDEN_KEY)}catch(e){}save();render()}}
+}
+
+document.addEventListener("click",e=>{
+ const nav=e.target.closest("[data-page]");
+ if(nav){setPage(nav.dataset.page);return}
+ const el=e.target.closest("[data-action]");
+ if(el)action(el.dataset.action,el);
+});
+document.addEventListener("change",e=>{
+ if(e.target.id==="profile-avatar-file"&&e.target.files?.[0]){
+  const file=e.target.files[0];
+  if(!["image/jpeg","image/png","image/webp","image/avif"].includes(file.type)){alert("Можно загружать только фотографии в форматах JPG, PNG, WEBP или AVIF.");e.target.value="";return;}
+  const reader=new FileReader();
+  reader.onload=()=>{
+   const img=new Image();
+   img.onload=()=>{
+    const max=512,scale=Math.min(1,max/Math.max(img.width,img.height));
+    const canvas=document.createElement("canvas");
+    canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
+    canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+    const avatarData=canvas.toDataURL("image/jpeg",.82);
+    const hidden=document.getElementById("profile-avatar-data");
+    const preview=document.getElementById("profile-avatar-preview");
+    if(hidden)hidden.value=avatarData;
+    if(preview){preview.classList.add("has-photo");preview.innerHTML=`<img src="${avatarData}" alt="Аватарка">`;}
+   };
+   img.onerror=()=>alert("Не удалось открыть это изображение.");
+   img.src=reader.result;
+  };
+  reader.onerror=()=>alert("Не удалось прочитать файл.");
+  reader.readAsDataURL(file);
+ }
+ if(e.target.dataset.action==="toggle-reminders"){
+  data.profile.reminders=e.target.checked;save();render();
+ }
+});
+save();
+render();
+})();
+</script>
+<script>
+/* Disable manual zoom gestures in the embedded app */
+document.addEventListener("gesturestart",function(e){e.preventDefault()},{passive:false});
+document.addEventListener("gesturechange",function(e){e.preventDefault()},{passive:false});
+document.addEventListener("gestureend",function(e){e.preventDefault()},{passive:false});
+document.addEventListener("dblclick",function(e){e.preventDefault()},{passive:false});
+</script>
+</body>
+</html>
