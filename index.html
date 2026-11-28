@@ -458,6 +458,7 @@ function calendarDayType(key){
 }
 function isNoSchoolDate(key){return key<"2026-09-01"||key>"2027-05-31"||calendarDayType(key)!=="";}
 function getActiveSchedule(){
+ if(!data.profile.schoolClass||data.profile.schoolClass==="none")return [];
  const classList=Array.isArray(data.classSchedules?.[data.profile.schoolClass])?data.classSchedules[data.profile.schoolClass]:[];
  const subgroupClasses=["6М","8А","8В","8Г","8Д","8Е","9А","9Б","9В","9Г","9Д"];const schoolLessons=subgroupClasses.includes(data.profile.schoolClass)?classList.filter(t=>!t.subGroup||t.subGroup===(data.profile.subGroup||"1")):classList;
  const personalLessons=Array.isArray(data.schedule)?data.schedule:[];
@@ -573,8 +574,7 @@ function renderSchedule(){
   `<div class="week-strip">${weekCells.map(x=>`<button class="week-cell ${x.selected?"selected":""} ${x.isToday?"today":""} ${x.type}" data-action="calendar-select" data-date="${x.key}"><span class="week-name">${new Date(x.key+"T12:00:00").toLocaleDateString("ru-RU",{weekday:"short"})}</span><span class="week-number">${x.number}</span><span class="calendar-dots">${x.dots.map(d=>`<i title="${d}"></i>`).join("")}</span></button>`).join("")}</div>`}
   <button class="secondary full" data-action="calendar-today">${selectedCalendarDate===today?"Сегодня":"Вернуться к сегодня"}</button>`}
  </div>
- ${calendarYearView?"":`<div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2>${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`<button class="primary" data-action="add-lesson">＋ Урок</button>`:""}</div>
- <div class="card">${list.length?list.map(lessonHTML).join(""):empty(uiIcon("book"),noSchool?"В этот день занятий нет":(!data.profile.schoolClass||data.profile.schoolClass==="none"?"Класс не выбран. Выбери класс в профиле, чтобы увидеть расписание.":"На этот день уроков пока нет"))}</div>
+ ${calendarYearView?"":` ${data.profile.schoolClass&&data.profile.schoolClass!=="none"?`<div class="section-head"><h2>${selected.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}</h2><button class="primary" data-action="add-lesson">＋ Урок</button></div><div class="card">${list.length?list.map(lessonHTML).join(""):empty(uiIcon("book"),noSchool?"В этот день занятий нет":"На этот день уроков пока нет")}</div>`:""}
  ${chosenTasks.length?`<div class="section-head"><h2>Задания на эту дату</h2></div><div class="card">${chosenTasks.map(taskHTML).join("")}</div>`:""}
  ${chosenDeadlines.length?`<div class="section-head"><h2>Дедлайны на эту дату</h2></div><div class="card">${chosenDeadlines.map(deadlineHTML).join("")}</div>`:""}`}`;
 }
@@ -823,7 +823,7 @@ function classForm(){
  openModal("Класс и расписание",`
  <div class="field class-picker">
   <label>Класс</label>
-  <button type="button" id="class-picker-trigger" class="select-like" aria-haspopup="dialog" aria-expanded="false">${esc(current==="none"?"Найти класс":current)} <span>⌕</span></button>
+  <button type="button" id="class-picker-trigger" class="select-like" aria-haspopup="dialog" aria-expanded="false">${esc(current==="none"?"Поиск класса":current)} <span>⌕</span></button>
   <input type="hidden" id="schoolClassSelect" name="schoolClass" value="${esc(current)}">
  </div>
  <div id="subgroup-field" class="field" style="display:${hasGroups?"block":"none"}">
@@ -832,12 +832,12 @@ function classForm(){
  <option value="1" ${(data.profile.subGroup||"1")==="1"?"selected":""}>1-я подгруппа</option>
  <option value="2" ${(data.profile.subGroup||"1")==="2"?"selected":""}>2-я подгруппа</option>
  </select></div>
- <p class="muted">Выбери класс из списка или воспользуйся поиском.</p>
  <div id="class-picker-overlay" class="class-picker-overlay" style="display:none">
   <section class="class-picker-sheet" role="dialog" aria-modal="true" aria-label="Выбор класса">
    <div class="class-picker-sheet-head"><h3>Выбрать класс</h3><button type="button" class="class-picker-close" id="class-picker-close" aria-label="Закрыть">×</button></div>
-   <input id="classSearch" class="class-picker-search" type="search" placeholder="Поиск класса, например 9…" autocomplete="off">
+   <input id="classSearch" class="class-picker-search" type="search" placeholder="Поиск класса" autocomplete="off">
    <div id="class-picker-options" class="class-picker-options">
+    <button type="button" class="class-option ${current==="none"?"selected":""}" data-class="none">Без класса</button>
     ${options.map(x=>`<button type="button" class="class-option ${x===current?"selected":""}" data-class="${esc(x)}">${esc(x)}</button>`).join("")}
    </div>
   </section>
@@ -860,7 +860,9 @@ function classForm(){
  const renderOptions=query=>{
   const q=(query||"").trim().toLocaleLowerCase("ru");
   const matches=options.filter(x=>x.toLocaleLowerCase("ru").includes(q));
-  list.innerHTML=matches.length?matches.map(x=>`<button type="button" class="class-option ${x===hidden.value?"selected":""}" data-class="${esc(x)}">${esc(x)}${x===hidden.value?"　✓":""}</button>`).join(""):'<div class="class-no-results">Ничего не найдено</div>';
+  const showNone=!q||"без класса".includes(q)||"не выбран".includes(q);
+  const noneOption=showNone?`<button type="button" class="class-option ${hidden.value==="none"?"selected":""}" data-class="none">Без класса${hidden.value==="none"?"　✓":""}</button>`:"";
+  list.innerHTML=noneOption+(matches.length?matches.map(x=>`<button type="button" class="class-option ${x===hidden.value?"selected":""}" data-class="${esc(x)}">${esc(x)}${x===hidden.value?"　✓":""}</button>`).join(""):(!noneOption?'<div class="class-no-results">Ничего не найдено</div>':""));
  };
  const viewport=window.visualViewport;
  const resizeSheet=()=>{
@@ -883,7 +885,7 @@ function classForm(){
  list?.addEventListener("click",e=>{
   const option=e.target.closest("[data-class]");if(!option)return;
   const chosen=option.dataset.class;hidden.value=chosen;
-  trigger.innerHTML=`${esc(chosen)} <span>⌄</span>`;
+  trigger.innerHTML=chosen==="none"?'Поиск класса <span>⌕</span>':`${esc(chosen)} <span>⌄</span>`;
   if(groupField)groupField.style.display=subgroupClasses.includes(chosen)?"block":"none";
   closePicker();
  });
