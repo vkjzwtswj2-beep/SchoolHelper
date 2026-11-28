@@ -663,9 +663,10 @@ function calendarDayType(key){
 }
 function isNoSchoolDate(key){return key<"2026-09-01"||key>"2027-05-31"||calendarDayType(key)!=="";}
 function getActiveSchedule(){
- const list=Array.isArray(data.classSchedules?.[data.profile.schoolClass])?data.classSchedules[data.profile.schoolClass]:[];
- if(data.profile.schoolClass==="6М")return list.filter(t=>!t.subGroup||t.subGroup===(data.profile.subGroup||"1"));
- return list;
+ const classList=Array.isArray(data.classSchedules?.[data.profile.schoolClass])?data.classSchedules[data.profile.schoolClass]:[];
+ const schoolLessons=data.profile.schoolClass==="6М"?classList.filter(t=>!t.subGroup||t.subGroup===(data.profile.subGroup||"1")):classList;
+ const personalLessons=Array.isArray(data.schedule)?data.schedule:[];
+ return [...schoolLessons,...personalLessons];
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}
  catch(e){alert("Не удалось сохранить данные на устройстве.")}}
@@ -698,12 +699,11 @@ function deadlineHTML(t){
  </div></div></div>`}
 
 function lessonTimeRange(start){const ends={"08:30":"09:15","09:30":"10:15","10:30":"11:15","11:35":"12:20","12:35":"13:20","13:35":"14:20","14:30":"15:15"};return ends[start]?`${start}–${ends[start]}`:start}
-function lessonHTML(t){return `<div class="item">
+function lessonHTML(t){const schoolLesson=Boolean(t.teacher);return `<div class="item">
  <div class="lesson-time">${esc(lessonTimeRange(t.time))}</div><div class="item-icon">${uiIcon("book")}</div>
- <div class="item-main"><h3>${esc(t.subject)}</h3><p>${t.teacher?"Учитель: "+esc(t.teacher):"Кабинет: "+esc(t.room||"—")}</p>
+ <div class="item-main"><h3>${esc(t.subject)}</h3><p>${schoolLesson?"Учитель: "+esc(t.teacher):"Кабинет: "+esc(t.room||"—")}</p>
  <div class="item-actions">
- <button class="small-btn" data-action="edit-lesson" data-id="${t.id}">Изменить</button>
- <button class="small-btn danger" data-action="delete-lesson" data-id="${t.id}">Удалить</button>
+ ${schoolLesson?`<button class="small-btn" data-action="edit-lesson" data-id="${esc(t.id)}">Кабинет</button>`:`<button class="small-btn" data-action="edit-lesson" data-id="${esc(t.id)}">Изменить</button><button class="small-btn danger" data-action="delete-lesson" data-id="${esc(t.id)}">Удалить</button>`}
  </div></div></div>`}
 
 function renderHome(){
@@ -954,16 +954,27 @@ function deadlineForm(idValue=null,presetDate=null){
  });
 }
 function lessonForm(idValue=null){
- const old=data.schedule.find(x=>x.id===idValue);
- openModal(old?"Изменить урок":"Новый урок",`
+ const old=data.schedule.find(x=>String(x.id)===String(idValue));
+ openModal(old?"Изменить свой урок":"Новый урок",`
  ${field("Предмет","subject",old?.subject||"")}
  ${field("Время начала","time",old?.time||"08:30","time")}
  ${field("Кабинет","room",old?.room||"", "text",false)}
  ${selectField("День недели","day",weekdays,weekdays[old?old.day:data.selectedDay])}`,v=>{
   if(!v.subject.trim())return false;
-  const item={subject:v.subject,time:v.time,room:v.room,day:weekdays.indexOf(v.day)};
+  const item={subject:v.subject.trim(),time:v.time,room:v.room,day:weekdays.indexOf(v.day)};
   if(old)Object.assign(old,item);else data.schedule.push({id:id(),...item});
   data.selectedDay=item.day;
+ });
+}
+function schoolLessonRoomForm(idValue){
+ const list=data.classSchedules?.[data.profile.schoolClass]||[];
+ const lesson=list.find(x=>String(x.id)===String(idValue));
+ if(!lesson)return;
+ openModal("Кабинет урока",`
+ <div class="field"><label>Предмет</label><p style="font-weight:750;margin:8px 0 14px">${esc(lesson.subject)}</p></div>
+ ${field("Кабинет","room",lesson.room||"", "text",false)}
+ <p class="muted">Предмет, учитель, время и день школьного урока изменить нельзя.</p>`,v=>{
+  lesson.room=v.room.trim();
  });
 }
 function gradeForm(idValue=null,subjectPreset=""){
@@ -1082,8 +1093,16 @@ function action(a,el){
  if(a==="edit-deadline")return deadlineForm(n);
  if(a==="delete-deadline")return remove("deadlines",n,"дедлайн");
  if(a==="add-lesson")return lessonForm();
- if(a==="edit-lesson")return lessonForm(n);
- if(a==="delete-lesson")return remove("schedule",n,"урок");
+ if(a==="edit-lesson"){
+  const classLesson=(data.classSchedules?.[data.profile.schoolClass]||[]).find(x=>String(x.id)===String(el.dataset.id));
+  if(classLesson)return schoolLessonRoomForm(el.dataset.id);
+  return lessonForm(el.dataset.id);
+ }
+ if(a==="delete-lesson"){
+  const isClassLesson=(data.classSchedules?.[data.profile.schoolClass]||[]).some(x=>String(x.id)===String(el.dataset.id));
+  if(isClassLesson)return;
+  data.schedule=data.schedule.filter(x=>String(x.id)!==String(el.dataset.id));save();render();return;
+ }
  if(a==="add-grade")return gradeForm();
  if(a==="add-grade-subject")return gradeForm(null,el.dataset.subject);
  if(a==="edit-grade")return gradeForm(n);
