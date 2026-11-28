@@ -1031,11 +1031,14 @@ function profileForm(){
  });
 }
 function classForm(){
- const options=Object.keys(data.classSchedules).sort((a,b)=>a.localeCompare(b,"ru"));
+ const allClasses=Object.keys(data.classSchedules); const lastClasses=["10Б","10Ф"]; const options=allClasses.filter(x=>!lastClasses.includes(x)).sort((a,b)=>a.localeCompare(b,"ru")).concat(lastClasses.filter(x=>allClasses.includes(x)));
  const current=data.profile.schoolClass||"none";
- const subgroupClasses=["6М","8А","8В","8Г","8Д","8Е","9А","9Б","9В","9Г"];
+ const subgroupClasses=["6М","8А","8В","8Г","8Д","8Е","9А","9Б","9В","9Г","9Д"];
  const hasGroups=subgroupClasses.includes(current);
  openModal("Класс и расписание",`
+ <div class="field"><label for="classSearch">Поиск класса</label>
+ <input id="classSearch" type="search" placeholder="Начни вводить, например 9Д или 10Б" autocomplete="off">
+ </div>
  <div class="field"><label for="schoolClassSelect">Выбрать класс</label>
  <select id="schoolClassSelect" name="schoolClass" required>
  <option value="none" ${current==="none"?"selected":""}>Класс не выбран</option>
@@ -1055,7 +1058,15 @@ function classForm(){
   data.schedule=[];
  });
  const classSelect=$("#schoolClassSelect");
+ const classSearch=$("#classSearch");
  const groupField=$("#subgroup-field");
+ classSearch?.addEventListener("input",()=>{
+  const query=classSearch.value.trim().toLocaleLowerCase("ru");
+  const selected=classSelect.value;
+  const filtered=options.filter(x=>x.toLocaleLowerCase("ru").includes(query));
+  classSelect.innerHTML=`<option value="none">Класс не выбран</option>`+`<option value="${esc(selected)}" selected>${esc(selected==="none"?"Класс не выбран":selected)}</option>`+
+   filtered.filter(x=>x!==selected).map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+ });
  classSelect?.addEventListener("change",()=>{
   const show=subgroupClasses.includes(classSelect.value);
   if(groupField)groupField.style.display=show?"block":"none";
