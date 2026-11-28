@@ -709,7 +709,7 @@ function deadlineHTML(t){
 function lessonTimeRange(start){const ends={"08:30":"09:15","09:30":"10:15","10:30":"11:15","11:35":"12:20","12:35":"13:20","13:35":"14:20","14:30":"15:15"};return ends[start]?`${start}–${ends[start]}`:start}
 function lessonHTML(t){const schoolLesson=Boolean(t.teacher);return `<div class="item">
  <div class="lesson-time">${esc(lessonTimeRange(t.time))}</div><div class="item-icon">${uiIcon("book")}</div>
- <div class="item-main"><h3>${esc(t.subject)}</h3><p>${schoolLesson?"Учитель: "+esc(t.teacher):"Кабинет: "+esc(t.room||"—")}</p>
+ <div class="item-main"><h3>${esc(t.subject)}${t.subGroup?` <span class="muted" style="font-size:.85em">· ${t.subGroup==="1"?"1-я подгруппа":"2-я подгруппа"}</span>`:""}</h3><p>${schoolLesson?"Учитель: "+esc(t.teacher):"Кабинет: "+esc(t.room||"—")}</p>
  <div class="item-actions">
  ${schoolLesson?`<button class="small-btn" data-action="edit-lesson" data-id="${esc(t.id)}">Кабинет</button>`:`<button class="small-btn" data-action="edit-lesson" data-id="${esc(t.id)}">Изменить</button><button class="small-btn danger" data-action="delete-lesson" data-id="${esc(t.id)}">Удалить</button>`}
  </div></div></div>`}
@@ -1038,7 +1038,7 @@ function classForm(){
  <div id="subgroup-field" class="field" style="display:${["6М","8А","8В","8Г","8Д","8Е","9А"].includes(current)?"block":"none"}">
  <label for="subGroup" id="subgroup-label">${current==="6М"?"Моя подгруппа (для уроков труда)":"Моя подгруппа (для английского языка)"}</label>
  <select id="subGroup" name="subGroup">
- ${["Первая подгруппа","Вторая подгруппа"].map((label,i)=>`<option value="${i+1}" ${(data.profile.subGroup||"1")===String(i+1)?"selected":""}>${label}</option>`).join("")}
+ ${["1-я подгруппа","2-я подгруппа"].map((label,i)=>`<option value="${i+1}" ${(data.profile.subGroup||"1")===String(i+1)?"selected":""}>${label}</option>`).join("")}
  </select></div>
  <p class="muted">Можно выбрать класс или оставить вариант «Класс не выбран».</p>`,v=>{
   const raw=v.schoolClass.trim();
