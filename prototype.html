@@ -332,6 +332,15 @@ p{margin:5px 0}
 html,body{touch-action:pan-x pan-y; -webkit-text-size-adjust:100%}
 button,a,input,select,textarea{touch-action:manipulation}
 
+
+.class-picker{position:relative}
+.select-like{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;background:var(--card,#fff);color:inherit;border:1px solid var(--line,#ddd);border-radius:12px;padding:13px 14px;font:inherit;cursor:pointer}
+.class-picker-panel{position:absolute;z-index:30;top:calc(100% - 2px);left:0;right:0;background:var(--card,#fff);border:1px solid var(--line,#ddd);border-radius:12px;padding:10px;box-shadow:0 12px 30px #0002}
+.class-picker-panel input{width:100%;box-sizing:border-box;margin-bottom:8px}
+.class-picker-options{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
+.class-option{width:100%;border:0;border-radius:8px;background:transparent;color:inherit;text-align:left;padding:10px 12px;font:inherit;cursor:pointer}
+.class-option:hover{background:var(--soft,#eee)}
+.class-no-results{padding:10px 12px}
 </style>
 </head>
 <body>
@@ -1036,40 +1045,48 @@ function classForm(){
  const subgroupClasses=["6М","8А","8В","8Г","8Д","8Е","9А","9Б","9В","9Г","9Д"];
  const hasGroups=subgroupClasses.includes(current);
  openModal("Класс и расписание",`
- <div class="field"><label for="classSearch">Поиск класса</label>
- <input id="classSearch" type="search" placeholder="Начни вводить, например 9Д или 10Б" autocomplete="off">
+ <div class="field class-picker">
+  <label>Класс</label>
+  <button type="button" id="class-picker-trigger" class="select-like" aria-expanded="false">${esc(current==="none"?"Выбрать класс":current)} <span>⌄</span></button>
+  <div id="class-picker-panel" class="class-picker-panel" style="display:none">
+   <input id="classSearch" type="search" placeholder="Поиск класса…" autocomplete="off">
+   <div id="class-picker-options" class="class-picker-options">
+    ${options.map(x=>`<button type="button" class="class-option" data-class="${esc(x)}">${esc(x)}</button>`).join("")}
+   </div>
+  </div>
+  <input type="hidden" id="schoolClassSelect" name="schoolClass" value="${esc(current)}">
  </div>
- <div class="field"><label for="schoolClassSelect">Выбрать класс</label>
- <select id="schoolClassSelect" name="schoolClass" required>
- <option value="none" ${current==="none"?"selected":""}>Класс не выбран</option>
- ${options.map(x=>`<option value="${esc(x)}" ${x===current?"selected":""}>${esc(x)}</option>`).join("")}
- </select></div>
  <div id="subgroup-field" class="field" style="display:${hasGroups?"block":"none"}">
  <label for="subGroup">Моя подгруппа</label>
  <select id="subGroup" name="subGroup">
  <option value="1" ${(data.profile.subGroup||"1")==="1"?"selected":""}>1-я подгруппа</option>
  <option value="2" ${(data.profile.subGroup||"1")==="2"?"selected":""}>2-я подгруппа</option>
  </select></div>
- <p class="muted">Выбери класс и сохрани изменения.</p>`,v=>{
+ <p class="muted">Можно выбрать класс из списка или начать вводить его название в поиске.</p>`,v=>{
   const chosen=v.schoolClass||"none";
   if(chosen!=="none"&&!options.includes(chosen))return false;
   data.profile.schoolClass=chosen;
   if(subgroupClasses.includes(chosen))data.profile.subGroup=v.subGroup||"1";
   data.schedule=[];
  });
- const classSelect=$("#schoolClassSelect");
- const classSearch=$("#classSearch");
- const groupField=$("#subgroup-field");
- classSearch?.addEventListener("input",()=>{
-  const query=classSearch.value.trim().toLocaleLowerCase("ru");
-  const selected=classSelect.value;
-  const filtered=options.filter(x=>x.toLocaleLowerCase("ru").includes(query));
-  classSelect.innerHTML=`<option value="none">Класс не выбран</option>`+`<option value="${esc(selected)}" selected>${esc(selected==="none"?"Класс не выбран":selected)}</option>`+
-   filtered.filter(x=>x!==selected).map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+ const trigger=$("#class-picker-trigger"), panel=$("#class-picker-panel"), search=$("#classSearch"), list=$("#class-picker-options"), hidden=$("#schoolClassSelect"), groupField=$("#subgroup-field");
+ trigger?.addEventListener("click",()=>{
+  const opening=panel.style.display==="none";
+  panel.style.display=opening?"block":"none";
+  trigger.setAttribute("aria-expanded",String(opening));
+  if(opening)search.focus();
  });
- classSelect?.addEventListener("change",()=>{
-  const show=subgroupClasses.includes(classSelect.value);
-  if(groupField)groupField.style.display=show?"block":"none";
+ search?.addEventListener("input",()=>{
+  const q=search.value.trim().toLocaleLowerCase("ru");
+  const matches=options.filter(x=>x.toLocaleLowerCase("ru").includes(q));
+  list.innerHTML=matches.length?matches.map(x=>`<button type="button" class="class-option" data-class="${esc(x)}">${esc(x)}</button>`).join(""):'<div class="muted class-no-results">Ничего не найдено</div>';
+ });
+ list?.addEventListener("click",e=>{
+  const option=e.target.closest("[data-class]"); if(!option)return;
+  const chosen=option.dataset.class;
+  hidden.value=chosen; trigger.innerHTML=`${esc(chosen)} <span>⌄</span>`;
+  panel.style.display="none"; trigger.setAttribute("aria-expanded","false");
+  if(groupField)groupField.style.display=subgroupClasses.includes(chosen)?"block":"none";
  });
 }
 function remove(list,idValue,label){
