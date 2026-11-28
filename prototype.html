@@ -832,9 +832,11 @@ function classForm(){
   list.querySelectorAll("[data-class]").forEach(el=>{
    const match=el.dataset.class.toLocaleLowerCase("ru").includes(q);
    el.hidden=!match;
+   el.style.display=match?"block":"none";
   });
  };
  search?.addEventListener("input",filter);
+ filter();
  list?.addEventListener("click",e=>{
   const option=e.target.closest("[data-class]");
   if(!option)return;
