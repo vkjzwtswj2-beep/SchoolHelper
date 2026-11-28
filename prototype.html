@@ -814,9 +814,18 @@ function profileForm(){
 function classForm(){
  const options=["none",...Object.keys(data.classSchedules).sort((a,b)=>a.localeCompare(b,"ru"))];
  const labels=options.map(x=>x==="none"?"Не выбран":x);
- openModal("Класс и расписание",`<div class="field"><label>Выбери свой класс</label><select name="schoolClass" required>${options.map((x,i)=>`<option value="${esc(x)}" ${x===data.profile.schoolClass?"selected":""}>${labels[i]}</option>`).join("")}</select></div><p class="muted">Проверенные расписания: 5А, 5Б, 5В, 5М, 6А, 6В и 6Г.</p>`,v=>{
+ openModal("Класс и расписание",`<div class="field"><label for="class-search">Найти класс</label><input id="class-search" type="search" placeholder="Начни вводить, например 6Г" autocomplete="off"></div><div class="field"><label for="class-choice">Выбери класс</label><select id="class-choice" name="schoolClass" required size="7">${options.map((x,i)=>`<option value="${esc(x)}" ${x===data.profile.schoolClass?"selected":""}>${labels[i]}</option>`).join("")}</select></div><p class="muted">Начни вводить номер или букву класса — список отфильтруется.</p>`,v=>{
   data.profile.schoolClass=v.schoolClass;
   data.schedule=[];
+ });
+ const search=$("#class-search"),choice=$("#class-choice");
+ search?.addEventListener("input",()=>{
+  const query=search.value.trim().toLocaleLowerCase("ru");
+  const current=choice.value;
+  const filtered=options.map((value,i)=>({value,label:labels[i]})).filter(x=>!query||x.label.toLocaleLowerCase("ru").includes(query));
+  choice.innerHTML=filtered.map(x=>`<option value="${esc(x.value)}">${esc(x.label)}</option>`).join("");
+  if(filtered.some(x=>x.value===current))choice.value=current;
+  else if(filtered.length)choice.value=filtered[0].value;
  });
 }
 function remove(list,idValue,label){
