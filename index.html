@@ -420,9 +420,9 @@ function load(){
   const x=JSON.parse(saved);
   return {
    ...clone(initial),...x,
-   profile:{...initial.profile,...(x.profile||{}),schoolClass:(x.profile?.schoolClass==="-"||x.profile?.schoolClass==="none")?"none":(initial.classSchedules?.[x.profile?.schoolClass]?x.profile.schoolClass:"none")},
+   profile:{...initial.profile,...(x.profile||{}),schoolClass:"none"},
    schedule:Array.isArray(x.schedule)?x.schedule:[],
-   classSchedules:{...clone(initial.classSchedules),...(x.classSchedules&&typeof x.classSchedules==="object"?x.classSchedules:{})},
+   classSchedules:{},
    tasks:Array.isArray(x.tasks)?x.tasks:[],
    deadlines:Array.isArray(x.deadlines)?x.deadlines:[],
    grades:Array.isArray(x.grades)?x.grades:[],
@@ -837,7 +837,7 @@ function action(a,el){
  if(a==="remove-avatar"){data.profile.avatar="";save();return renderProfile();}
  if(a==="edit-profile")return profileForm();
  if(a==="edit-class")return classForm();
- if(a==="set-class"){const chosen=el.dataset.class;if(chosen==="5А"||chosen==="none"){data.profile.schoolClass=chosen;save();renderProfile()}return;}
+ if(a==="set-class"){const chosen=el.dataset.class;if(chosen==="none"){data.profile.schoolClass="none";save();renderProfile()}return;}
  if(a==="select-day"){data.selectedDay=Number(el.dataset.day);save();return render()}
  if(a==="go-deadlines")return setPage("deadlines");
  if(a==="hide-welcome"||a==="show-welcome"){
@@ -849,7 +849,7 @@ function action(a,el){
   return render();
  }
  if(a==="close-modal")return closeModal();
- if(a==="reset-data"){if(confirm("Сбросить приложение?\n\nИмя, фотография, выбранный класс, личное расписание, задания, оценки, цели и дедлайны будут удалены. Календарь, каникулы, выходные и праздники останутся без изменений.")){const savedClassSchedules=data.classSchedules;data=clone(initial);data.classSchedules=savedClassSchedules;welcomeHidden=false;try{localStorage.removeItem(WELCOME_HIDDEN_KEY)}catch(e){}save();render()}}
+ if(a==="reset-data"){if(confirm("Сбросить приложение?\n\nИмя, фотография, выбранный класс, личное расписание, задания, оценки, цели и дедлайны будут удалены. Календарь, каникулы, выходные и праздники останутся без изменений.")){data=clone(initial);welcomeHidden=false;try{localStorage.removeItem(WELCOME_HIDDEN_KEY)}catch(e){}save();render()}}
 }
 
 document.addEventListener("click",e=>{
