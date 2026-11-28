@@ -648,7 +648,7 @@ function load(){
    ...clone(initial),...x,
    profile:{...initial.profile,...(x.profile||{})},
    schedule:Array.isArray(x.schedule)?x.schedule:[],
-   classSchedules:Object.fromEntries(Object.entries({...clone(initial.classSchedules),...(x.classSchedules||{})}).map(([className,lessons])=>{if(["8А","8В","8Г"].includes(className)){const savedRooms=new Map((x.classSchedules?.[className]||[]).map(lesson=>[lesson.id,lesson.room]));return [className,(initial.classSchedules[className]||[]).map(lesson=>({...lesson,...(savedRooms.has(lesson.id)?{room:savedRooms.get(lesson.id)}:{})}))];}return [className,lessons];})),
+   classSchedules:Object.fromEntries(Object.entries({...clone(initial.classSchedules),...(x.classSchedules||{})}).map(([className,lessons])=>{if(["8А","8В","8Г","9А"].includes(className)){const savedRooms=new Map((x.classSchedules?.[className]||[]).map(lesson=>[lesson.id,lesson.room]));return [className,(initial.classSchedules[className]||[]).map(lesson=>({...lesson,...(savedRooms.has(lesson.id)?{room:savedRooms.get(lesson.id)}:{})}))];}return [className,lessons];})),
    tasks:Array.isArray(x.tasks)?x.tasks:[],
    deadlines:Array.isArray(x.deadlines)?x.deadlines:[],
    grades:Array.isArray(x.grades)?x.grades:[],
