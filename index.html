@@ -399,12 +399,7 @@ function clone(v){return JSON.parse(JSON.stringify(v))}
 
 const initial={
  profile:{name:"",schoolClass:"none",reminders:false},
- classSchedules:{"5А":[
- {id:501,day:0,time:"08:30",subject:"Разговоры о важном",teacher:"Федорова ИЮ"},{id:502,day:0,time:"09:30",subject:"Русский язык",teacher:"Букина АА"},{id:503,day:0,time:"10:30",subject:"Литература",teacher:"Букина АА"},{id:504,day:0,time:"11:35",subject:"География",teacher:"Владимирова ЕА"},{id:505,day:0,time:"12:35",subject:"Киберурок",teacher:"Федорова ИЮ"},{id:506,day:0,time:"13:35",subject:"Математика",teacher:"Федорова ИЮ"},
- {id:507,day:1,time:"08:30",subject:"Математика",teacher:"Федорова ИЮ"},{id:508,day:1,time:"09:30",subject:"Компьютерная грамотность",teacher:"Деклау НВ"},{id:509,day:1,time:"10:30",subject:"Русский язык",teacher:"Букина АА"},{id:510,day:1,time:"11:35",subject:"Изобразительное искусство",teacher:"Афанасьева ДВ"},{id:511,day:1,time:"12:35",subject:"Физическая культура",teacher:"Красновейкин ВА"},{id:512,day:1,time:"13:35",subject:"Литература",teacher:"Букина АА"},
- {id:513,day:2,time:"08:30",subject:"Физическая культура",teacher:"Красновейкин ВА"},{id:514,day:2,time:"09:30",subject:"Математика",teacher:"Федорова ИЮ"},{id:515,day:2,time:"10:30",subject:"Английский язык",teacher:"Деклау НВ"},{id:516,day:2,time:"11:35",subject:"Биология",teacher:"Кочетова МР"},{id:517,day:2,time:"12:35",subject:"Русский язык",teacher:"Букина АА"},{id:518,day:2,time:"13:35",subject:"Математика",teacher:"Федорова ИЮ"},{id:519,day:2,time:"14:30",subject:"История",teacher:"Зенцов СБ"},
- {id:520,day:3,time:"08:30",subject:"Практикум по математике",teacher:"Федорова ИЮ"},{id:521,day:3,time:"09:30",subject:"Математика",teacher:"Федорова ИЮ"},{id:522,day:3,time:"10:30",subject:"Труд (технология)",teacher:"Спирлиев ДВ"},{id:523,day:3,time:"11:35",subject:"Труд (технология)",teacher:"Спирлиев ДВ"},{id:524,day:3,time:"12:35",subject:"История",teacher:"Зенцов СБ"},{id:525,day:3,time:"13:35",subject:"Русский язык",teacher:"Букина АА"},
- {id:526,day:4,time:"08:30",subject:"Английский язык",teacher:"Деклау НВ"},{id:527,day:4,time:"09:30",subject:"Музыка",teacher:"Таранюк ОВ"},{id:528,day:4,time:"10:30",subject:"История",teacher:"Зенцов СБ"},{id:529,day:4,time:"11:35",subject:"Функциональная грамотность",teacher:"Таранюк ОВ"},{id:530,day:4,time:"12:35",subject:"Русский язык",teacher:"Букина АА"},{id:531,day:4,time:"13:35",subject:"Литература",teacher:"Букина АА"}]},
+ classSchedules:{},
  selectedDay:todayIndex,
  schedule:[],
  tasks:[],
@@ -783,17 +778,7 @@ function profileForm(){
  });
 }
 function classForm(){
- const current=data.profile.schoolClass||"none";
- openModal("Класс и расписание",`<div class="field"><label style="display:block;margin-bottom:10px">Выбери свой класс</label>
- <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #DCE4DE;border-radius:14px;margin-bottom:10px;cursor:pointer;background:#fff">
- <input type="radio" name="schoolClass" value="none" ${current==="none"?"checked":""} style="width:20px;height:20px;accent-color:#536F61">
- <span style="font-weight:700">Нет</span></label>
- <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #DCE4DE;border-radius:14px;cursor:pointer;background:#fff">
- <input type="radio" name="schoolClass" value="5А" ${current==="5А"?"checked":""} style="width:20px;height:20px;accent-color:#536F61">
- <span style="font-weight:700">5А</span></label></div>`,v=>{
-  if(!["5А","none"].includes(v.schoolClass))return false;
-  data.profile.schoolClass=v.schoolClass;
- });
+ openModal("Класс и расписание",`<p class="muted">Список классов временно очищен. Новые расписания появятся после проверки прототипа.</p>`,()=>{});
 }
 function remove(list,idValue,label){
  if(!confirm(`Удалить ${label}?`))return;
