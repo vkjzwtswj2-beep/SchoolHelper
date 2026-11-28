@@ -334,21 +334,21 @@ button,a,input,select,textarea{touch-action:manipulation}
 
 
 .class-picker{position:relative}
-.select-like{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;background:var(--card,#fff);color:inherit;border:1px solid var(--line,#ddd);border-radius:12px;padding:13px 14px;font:inherit;cursor:pointer}
-.class-picker-panel{position:absolute;z-index:30;top:calc(100% - 2px);left:0;right:0;max-height:min(65vh,420px);overflow-y:auto;overscroll-behavior:contain;background:var(--card,#fff);border:1px solid var(--line,#ddd);border-radius:12px;padding:10px;box-shadow:0 12px 30px #0002}
-.class-picker-panel input{width:100%;box-sizing:border-box;margin-bottom:8px}
-.class-picker-options{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
-.class-option{width:100%;border:0;border-radius:8px;background:transparent;color:inherit;text-align:left;padding:10px 12px;font:inherit;cursor:pointer}
-.class-option:hover{background:var(--soft,#eee)}
-.class-no-results{padding:10px 12px}
-
+.select-like{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;background:var(--card,#fff);color:inherit;border:1px solid var(--line,#ddd);border-radius:14px;padding:15px 16px;font:inherit;cursor:pointer;min-height:54px}
+.class-picker-overlay{position:fixed;inset:0;z-index:120;background:#1118;display:flex;align-items:flex-end;justify-content:center;padding:12px}
+.class-picker-sheet{width:min(100%,520px);height:min(76dvh,620px);max-height:calc(var(--picker-vh,100dvh) - 20px);display:flex;flex-direction:column;background:var(--card,#fff);color:var(--text,#222);border-radius:24px 24px 18px 18px;padding:18px;box-shadow:0 18px 55px #0003;overflow:hidden}
+.class-picker-sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.class-picker-sheet-head h3{margin:0;font-size:21px}
+.class-picker-close{border:0;border-radius:12px;background:var(--soft,#eee);font-size:24px;width:42px;height:42px;color:inherit}
+.class-picker-search{width:100%;box-sizing:border-box;border:1px solid var(--line,#ddd);border-radius:13px;padding:14px 15px;font:inherit;margin-bottom:12px;background:var(--bg,#fff);color:inherit;flex:0 0 auto}
+.class-picker-options{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:5px}
+.class-option{width:100%;border:0;border-radius:11px;background:transparent;color:inherit;text-align:left;padding:13px 14px;font:inherit;cursor:pointer;min-height:46px}
+.class-option:hover,.class-option:focus{background:var(--soft,#eee)}
+.class-option.selected{background:var(--soft,#eee);font-weight:700}
+.class-no-results{padding:14px;color:var(--muted,#777)}
 .modal{max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain}
-@media(max-width:600px){
- .modal-bg.keyboard-open{align-items:flex-start;padding-top:8px;padding-bottom:8px}
- .modal-bg.keyboard-open .modal{max-height:var(--keyboard-modal-height,calc(100dvh - 16px));overflow-y:auto}
- .modal-bg.keyboard-open .class-picker-panel{position:relative;top:auto;left:auto;right:auto;max-height:none;overflow:visible;margin-top:6px}
- .modal-bg.keyboard-open .class-picker-options{max-height:clamp(110px,24vh,190px);overflow-y:auto;-webkit-overflow-scrolling:touch}
-}
+@media(max-width:600px){.class-picker-overlay{padding:8px}.class-picker-sheet{width:100%;border-radius:24px 24px 14px 14px}}
+
 </style>
 </head>
 <body>
@@ -822,13 +822,7 @@ function classForm(){
  openModal("Класс и расписание",`
  <div class="field class-picker">
   <label>Класс</label>
-  <button type="button" id="class-picker-trigger" class="select-like" aria-expanded="false">${esc(current==="none"?"Выбрать класс":current)} <span>⌄</span></button>
-  <div id="class-picker-panel" class="class-picker-panel" style="display:none">
-   <input id="classSearch" type="search" placeholder="Поиск класса…" autocomplete="off">
-   <div id="class-picker-options" class="class-picker-options">
-    ${options.map(x=>`<button type="button" class="class-option" data-class="${esc(x)}">${esc(x)}</button>`).join("")}
-   </div>
-  </div>
+  <button type="button" id="class-picker-trigger" class="select-like" aria-haspopup="dialog" aria-expanded="false">${esc(current==="none"?"Выбрать класс":current)} <span>⌄</span></button>
   <input type="hidden" id="schoolClassSelect" name="schoolClass" value="${esc(current)}">
  </div>
  <div id="subgroup-field" class="field" style="display:${hasGroups?"block":"none"}">
@@ -837,65 +831,68 @@ function classForm(){
  <option value="1" ${(data.profile.subGroup||"1")==="1"?"selected":""}>1-я подгруппа</option>
  <option value="2" ${(data.profile.subGroup||"1")==="2"?"selected":""}>2-я подгруппа</option>
  </select></div>
- <p class="muted">Можно выбрать класс из списка или начать вводить его название в поиске.</p>`,v=>{
+ <p class="muted">Выбери класс из списка или воспользуйся поиском.</p>
+ <div id="class-picker-overlay" class="class-picker-overlay" style="display:none">
+  <section class="class-picker-sheet" role="dialog" aria-modal="true" aria-label="Выбор класса">
+   <div class="class-picker-sheet-head"><h3>Выбрать класс</h3><button type="button" class="class-picker-close" id="class-picker-close" aria-label="Закрыть">×</button></div>
+   <input id="classSearch" class="class-picker-search" type="search" placeholder="Поиск класса, например 9…" autocomplete="off">
+   <div id="class-picker-options" class="class-picker-options">
+    ${options.map(x=>`<button type="button" class="class-option ${x===current?"selected":""}" data-class="${esc(x)}">${esc(x)}</button>`).join("")}
+   </div>
+  </section>
+ </div>`,v=>{
   const chosen=v.schoolClass||"none";
   if(chosen!=="none"&&!options.includes(chosen))return false;
   data.profile.schoolClass=chosen;
   if(subgroupClasses.includes(chosen))data.profile.subGroup=v.subGroup||"1";
   data.schedule=[];
  });
- const trigger=$("#class-picker-trigger"), panel=$("#class-picker-panel"), search=$("#classSearch"), list=$("#class-picker-options"), hidden=$("#schoolClassSelect"), groupField=$("#subgroup-field");
- const modalBackdrop=$(".modal-bg"), modalElement=$(".modal");
- if(classPickerViewportCleanup){classPickerViewportCleanup();classPickerViewportCleanup=null;}
- const viewport=window.visualViewport;
- const updateKeyboardLayout=()=>{
-  if(!modalBackdrop||!modalElement||!search)return;
-  const keyboardOpen=document.activeElement===search && viewport && (window.innerHeight-viewport.height)>120;
-  modalBackdrop.classList.toggle("keyboard-open",!!keyboardOpen);
-  if(keyboardOpen){
-   const available=Math.max(220,viewport.height-16);
-   modalBackdrop.style.top=Math.max(0,viewport.offsetTop)+"px";
-   modalBackdrop.style.bottom=Math.max(0,window.innerHeight-(viewport.height+viewport.offsetTop))+"px";
-   modalElement.style.setProperty("--keyboard-modal-height",available+"px");
-   modalElement.style.maxHeight=available+"px";
-  }else{
-   modalBackdrop.style.top="";
-   modalBackdrop.style.bottom="";
-   modalElement.style.removeProperty("--keyboard-modal-height");
-   modalElement.style.maxHeight="";
-  }
+ const trigger=$("#class-picker-trigger"), overlay=$("#class-picker-overlay"), search=$("#classSearch"), list=$("#class-picker-options"), hidden=$("#schoolClassSelect"), groupField=$("#subgroup-field"), sheet=$(".class-picker-sheet");
+ let previousFocus=null;
+ const closePicker=()=>{
+  if(!overlay||overlay.style.display==="none")return;
+  overlay.style.display="none";trigger?.setAttribute("aria-expanded","false");
+  document.body.style.overflow="";
+  search.value="";
+  if(previousFocus)previousFocus.focus();
  };
- const onViewportChange=()=>updateKeyboardLayout();
- search?.addEventListener("focus",updateKeyboardLayout);
- search?.addEventListener("blur",()=>{modalBackdrop?.classList.remove("keyboard-open");});
- viewport?.addEventListener("resize",onViewportChange);
- viewport?.addEventListener("scroll",onViewportChange);
- window.addEventListener("resize",onViewportChange);
- classPickerViewportCleanup=()=>{
-  viewport?.removeEventListener("resize",onViewportChange);
-  viewport?.removeEventListener("scroll",onViewportChange);
-  window.removeEventListener("resize",onViewportChange);
- };
-
- trigger?.addEventListener("click",()=>{
-  const opening=panel.style.display==="none";
-  panel.style.display=opening?"block":"none";
-  trigger.setAttribute("aria-expanded",String(opening));
-  if(opening)search.focus();
- });
- search?.addEventListener("input",()=>{
-  const q=search.value.trim().toLocaleLowerCase("ru");
+ const renderOptions=query=>{
+  const q=(query||"").trim().toLocaleLowerCase("ru");
   const matches=options.filter(x=>x.toLocaleLowerCase("ru").includes(q));
-  list.innerHTML=matches.length?matches.map(x=>`<button type="button" class="class-option" data-class="${esc(x)}">${esc(x)}</button>`).join(""):'<div class="muted class-no-results">Ничего не найдено</div>';
+  list.innerHTML=matches.length?matches.map(x=>`<button type="button" class="class-option ${x===hidden.value?"selected":""}" data-class="${esc(x)}">${esc(x)}${x===hidden.value?"　✓":""}</button>`).join(""):'<div class="class-no-results">Ничего не найдено</div>';
+ };
+ const viewport=window.visualViewport;
+ const resizeSheet=()=>{
+  if(!overlay||overlay.style.display==="none"||!sheet)return;
+  const height=viewport?.height||window.innerHeight;
+  const keyboardOpen=document.activeElement===search&&window.innerHeight-height>100;
+  sheet.style.setProperty("--picker-vh",height+"px");
+  sheet.style.height=keyboardOpen?Math.max(190,height-12)+"px":"min(76dvh, 620px)";
+  overlay.style.alignItems="flex-end";
+ };
+ const onViewport=()=>resizeSheet();
+ trigger?.addEventListener("click",()=>{
+  previousFocus=trigger;overlay.style.display="flex";trigger.setAttribute("aria-expanded","true");
+  document.body.style.overflow="hidden";renderOptions("");resizeSheet();
  });
+ $("#class-picker-close")?.addEventListener("click",closePicker);
+ overlay?.addEventListener("click",e=>{if(e.target===overlay)closePicker()});
+ search?.addEventListener("input",()=>renderOptions(search.value));
+ search?.addEventListener("focus",resizeSheet);
  list?.addEventListener("click",e=>{
-  const option=e.target.closest("[data-class]"); if(!option)return;
-  const chosen=option.dataset.class;
-  hidden.value=chosen; trigger.innerHTML=`${esc(chosen)} <span>⌄</span>`;
-  panel.style.display="none"; trigger.setAttribute("aria-expanded","false");
+  const option=e.target.closest("[data-class]");if(!option)return;
+  const chosen=option.dataset.class;hidden.value=chosen;
+  trigger.innerHTML=`${esc(chosen)} <span>⌄</span>`;
   if(groupField)groupField.style.display=subgroupClasses.includes(chosen)?"block":"none";
+  closePicker();
  });
+ viewport?.addEventListener("resize",onViewport);viewport?.addEventListener("scroll",onViewport);window.addEventListener("resize",onViewport);
+ classPickerViewportCleanup=()=>{
+  viewport?.removeEventListener("resize",onViewport);viewport?.removeEventListener("scroll",onViewport);window.removeEventListener("resize",onViewport);
+  document.body.style.overflow="";
+ };
 }
+
 function remove(list,idValue,label){
  if(!confirm(`Удалить ${label}?`))return;
  data[list]=data[list].filter(x=>x.id!==idValue);save();render();
