@@ -648,7 +648,7 @@ function load(){
    ...clone(initial),...x,
    profile:{...initial.profile,...(x.profile||{})},
    schedule:Array.isArray(x.schedule)?x.schedule:[],
-   classSchedules:Object.fromEntries(Object.entries({...clone(initial.classSchedules),...(x.classSchedules||{})}).map(([className,lessons])=>{if(["8А","8В","8Г","9А"].includes(className)){const savedRooms=new Map((x.classSchedules?.[className]||[]).map(lesson=>[lesson.id,lesson.room]));return [className,(initial.classSchedules[className]||[]).map(lesson=>({...lesson,...(savedRooms.has(lesson.id)?{room:savedRooms.get(lesson.id)}:{})}))];}return [className,lessons];})),
+   classSchedules:Object.fromEntries(Object.entries({...clone(initial.classSchedules),...(x.classSchedules||{})}).map(([className,lessons])=>{if(["8А","8В","8Г","8Д","8Е","9А"].includes(className)){const savedRooms=new Map((x.classSchedules?.[className]||[]).map(lesson=>[lesson.id,lesson.room]));return [className,(initial.classSchedules[className]||[]).map(lesson=>({...lesson,...(savedRooms.has(lesson.id)?{room:savedRooms.get(lesson.id)}:{})}))];}return [className,lessons];})),
    tasks:Array.isArray(x.tasks)?x.tasks:[],
    deadlines:Array.isArray(x.deadlines)?x.deadlines:[],
    grades:Array.isArray(x.grades)?x.grades:[],
@@ -1063,7 +1063,7 @@ function classForm(){
   const option=e.target.closest("[data-class]");if(!option)return;
   hidden.value=option.dataset.class;
   search.value=option.dataset.class==="none"?"":option.dataset.class;
-  const chosenClass=option.dataset.class;groupField.style.display=["6М","8А","8В","8Г","8Д","8Е","9А"].includes(chosenClass)?"block":"none";const subgroupSelect=$("#subGroup"),subgroupLabel=$("#subgroup-label");if(subgroupSelect&&["6М","8А","8В","8Г","8Д","8Е","9А"].includes(chosenClass)){const labels=["Первая подгруппа","Вторая подгруппа"];subgroupSelect.innerHTML=labels.map((label,i)=>`<option value="${i+1}">${label}</option>`).join("");subgroupSelect.value=data.profile.subGroup||"1";if(subgroupLabel)subgroupLabel.textContent="Моя подгруппа";}
+  const chosenClass=option.dataset.class;groupField.style.display=["6М","8А","8В","8Г","8Д","8Е","9А"].includes(chosenClass)?"block":"none";const subgroupSelect=$("#subGroup"),subgroupLabel=$("#subgroup-label");if(subgroupSelect&&["6М","8А","8В","8Г","8Д","8Е","9А"].includes(chosenClass)){const labels=["1-я подгруппа","2-я подгруппа"];subgroupSelect.innerHTML=labels.map((label,i)=>`<option value="${i+1}">${label}</option>`).join("");subgroupSelect.value=data.profile.subGroup||"1";if(subgroupLabel)subgroupLabel.textContent="Моя подгруппа";}
   list.querySelectorAll("[data-class]").forEach(el=>{
    const active=el===option;el.setAttribute("aria-selected",String(active));
    el.style.background=active?"var(--soft,#eef1f8)":"transparent";
