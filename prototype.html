@@ -815,7 +815,7 @@ function classForm(){
  const current=data.profile.schoolClass==="none"?"":(data.profile.schoolClass||"");
  openModal("Класс и расписание",`
  <div class="field"><label for="class-search">Найти и выбрать класс</label>
- <input id="class-search" type="search" placeholder="Начни вводить, например 6Г" value="${esc(current)}" autocomplete="off">
+ <input id="class-search" type="search" placeholder="Поиск по списку классов" value="${esc(current)}" autocomplete="off">
  <input id="school-class-value" type="hidden" name="schoolClass" value="${esc(current)}"></div>
  <div id="class-options" style="max-height:240px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border,#ddd);border-radius:14px;padding:6px;background:var(--card,#fff)" role="listbox" aria-label="Список классов">
  ${options.map(x=>`<button type="button" class="class-option" data-class="${esc(x)}" aria-selected="${x===current}" style="display:block;width:100%;text-align:left;padding:12px 14px;border:0;border-radius:10px;background:${x===current?"var(--soft,#eef1f8)":"transparent"};color:inherit;font:inherit">${esc(x)}</button>`).join("")}
