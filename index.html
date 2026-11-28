@@ -498,9 +498,7 @@ function lessonTimeRange(start){const ends={"08:30":"09:15","09:30":"10:15","10:
 function lessonHTML(t){const schoolLesson=Boolean(t.teacher);return `<div class="item">
  <div class="lesson-time">${esc(lessonTimeRange(t.time))}</div><div class="item-icon">${uiIcon("book")}</div>
  <div class="item-main"><h3>${esc(t.subject)}</h3><p>${schoolLesson?"Учитель: "+esc(t.teacher):"Кабинет: "+esc(t.room||"—")}</p>
- <div class="item-actions">
- ${schoolLesson?`<button class="small-btn" data-action="edit-lesson" data-id="${esc(t.id)}">Кабинет</button>`:`<button class="small-btn" data-action="edit-lesson" data-id="${esc(t.id)}">Изменить</button><button class="small-btn danger" data-action="delete-lesson" data-id="${esc(t.id)}">Удалить</button>`}
- </div></div></div>`}
+ ${schoolLesson?"":`<div class="item-actions"><button class="small-btn" data-action="edit-lesson" data-id="${esc(t.id)}">Изменить</button><button class="small-btn danger" data-action="delete-lesson" data-id="${esc(t.id)}">Удалить</button></div>`}</div></div>`}
 
 function renderHome(){
  const pending=data.tasks.filter(t=>!t.done);
